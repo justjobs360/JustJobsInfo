@@ -1,0 +1,70 @@
+.single-solution-style-one {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 30px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.single-solution-style-one .icon {
+    margin-bottom: 20px;
+}
+
+.single-solution-style-one .title {
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.single-solution-style-one .disc {
+    margin-bottom: 25px;
+    flex-grow: 1;
+    min-height: 60px;
+}
+
+.single-solution-style-one .btn-arrow {
+    margin-top: auto;
+    display: inline-block;
+}
+
+/* Right draw image */
+.right-draw {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    opacity: 0.1;
+}
+
+/* Icon styles */
+.icon img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/* Arrow button styles */
+.btn-arrow {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-arrow img {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.btn-arrow:hover img {
+    transform: translateX(5px);
+}
+
+/* Ensure equal heights on mobile */
+@media only screen and (max-width: 991px) {
+    .single-solution-style-one {
+        height: auto;
+        min-height: 300px;
+    }
+} 

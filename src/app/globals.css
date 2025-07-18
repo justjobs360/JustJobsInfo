@@ -1,0 +1,9 @@
+.single-solution-style-one {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+ 
+.single-solution-style-one .disc {
+    flex-grow: 1;
+} 

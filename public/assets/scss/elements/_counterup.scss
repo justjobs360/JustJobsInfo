@@ -1,0 +1,110 @@
+// counterup style
+.single-counter-up-one {
+    text-align: center;
+    padding: 97px 20px;
+    border-right: 1px solid rgba(209, 209, 209, 1);
+    border-bottom: 1px solid rgba(209, 209, 209, 1);
+
+    @media #{$mdsm-layout} {
+        border: none !important;
+        padding: 30px;
+    }
+
+    &.border-left {
+        border-left: 1px solid rgba(209, 209, 209, 1);
+    }
+
+    &.border-top {
+        border-top: 1px solid rgba(209, 209, 209, 1);
+        padding: 40px 20px;
+
+        @media #{$sm-layout} {
+            border: none;
+        }
+
+        .icon-area {
+            margin-bottom: 30px;
+        }
+    }
+
+    p {
+        font-size: 20px;
+        font-weight: 400;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        font-size: 64px;
+        font-weight: 400;
+
+        @media #{$sm-layout} {
+            font-size: 40px;
+        }
+
+        @media #{$large-mobile} {
+            font-size: 44px;
+            margin-top: 15px;
+        }
+    }
+}
+
+.counter-up-wrapper-5 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 0;
+
+    @media #{$sm-layout} {
+        flex-wrap: wrap;
+        gap: 40px;
+        justify-content: center;
+    }
+
+    .single-counter-area {
+        padding: 0 45px;
+        padding-right: 125px;
+        border-right: 1px solid rgba(38, 38, 38, 0.205);
+
+        @media #{$smlg-device} {
+            padding-right: 60px;
+        }
+
+        @media #{$sm-layout} {
+            border: none;
+            text-align: center;
+        }
+
+        &:last-child {
+            border-right: none;
+        }
+
+        .title {
+            font-size: 80px;
+            color: var(--color-primary);
+            margin-bottom: 7px;
+
+            @media #{$mdsm-layout} {
+                font-size: 50px;
+                margin-bottom: 20px;
+            }
+
+            span {
+                color: var(--color-primary);
+            }
+        }
+
+        p {
+            margin: 0;
+            font-size: 28px;
+
+            @media #{$sm-layout} {
+                font-size: 18px;
+            }
+        }
+    }
+}
+
+.video-counter-bg {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #F5F5FF 100%);
+
+}

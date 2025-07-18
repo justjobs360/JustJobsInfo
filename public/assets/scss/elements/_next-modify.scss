@@ -1,0 +1,148 @@
+.service-banner-content-wrapper .title {
+    font-size: 64px;
+    line-height: 1.1;
+    margin-top: 30px;
+    margin-bottom: 25px;
+    font-weight: 400;
+    max-width: 80%;
+}
+
+.single-service-list h3.title {
+    font-weight: 400;
+}
+
+.apply-bottom-wrapper .benefits-wrapper-card .single p {
+    margin: 0 !important;
+}
+
+.thumbnail-consultancy {
+    height: auto;
+}
+
+.team-single-banner-area .social-area-wrapper p {
+    margin: 0 !important;
+}
+
+.float-right-style {
+    width: 124% !important;
+    max-width: 124% !important;
+}
+
+.career-right-two-wrapper.industry .single-wrapper .single-check p {
+    margin-bottom: 0 !important;
+}
+
+.career-two-section .check-wrapper-main .single-check p {
+    margin-bottom: 0 !important;
+}
+
+.service-area-details-wrapper .top p.disc {
+    max-width: 60%;
+    margin: auto !important;
+}
+
+.service-area-details-wrapper .top .title {
+    font-size: 60px;
+    font-weight: 400;
+    margin-bottom: 25px;
+}
+
+.single-pricing-wrapper-choose .body .check-single p {
+    margin: 0 !important;
+}
+
+.single-job-opening-card .bottom-area .selary-range p {
+    margin: 0 !important;
+}
+
+.luminos-main-solutioin-key .single-check p {
+    margin: 0 !important;
+}
+
+.shedule-consulting-left p.call {
+    margin-top: 35px !important;
+}
+
+.mySwiper-testimonials-4 {
+    padding: 60px 0 !important;
+    padding-bottom: 150px !important;
+    position: relative !important;
+}
+
+.coming-soon-wrapper-main .para {
+    font-size: 18px !important;
+    max-width: 40%;
+    margin: auto !important;
+    margin-top: 79px !important;
+    font-size: 22px !important;
+    line-height: 1.6;
+}
+
+.banner-inner-wrapper-five p.disc {
+    margin: auto !important;
+    margin-bottom: 45px !important;
+    margin-top: 20px !important;
+}
+
+.swiper-testimonials-wrapper-full-center .swiper {
+    overflow: visible !important;
+}
+
+.rts-copyright-area-one .copyright-wrapper p {
+    margin: 0 !important;
+}
+
+.rts-call-to-action-area-about .title {
+    margin-bottom: 20px !important;
+}
+
+.shedule-consulting-left .check-wrapper .single-check p {
+    margin-bottom: 0 !important;
+}
+
+.career-banner-wrapper .title {
+    margin-bottom: 20px !important;
+}
+
+.video-counter-bg {
+    z-index: 97;
+}
+
+// consultancy
+.thumbnail-consultancy {
+    height: auto !important;
+    object-fit: cover !important;
+}
+
+.thumbnail-top.jarallax.thumbnail-consultancy img {
+    object-fit: cover;
+    height: 100%;
+}
+
+@media only screen and (max-width: 991px) {
+    .counter-up-wrapper-5 .single-counter-area .title {
+        font-size: 42px !important;
+    }
+
+    .counter-up-wrapper-5 .single-counter-area .p {
+        font-size: 17px !important;
+    }
+}
+.footer-copyright-area-small .small-footer-wrapper p {
+    margin: 0 !important;
+}
+.review-area-partner .left .information p {
+    margin: 0 !important;
+}
+.review-area-partner .mid .info p,
+.review-area-partner .end p {
+    margin: 0 !important;
+}
+.blog-single-post-listing.details .author-area .author-details p {
+    margin: 0 !important;
+}
+.mySwiper-testimonials-4 {
+    @media #{$sm-layout} {
+        padding: 0 !important;
+    }
+}

@@ -1,0 +1,137 @@
+.banner-partner-inner-wrapper {
+    text-align: center;
+    padding: 120px 0 40px 0;
+
+    @media #{$large-mobile} {
+        padding: 70px 0 40px 0;
+    }
+
+    .thumbnail-large {
+        height: 500px;
+
+        @media #{$mdsm-layout} {
+            height: 300px;
+        }
+
+        @media #{$sm-layout} {
+            height: 250px;
+        }
+
+        @media #{$large-mobile} {
+            height: 200px;
+        }
+
+        @media #{$small-mobile} {
+            height: auto;
+        }
+    }
+}
+
+.partner-large-xl-image {
+    height: 573px;
+
+    @media #{$mdsm-layout} {
+        height: auto;
+    }
+}
+
+.thumbnail-main-wrapper-choose-us {
+    height: 383px;
+
+    @media #{$sm-layout} {
+        height: auto;
+        margin-top: 30px;
+    }
+}
+
+.brand-partner-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    p {
+        flex-basis: 100%;
+        margin: 0;
+
+        @media #{$mdsm-layout} {
+            br {
+                display: none;
+            }
+        }
+    }
+
+    .partner-icon-wrapper {
+        flex-basis: 80%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        a {
+            max-width: 120px;
+            margin: auto;
+        }
+    }
+}
+
+.review-area-partner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media #{$mdsm-layout} {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+
+        img {
+            max-width: 178px;
+        }
+
+        .information {
+            font-family: var(--font-medium);
+            font-size: 16px;
+
+            p {
+                margin: 0;
+                color: var(--color-primary);
+            }
+        }
+    }
+
+    .mid {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .title {
+            font-size: 36px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .info {
+            p {
+                margin: 0;
+                font-family: var(--font-medium);
+
+                span {
+                    color: var(--color-primary);
+                }
+            }
+        }
+    }
+
+    .end {
+        max-width: 201px;
+
+        p {
+            margin-left: auto;
+            margin-right: 0;
+        }
+    }
+}

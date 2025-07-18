@@ -1,0 +1,31 @@
+/* Banner Component Specific Styles */
+
+/* Mobile-specific styles for Register Now button in BannerOne */
+@media only screen and (max-width: 767px) {
+    .banner-wrapper-one .landingbtnmedia.rts-btn.btn-primary,
+    .rts-banner-area-start .landingbtnmedia.rts-btn.btn-primary,
+    .landingbtnmedia.rts-btn.btn-primary {
+        margin-bottom: 25% !important;
+        margin-bottom: 25vh !important; /* Fallback with viewport height */
+    }
+}
+
+/* Additional specificity for all mobile devices */
+@media screen and (max-width: 768px) {
+    .banner-wrapper-one .landingbtnmedia.rts-btn.btn-primary,
+    .rts-banner-area-start .landingbtnmedia.rts-btn.btn-primary,
+    .landingbtnmedia.rts-btn.btn-primary {
+        margin-bottom: 25% !important;
+        padding-bottom: 20px !important; /* Additional padding for extra space */
+    }
+}
+
+/* Tablet and small desktop override */
+@media screen and (min-width: 769px) {
+    .banner-wrapper-one .landingbtnmedia.rts-btn.btn-primary,
+    .rts-banner-area-start .landingbtnmedia.rts-btn.btn-primary,
+    .landingbtnmedia.rts-btn.btn-primary {
+        margin-bottom: 0 !important; /* Reset margin on larger screens */
+        padding-bottom: 15px !important; /* Reset padding on larger screens */
+    }
+} 

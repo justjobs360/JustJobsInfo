@@ -1,0 +1,398 @@
+/* Job Alerts Page Styles */
+.job-alerts-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Hero Section */
+.job-alerts-hero {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #1a365d 100%);
+  color: white;
+  padding: 80px 0 60px;
+  margin-bottom: 40px;
+}
+
+.job-alerts-title {
+  font-size: var(--h2);
+  font-weight: 400;
+  margin-bottom: 20px;
+  color: white;
+  font-family: var(--font-primary);
+  line-height: 1.1;
+}
+
+.job-alerts-subtitle {
+  font-size: var(--font-size-b1);
+  opacity: 0.9;
+  margin-bottom: 0;
+  font-family: var(--font-primary);
+  line-height: var(--line-height-b1);
+  color: white !important;
+}
+
+/* Main Content */
+.job-alerts-content {
+  padding: 40px 0;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: var(--h4);
+  font-weight: var(--p-semi-bold);
+  color: var(--color-heading-1);
+  font-family: var(--font-primary);
+  margin-bottom: 0;
+}
+
+/* Card Styles */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+/* Alerts Toggle Section */
+.alerts-toggle-section .card-body {
+  padding: 1.5rem 2rem;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.form-check-label {
+  font-weight: var(--p-medium);
+  color: var(--color-body);
+  cursor: pointer;
+  font-size: var(--font-size-b1);
+}
+
+/* Empty State */
+.empty-state {
+  padding: 3rem 1rem;
+}
+
+.empty-icon {
+  margin-bottom: 1.5rem;
+}
+
+.empty-state h4 {
+  font-size: var(--h5);
+  font-weight: var(--p-semi-bold);
+  color: var(--color-body);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  font-size: var(--font-size-b1);
+  color: var(--color-body);
+  line-height: var(--line-height-b1);
+  margin-bottom: 2rem;
+}
+
+/* Bookmarked Jobs List */
+.bookmarked-jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bookmarked-job-item {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.bookmarked-job-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.job-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.job-header {
+  flex: 1;
+}
+
+.job-title {
+  font-size: var(--h6);
+  font-weight: var(--p-semi-bold);
+  color: var(--color-heading-1);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-primary);
+}
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: var(--font-size-b1);
+  color: var(--color-body);
+}
+
+.company-name,
+.job-location {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.job-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Button Styles */
+.rts-btn {
+  font-family: var(--font-primary);
+  font-weight: var(--p-medium);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1a365d;
+  border-color: #1a365d;
+  color: white;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .job-alerts-hero {
+    padding: 60px 0 40px;
+  }
+  
+  .job-alerts-title {
+    font-size: var(--h3);
+  }
+  
+  .job-alerts-subtitle {
+    font-size: var(--font-size-b1);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .alerts-toggle-section .card-body {
+    padding: 1rem 1.5rem;
+  }
+  
+  .job-info {
+    gap: 0.75rem;
+  }
+  
+  .job-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .job-actions {
+    justify-content: flex-start;
+  }
+  
+  .bookmarked-job-item {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .job-alerts-hero {
+    padding: 40px 0 30px;
+  }
+  
+  .job-alerts-title {
+    font-size: var(--h4);
+  }
+  
+  .section-title {
+    font-size: var(--h5);
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .alerts-toggle-section .card-body {
+    padding: 1rem;
+  }
+  
+  .empty-state {
+    padding: 2rem 0.5rem;
+  }
+  
+  .bookmarked-job-item {
+    padding: 0.75rem;
+  }
+  
+  .job-title {
+    font-size: var(--font-size-b1);
+  }
+  
+  .job-meta {
+    font-size: 0.875rem;
+  }
+}
+
+/* Form Switch Customization */
+.form-check-input:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.form-check-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem rgba(26, 54, 93, 0.25);
+} 
+
+/* Custom Switch Styles */
+.custom-switch {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+.custom-switch-input {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  margin: 0;
+  z-index: 1;
+}
+.custom-switch-slider {
+  width: 44px;
+  height: 24px;
+  background: #e9ecef;
+  border-radius: 24px;
+  position: relative;
+  transition: background 0.3s;
+  display: inline-block;
+}
+.custom-switch-slider:before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+}
+.custom-switch-input:checked + .custom-switch-slider {
+  background: var(--color-primary, #2563eb);
+}
+.custom-switch-input:checked + .custom-switch-slider:before {
+  transform: translateX(20px);
+}
+.custom-switch-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #444;
+  margin-left: 8px;
+}
+
+@media (max-width: 576px) {
+  .custom-switch-slider {
+    width: 36px;
+    height: 20px;
+  }
+  .custom-switch-slider:before {
+    width: 12px;
+    height: 12px;
+    left: 4px;
+    top: 4px;
+  }
+  .custom-switch-input:checked + .custom-switch-slider:before {
+    transform: translateX(12px);
+  }
+  .custom-switch-label {
+    font-size: 0.95rem;
+  }
+} 
+
+/* Hide any stray checkboxes in the alerts toggle section except our custom one */
+.alerts-toggle-section input[type="checkbox"]:not(.custom-switch-input) {
+  display: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+} 
+
+/* Force override all global checkbox styles in job alerts toggle section */
+.alerts-toggle-section input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  pointer-events: none !important;
+  z-index: 1;
+}
+
+/* Restore our custom switch input */
+.alerts-toggle-section .custom-switch-input {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  pointer-events: auto !important;
+  margin: 0 !important;
+  z-index: 2;
+} 
+
+.job-alerts-view-btn:hover {
+  color: #111 !important;
+} 

@@ -1,0 +1,62 @@
+.nav-area {
+    ul {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 40px;
+
+        li {
+            margin: 0;
+            padding: 0;
+
+            a {
+                padding: 38px 0;
+                display: block;
+                color: #000000;
+                font-size: 16px;
+                font-family: var(--font-medium);
+            }
+        }
+    }
+}
+.title-center-2 p {
+    margin: auto !important;
+}
+.with-megamenu .submenu .single-menu .single-service-area-wrapper .info p{
+    margin-bottom: 0 !important;
+}
+.header--sticky.sticky {
+    .nav-area ul li>a.nav-link {
+        padding: 20px 0;
+    }
+}
+
+.has-dropdown {
+    a {
+        display: flex;
+        align-items: center;
+
+        i {
+            &::after {
+                display: none;
+            }
+
+            &::before {
+                top: -11px;
+                font-size: 11px;
+                right: -17px;
+            }
+        }
+    }
+
+    &:hover {
+        &>a {
+            i {
+                &::before {
+                    content: "\f077";
+                }
+            }
+        }
+    }
+}

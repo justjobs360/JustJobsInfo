@@ -1,0 +1,9 @@
+.breadcrumb-wrapper-one {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .current {
+        color: var(--color-primary);
+    }
+}

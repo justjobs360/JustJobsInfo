@@ -1,0 +1,19 @@
+.benefits-area-title-wrapper {
+    text-align: center;
+
+    .title {
+        font-size: 28px;
+    }
+}
+
+.single-benefits-area-wrapper {
+    padding: 30px;
+
+    &.bg-light {
+        background: #F6F6F6;
+    }
+
+    .icon {
+        margin-bottom: 30px;
+    }
+}

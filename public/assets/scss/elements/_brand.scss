@@ -1,0 +1,10 @@
+.brand-area-main-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .single-brand {
+        max-width: 180px;
+        height: auto;
+    }
+}

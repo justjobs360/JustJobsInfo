@@ -1,0 +1,225 @@
+.career-banner-wrapper {
+    .title {
+        font-size: 56px;
+
+        @media #{$smlg-device} {
+            font-size: 42px;
+        }
+
+        @media #{$mdsm-layout} {
+            font-size: 44px;
+        }
+
+        @media #{$sm-layout} {
+            font-size: 28px;
+        }
+
+        @media #{$small-mobile} {
+            font-size: 24px;
+        }
+    }
+}
+
+.career-right-two-wrapper {
+    .title {
+        br {
+            @media #{$sm-layout} {
+                display: none;
+            }
+        }
+    }
+}
+
+.career-two-section {
+    .check-wrapper-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 30px;
+
+        @media #{$large-mobile} {
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .single-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 15px 0;
+        }
+    }
+}
+
+
+.career-video-area-large {
+    height: 600px;
+    border-radius: 10px !important;
+    background-image: url(../images/career/03.webp);
+
+    @media #{$small-mobile} {
+        height: 300px;
+    }
+
+    .jarallax-container {
+        border-radius: 10px !important;
+    }
+}
+
+.title-between-area-wrapper-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media #{$mdsm-layout} {
+        flex-direction: column;
+        align-items: flex-start;
+
+        p {
+            margin-left: 0 !important;
+        }
+    }
+
+    .title {
+        font-size: 48px;
+
+        @media #{$sm-layout} {
+            font-size: 36px;
+        }
+    }
+
+    p.disc {
+        max-width: 515px;
+        margin-left: auto;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+}
+
+.single-values-in-action {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 36px 30px;
+    border-radius: 0;
+    border: 1px solid #EAF0FF;
+    transition: .4s;
+
+    @media #{$large-mobile} {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .icon {
+        min-width: max-content;
+    }
+
+    .information {
+        .title {
+            font-weight: 500;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    }
+
+    &:hover {
+        border-color: var(--color-primary);
+    }
+}
+
+
+.single-job-opening-card {
+    border: 1px solid #DFDBF9;
+    padding: 40px;
+    transition: .3s;
+
+    @media #{$sm-layout} {
+        padding: 25px;
+    }
+
+    &:hover {
+        border: 1px solid var(--color-primary);
+    }
+
+    .title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    p {
+        margin-bottom: 15px;
+
+        span {
+            font-weight: 500;
+            font-size: 20px;
+            color: #050D20;
+        }
+    }
+
+    .tag-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        @media #{$large-mobile} {
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        span {
+            display: block;
+            border-radius: 20px;
+            border: 1px solid #DFDBF9;
+            padding: 5px 16px;
+        }
+    }
+
+    .bottom-area {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 30px;
+
+        @media #{$sm-layout} {
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .selary-range {
+            padding: 5px 15px;
+            background: #EAF0FF;
+            border-radius: 5px;
+
+            p {
+                font-weight: 600;
+                font-size: 20px;
+
+                span {
+                    font-size: 18px;
+                    font-weight: 400;
+                }
+            }
+        }
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+.apply-bottom-wrapper {
+    margin-top: 60px;
+
+    .benefits-wrapper-card {
+        .single {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+}

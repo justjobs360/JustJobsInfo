@@ -1,0 +1,462 @@
+.register-page-wrapper {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.register-form-wrapper {
+    background: #fff;
+    padding: 50px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-header {
+    margin-bottom: 40px;
+}
+
+.register-header .header-logo {
+    width: 160px;
+    height: auto;
+    margin-bottom: 30px;
+}
+
+.register-header .title {
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    color: #262626;
+}
+
+.register-header .subtitle {
+    color: #6D6D6D;
+    font-size: 16px;
+}
+
+.register-form {
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.register-form .form-group {
+    margin-bottom: 20px;
+}
+
+.register-form .form-group input {
+    width: 100%;
+    height: 55px;
+    padding: 0 25px;
+    border: 1px solid #E9E9E9;
+    border-radius: 0;
+    background: transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.register-form .form-group input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6D6D6D;
+    user-select: none;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+.custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+.custom-checkbox .checkmark {
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 1px solid #E9E9E9;
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+}
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: #6B6B8A;
+    border-color: #6B6B8A;
+}
+.custom-checkbox .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+.custom-checkbox .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.login-link {
+    color: #6D6D6D;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.login-link a:hover {
+    color: #0963D3;
+}
+
+.register-image-wrapper {
+    height: 90vh;
+    overflow: hidden;
+}
+
+.register-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.password-group {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.password-group input {
+    padding-right: 45px !important;
+}
+
+@media only screen and (max-width: 991px) {
+    .register-form-wrapper {
+        height: auto;
+        min-height: 90vh;
+        padding: 30px 20px;
+    }
+    .register-image-wrapper {
+        display: none;
+    }
+    .register-header .title {
+        font-size: 28px;
+    }
+}
+
+/* Error states for form validation */
+.form-group input.error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
+}
+
+.error-text {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    line-height: 1.2;
+}
+
+/* reCAPTCHA styling */
+.recaptcha-group {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.recaptcha-container {
+    transform-origin: center;
+}
+
+/* Responsive reCAPTCHA */
+@media (max-width: 768px) {
+    .recaptcha-container {
+        transform: scale(0.9);
+        transform-origin: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .recaptcha-container {
+        transform: scale(0.8);
+        transform-origin: center;
+    }
+}
+
+/* Security notice styling */
+.security-notice {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border-left: 3px solid #28a745;
+}
+
+/* Form validation improvements */
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.form-group input:valid {
+    border-color: #28a745;
+}
+
+/* Honeypot field - ensure it's completely hidden */
+.honeypot-field {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    z-index: -1 !important;
+}
+
+/* Loading state improvements */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Password strength indicator */
+.password-strength-container {
+    margin-top: 8px;
+}
+
+.password-strength-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.password-strength-fill {
+    height: 100%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.password-strength-text {
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+.password-strength-text div {
+    margin-bottom: 1px;
+}
+
+/* Password strength improvements */
+.password-strength {
+    font-size: 12px;
+    margin-top: 5px;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.password-strength.weak {
+    color: #dc3545;
+    background-color: #f8d7da;
+}
+
+.password-strength.medium {
+    color: #ffc107;
+    background-color: #fff3cd;
+}
+
+.password-strength.strong {
+    color: #28a745;
+    background-color: #d4edda;
+}
+
+/* Enhanced password field styling */
+.password-group {
+    position: relative;
+}
+
+.password-group input:focus + .password-toggle {
+    color: #007bff;
+}
+
+/* Improved form validation feedback */
+.form-group input.error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
+}
+
+.form-group input:valid:not(.error) {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Real-time validation success styling */
+.form-group input.success {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Form header improvements */
+.register-header .subtitle {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Enhanced checkbox styling */
+.custom-checkbox {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.custom-checkbox .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkmark {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkmark::after {
+    content: "✓";
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Link styling in terms acceptance */
+.custom-checkbox a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.custom-checkbox a:hover {
+    text-decoration: underline;
+}
+
+/* Form responsiveness improvements */
+@media (max-width: 768px) {
+    .register-form-wrapper {
+        padding: 20px;
+    }
+    
+    .register-header .title {
+        font-size: 24px;
+    }
+    
+    .form-group input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Loading spinner for submit button */
+.btn-loading {
+    position: relative;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    right: 15px;
+    top: 0;
+    bottom: 0;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Terms Agreement Checkbox Styles */
+.terms-agreement {
+    margin: 20px 0 !important;
+    font-size: 14px !important;
+    line-height: 1.4;
+}
+
+.terms-agreement a {
+    color: var(--color-primary) !important;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-agreement a:hover {
+    color: #0963D3 !important;
+    text-decoration: underline;
+}
+
+.form-group .terms-agreement {
+    margin-bottom: 10px;
+}
+
+/* Error state for terms checkbox */
+.form-group:has(.terms-agreement) .error-text {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .terms-agreement {
+        font-size: 13px !important;
+    }
+} 

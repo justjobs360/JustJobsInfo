@@ -1,0 +1,117 @@
+.contact-page-banner {
+    height: 450px !important;
+    background-image: url(/assets/images/contact/02.webp);
+
+    @media #{$large-mobile} {
+        height: 250px !important;
+    }
+}
+
+.container-contact {
+    max-width: 768px;
+    margin: auto;
+}
+
+.bg_iamge {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.contact-form {
+    margin-top: 50px;
+
+    input {
+        border-radius: 0;
+        height: 44PX;
+        border: 1px solid #D1D1D1;
+        font-size: 16px;
+        color: #6D6D6D;
+        padding: 12px;
+
+        &:focus {
+            border: 1px solid var(--color-primary);
+        }
+    }
+
+    .half-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+
+        @media #{$large-mobile} {
+            flex-direction: column;
+            gap: 0;
+        }
+    }
+
+    .single {
+        width: 100%;
+        margin-bottom: 23px;
+
+        label {
+            margin-bottom: 7px;
+            font-size: 14px;
+            color: #4F4F4F;
+            font-weight: 500;
+        }
+    }
+
+    textarea {
+        height: 133px;
+        border-radius: 0;
+        border: 1px solid #D1D1D1;
+        font-size: 16px;
+        color: #6D6D6D;
+        padding: 12px;
+
+        &:focus {
+            border: 1px solid var(--color-primary);
+        }
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+
+        label {
+            margin: 0;
+            padding-left: 10px;
+            font-size: 14px;
+            font-weight: 500;
+
+            &::after,
+            &::before {
+                display: none;
+            }
+        }
+    }
+}
+
+.single-location-area-contact {
+    text-align: center;
+
+    .icon {
+        margin-bottom: 16px;
+
+        i {
+            color: var(--color-primary);
+            font-size: 24px;
+        }
+    }
+
+    p {
+        margin-bottom: 12px;
+        font-size: 20px;
+    }
+
+    span {
+        color: #5D5D5D;
+    }
+}
+
+
+.section-seperator-b {
+    border-bottom: 1px solid #D1D1D1;
+}

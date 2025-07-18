@@ -1,0 +1,66 @@
+.about-banner-area-bg {
+    background-image: url(../images/about/01.webp);
+    height: 750px !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 90.323%, 0% 100%, 0% 0%);
+
+    @media #{$sm-layout} {
+        height: 450px !important;
+    }
+}
+
+.mt-dec-80 {
+    margin-top: -80px;
+    position: relative;
+    z-index: 10;
+
+    .single-counter-up-one {
+        background: #fff !important;
+    }
+}
+
+.what-we-do-wrapper-about {
+    p.disc {
+        font-size: 36px;
+        line-height: 1.5;
+
+        @media #{$sm-layout} {
+            font-size: 22px;
+        }
+    }
+}
+
+.what-we-do-main-wrapper {
+    .title {
+        font-size: 28px;
+        margin-bottom: 18px;
+    }
+
+    p.disc {
+        font-size: 20px;
+        line-height: 1.5;
+    }
+
+    .rts-btn {
+        margin-top: 64px;
+        display: flex;
+        justify-content: space-between;
+        max-width: 192px;
+    }
+}
+
+.thumbnail-about-mid {
+    clip-path: polygon(0% 5%, 100% 0%, 100% 95%, 0% 100%, 0% 5%);
+    height: 750px !important;
+
+    @media #{$smlg-device} {
+        height: auto !important;
+    }
+
+    @media #{$mdsm-layout} {
+        height: 378px !important;
+    }
+}
