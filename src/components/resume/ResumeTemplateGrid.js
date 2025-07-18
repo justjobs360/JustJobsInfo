@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
 const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) => {
+    // Use a single state to track which card is hovered
+    const [hoveredIndex, setHoveredIndex] = useState(null);
     return (
         <div className="resume-template-grid" style={{
             display: 'grid',
@@ -9,10 +11,9 @@ const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) =>
             marginBottom: '40px',
             justifyItems: 'center',
         }}>
-            {templates.map((template) => {
+            {templates.map((template, idx) => {
                 const isLocked = template.category === 'premium' && !isAuthenticated;
-                // Use local state for hover effect
-                const [isHovered, setIsHovered] = useState(false);
+                const isHovered = hoveredIndex === idx;
                 return (
                     <div
                         key={template.id}
@@ -32,8 +33,8 @@ const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) =>
                             transition: 'box-shadow 0.2s',
                             textAlign:'left'
                         }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onMouseEnter={() => setHoveredIndex(idx)}
+                        onMouseLeave={() => setHoveredIndex(null)}
                     >
                         {/* Resume Preview with floating button on hover */}
                         <div style={{
