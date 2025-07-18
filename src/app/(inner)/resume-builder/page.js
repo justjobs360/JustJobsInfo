@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOne from "@/components/footer/FooterOne";
@@ -10,9 +11,18 @@ import './resume-builder.css';
 
 export default function ResumeBuilderPage() {
     const { user, isAuthenticated } = useAuth();
-    const [selectedTemplate, setSelectedTemplate] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [activeTab, setActiveTab] = useState('templates');
+    const [activeFilter, setActiveFilter] = useState('All templates');
+    const router = useRouter();
+
+    // Template categories for filter bar
+    const templateCategories = [
+        'All templates',
+        'Free',
+        'Simple',
+        'Premium',
+
+        'Google Docs',
+    ];
 
     // Mock templates data - in production, this would come from your database
     const templates = [
@@ -21,7 +31,7 @@ export default function ResumeBuilderPage() {
             title: "Modern Professional",
             category: "free",
             tags: ["modern", "professional", "clean"],
-            thumbnail: null,
+            thumbnail: "/assets/resumes/templateone.webp",
             editableHtml: `
                 <div class="resume-template modern-professional">
                     <header data-section="header" contenteditable="true">
@@ -64,196 +74,90 @@ export default function ResumeBuilderPage() {
                     </section>
                 </div>
             `
-        },
-        {
-            id: 2,
-            title: "Clean Minimal",
-            category: "free",
-            tags: ["minimal", "clean", "simple"],
-            thumbnail: null,
-            editableHtml: `
-                <div class="resume-template minimal-clean">
-                    <header data-section="header" contenteditable="true">
-                        <h1 class="name">Emma Wilson</h1>
-                        <div class="contact-info">
-                            emma.wilson@email.com • +1 (555) 234-5678 • Boston, MA
-                        </div>
-                    </header>
-                    <section data-section="summary" contenteditable="true">
-                        <p>Dedicated professional with strong analytical skills and attention to detail. Experienced in project management and team collaboration.</p>
-                    </section>
-                    <section data-section="experience" contenteditable="true">
-                        <h2>Experience</h2>
-                        <div class="job">
-                            <h3>Project Manager</h3>
-                            <div class="company-date">Tech Solutions Inc., 2021-Present</div>
-                            <ul>
-                                <li>Led cross-functional teams of 10+ members to deliver projects on time</li>
-                                <li>Improved project delivery efficiency by 25% through process optimization</li>
-                                <li>Managed budgets exceeding $500K with zero cost overruns</li>
-                            </ul>
-                        </div>
-                    </section>
-                    <section data-section="education" contenteditable="true">
-                        <h2>Education</h2>
-                        <div class="education-item">
-                            <strong>Master of Business Administration</strong>, Boston University (2020)
-                        </div>
-                    </section>
-                    <section data-section="skills" contenteditable="true">
-                        <h2>Skills</h2>
-                        <p>Project Management, Team Leadership, Data Analysis, Strategic Planning, Risk Management</p>
-                    </section>
-                </div>
-            `
-        },
-        {
-            id: 3,
-            title: "Creative Designer",
-            category: "premium",
-            tags: ["creative", "designer", "colorful"],
-            thumbnail: null,
-            editableHtml: `
-                <div class="resume-template creative-designer">
-                    <div class="sidebar">
-                        <header data-section="header" contenteditable="true">
-                            <div class="profile-photo"></div>
-                            <h1 class="name">Jane Smith</h1>
-                            <p class="title">Creative Designer</p>
-                        </header>
-                        <section data-section="contact" contenteditable="true">
-                            <h2>Contact</h2>
-                            <div class="contact-item">📧 jane@email.com</div>
-                            <div class="contact-item">📱 +1 (555) 987-6543</div>
-                            <div class="contact-item">📍 Los Angeles, CA</div>
-                        </section>
-                        <section data-section="skills" contenteditable="true">
-                            <h2>Skills</h2>
-                            <div class="skill-item">
-                                <span>Adobe Creative Suite</span>
-                                <div class="skill-bar"><div class="skill-level" style="width: 90%"></div></div>
-                            </div>
-                        </section>
-                    </div>
-                    <div class="main-content">
-                        <section data-section="summary" contenteditable="true">
-                            <h2>About Me</h2>
-                            <p>Creative designer with passion for innovative solutions and user-centered design.</p>
-                        </section>
-                        <section data-section="experience" contenteditable="true">
-                            <h2>Experience</h2>
-                            <div class="job">
-                                <h3>Senior Designer</h3>
-                                <div class="company-date">Design Studio | 2021 - Present</div>
-                                <p>Led design projects for major clients, resulting in 40% increase in user engagement.</p>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-            `
-        },
-        {
-            id: 4,
-            title: "Executive Professional",
-            category: "premium",
-            tags: ["executive", "professional", "elegant"],
-            thumbnail: null,
-            editableHtml: `
-                <div class="resume-template executive-professional">
-                    <header data-section="header" contenteditable="true">
-                        <h1 class="name">Michael Johnson</h1>
-                        <p class="title">Chief Executive Officer</p>
-                        <div class="contact-bar">
-                            <span>michael.johnson@email.com</span>
-                            <span>+1 (555) 456-7890</span>
-                            <span>Chicago, IL</span>
-                        </div>
-                    </header>
-                    <section data-section="summary" contenteditable="true">
-                        <h2>Executive Summary</h2>
-                        <p>Visionary leader with 15+ years of experience driving organizational growth and transformation.</p>
-                    </section>
-                    <section data-section="experience" contenteditable="true">
-                        <h2>Professional Experience</h2>
-                        <div class="job">
-                            <div class="job-header">
-                                <h3>Chief Executive Officer</h3>
-                                <span class="date">2018 - Present</span>
-                            </div>
-                            <div class="company">Fortune 500 Company</div>
-                            <ul>
-                                <li>Increased company revenue by 150% over 5 years</li>
-                                <li>Led digital transformation initiatives</li>
-                            </ul>
-                        </div>
-                    </section>
-                </div>
-            `
         }
-        
     ];
 
+    // Filter logic (for demo, just show all for now)
+    const filteredTemplates = activeFilter === 'All templates'
+        ? templates
+        : templates.filter(t => t.tags.map(tag => tag.toLowerCase()).includes(activeFilter.toLowerCase()));
+
+    // When a template is selected, navigate to the dynamic page
     const handleTemplateSelect = (template) => {
-        // Check access permissions
         if (template.category === 'premium' && !isAuthenticated) {
-            // Show upgrade prompt or redirect to login
             alert('Please register or login to access premium templates');
             return;
         }
-        
-        setSelectedTemplate(template);
-        setIsEditing(true);
-        setActiveTab('editor');
-    };
-
-    const handleBackToTemplates = () => {
-        setIsEditing(false);
-        setSelectedTemplate(null);
-        setActiveTab('templates');
+        router.push(`/resume-builder/template/${template.id}`);
     };
 
     return (
         <>
             <HeaderOne />
-            <div className="resume-builder-page rts-section-gap">
+            <div className="resume-builder-page rts-section-gap" style={{ background: 'var(--color-white)' }}>
                 <div className="container">
-                    <div className="page-header text-center mb--50">
-                        <h1 className="title">Resume Builder</h1>
-                        <p className="subtitle">Create professional resumes with our easy-to-use templates</p>
-                        
-                        <div className="tab-navigation">
-                            <button 
-                                className={`tab-btn ${activeTab === 'templates' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('templates')}
+                    {/* HERO SECTION */}
+                    <div className="text-center mb--50" style={{ marginBottom: '24px' }}>
+                        <h1 className="title" style={{ fontSize: 'var(--h1)', color: 'var(--color-heading-1)', fontWeight: 700, marginBottom: '12px' }}>
+                            Resume templates
+                        </h1>
+                        <p className="subtitle" style={{ fontSize: '20px', color: 'var(--color-body)', marginBottom: '24px' }}>
+                            Each resume template is designed to follow the exact rules you need to get hired faster.<br />
+                            Use our resume templates and get free access to 18 more career tools!
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
+                            <button className="rts-btn btn-primary" style={{ fontSize: '18px', padding: '14px 36px', marginBottom: 0, minWidth: '220px' }}
+                                onClick={() => router.push('/resume-builder/template/1')}
+                                // Disabled if no template, but always enabled for now
                             >
-                                Choose Template
+                                Create my resume
                             </button>
-                            {selectedTemplate && (
-                                <button 
-                                    className={`tab-btn ${activeTab === 'editor' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('editor')}
-                                >
-                                    Edit Resume
-                                </button>
-                            )}
+                            {/* FILTER BAR */}
+                            <div className="resume-filter-bar" style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center',
+                                gap: '12px',
+                                margin: '0 auto 24px auto',
+                                width: '100%',
+                                maxWidth: '700px',
+                            }}>
+                                {templateCategories.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        className={`filter-btn${activeFilter === cat ? ' active' : ''}`}
+                                        style={{
+                                            display: 'inline-flex',
+                                            width: 'auto',
+                                            background: activeFilter === cat ? 'var(--color-primary)' : 'var(--color-white)',
+                                            color: activeFilter === cat ? 'var(--color-white)' : 'var(--color-body)',
+                                            border: activeFilter === cat ? '1.5px solid var(--color-primary)' : '1.5px solid #B5D2F6',
+                                            borderRadius: '24px',
+                                            padding: '8px 24px',
+                                            fontWeight: 500,
+                                            fontSize: '16px',
+                                            cursor: 'pointer',
+                                            transition: 'background 0.2s, color 0.2s',
+                                            boxShadow: activeFilter === cat ? '0 2px 8px rgba(9,99,211,0.08)' : 'none',
+                                            outline: 'none',
+                                            // Remove minWidth to prevent forced wrapping
+                                        }}
+                                        onClick={() => setActiveFilter(cat)}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {activeTab === 'templates' && (
-                        <ResumeTemplateGrid 
-                            templates={templates}
-                            onTemplateSelect={handleTemplateSelect}
-                            isAuthenticated={isAuthenticated}
-                        />
-                    )}
-
-                    {activeTab === 'editor' && selectedTemplate && (
-                        <ResumeEditor 
-                            template={selectedTemplate}
-                            onBack={handleBackToTemplates}
-                            isAuthenticated={isAuthenticated}
-                        />
-                    )}
+                    {/* Only show the template grid, not the editor */}
+                    <ResumeTemplateGrid
+                        templates={filteredTemplates}
+                        onTemplateSelect={handleTemplateSelect}
+                        isAuthenticated={isAuthenticated}
+                    />
                 </div>
             </div>
             <BackToTop />

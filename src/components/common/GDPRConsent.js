@@ -135,7 +135,15 @@ const GDPRConsent = () => {
                         <a href="/privacy-policy" style={{ color: '#0056b3', textDecoration: 'underline', marginLeft: 6 }}>Learn More</a>
                     </span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center', minWidth: isMobile ? '100%' : '360px', justifyContent: 'flex-end' }}>
+                <div style={{ 
+                    display: 'flex', 
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: isMobile ? '8px' : '12px',
+                    alignItems: 'center',
+                    minWidth: isMobile ? '100%' : '360px', 
+                    justifyContent: 'flex-end',
+                    width: isMobile ? '100%' : undefined
+                }}>
                     <button onClick={handleDecline} style={{
                         background: 'none',
                         border: '1px solid #222',
@@ -145,10 +153,11 @@ const GDPRConsent = () => {
                         cursor: 'pointer',
                         fontWeight: 500,
                         fontSize: '15px',
-                        width: '140px',
-                        minWidth: '140px',
+                        width: isMobile ? '100%' : '140px',
+                        minWidth: isMobile ? undefined : '140px',
                         textAlign: 'center',
                         transition: 'background 0.2s, color 0.2s',
+                        marginBottom: isMobile ? '0' : undefined
                     }}>Reject</button>
                     <button onClick={() => setShowDetails(true)} style={{
                         background: 'none',
@@ -159,10 +168,11 @@ const GDPRConsent = () => {
                         cursor: 'pointer',
                         fontWeight: 500,
                         fontSize: '15px',
-                        width: '140px',
-                        minWidth: '140px',
+                        width: isMobile ? '100%' : '140px',
+                        minWidth: isMobile ? undefined : '140px',
                         textAlign: 'center',
                         transition: 'background 0.2s, color 0.2s',
+                        marginBottom: isMobile ? '0' : undefined
                     }}>Cookie Settings</button>
                     <button onClick={handleAcceptAll} style={{
                         background: '#222',
@@ -173,10 +183,11 @@ const GDPRConsent = () => {
                         cursor: 'pointer',
                         fontWeight: 600,
                         fontSize: '15px',
-                        width: '140px',
-                        minWidth: '140px',
+                        width: isMobile ? '100%' : '140px',
+                        minWidth: isMobile ? undefined : '140px',
                         textAlign: 'center',
                         transition: 'background 0.2s, color 0.2s',
+                        marginBottom: isMobile ? '0' : undefined
                     }}>Accept All Cookies</button>
                 </div>
             </div>
