@@ -182,7 +182,7 @@ export default function DownloadableResourcesPage() {
             <AdminLayout>
                 <div style={{ textAlign: 'center', padding: '40px' }}>
                     <h2 style={{ color: 'var(--color-danger)' }}>Access Denied</h2>
-                    <p>You don't have permission to manage downloadable resources.</p>
+                    <p>You don&apos;t have permission to manage downloadable resources.</p>
                 </div>
             </AdminLayout>
         );
