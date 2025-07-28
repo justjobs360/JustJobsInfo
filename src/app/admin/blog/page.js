@@ -289,7 +289,7 @@ export default function BlogManagementPage() {
       <AdminLayout>
         <div className="admin-content">
           <div className="alert alert-danger">
-            You don't have permission to manage blog posts.
+            You don&apos;t have permission to manage blog posts.
           </div>
         </div>
       </AdminLayout>
@@ -712,7 +712,7 @@ export default function BlogManagementPage() {
           {showComments && (
             <div className="comments-modal">
               <div className="modal-header">
-                <h4>Comments for "{blogs.find(b => b._id === showComments)?.title}"</h4>
+                <h4>Comments for &quot;{blogs.find(b => b._id === showComments)?.title}&quot;</h4>
                 <button 
                   className="btn btn-secondary"
                   onClick={() => setShowComments(null)}

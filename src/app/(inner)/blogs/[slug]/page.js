@@ -1,6 +1,7 @@
 "use client"
 import { useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import HeaderOne from "@/components/header/HeaderOne";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
@@ -363,8 +364,8 @@ export default function BlogDetails() {
           <div className="container">
             <div className="row">
               <div className="col-12 text-center">
-                <p>The blog post you're looking for doesn't exist.</p>
-                <a href="/blogs" className="btn btn-primary">Back to Blogs</a>
+                <p>The blog post you&apos;re looking for doesn&apos;t exist.</p>
+                <Link href="/blogs" className="btn btn-primary">Back to Blogs</Link>
               </div>
             </div>
           </div>
@@ -610,7 +611,7 @@ export default function BlogDetails() {
                           </div>
                           <div className="post-content">
                             <h6>
-                              <a href={`/blogs/${post.slug}`}>{post.title}</a>
+                              <Link href={`/blogs/${post.slug}`}>{post.title}</Link>
                             </h6>
                             <span>{new Date(post.publishedDate).toLocaleDateString()}</span>
                           </div>
@@ -625,7 +626,7 @@ export default function BlogDetails() {
                     <div className="gallery-posts">
                       {galleryPosts.map((post, index) => (
                         <div key={post._id || index} className="gallery-post">
-                          <a href={`/blogs/${post.slug}`}>
+                          <Link href={`/blogs/${post.slug}`}>
                             <img
                               src={getImageUrl(post.image)}
                               alt={post.title}
@@ -634,7 +635,7 @@ export default function BlogDetails() {
                                 e.target.src = '/assets/images/blog/01.webp';
                               }}
                             />
-                          </a>
+                          </Link>
                         </div>
                       ))}
                     </div>
