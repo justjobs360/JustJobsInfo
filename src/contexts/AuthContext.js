@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import UserRoleService, { USER_ROLES } from '@/utils/userRoleService';
 
 const AuthContext = createContext({});
 
@@ -14,6 +15,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
     const [auth, setAuth] = useState(null);
 
@@ -23,8 +25,26 @@ export const AuthProvider = ({ children }) => {
             import('@/config/firebase').then(({ auth: firebaseAuth }) => {
                 setAuth(firebaseAuth);
                 
-                const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+                const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+                    console.log('AuthStateChanged:', user?.email);
                     setUser(user);
+                    
+                    // Get user role if authenticated
+                    if (user) {
+                        try {
+                            console.log('Fetching user role for:', user.uid);
+                            const roleData = await UserRoleService.getUserRole(user.uid);
+                            console.log('User role data:', roleData);
+                            setUserRole(roleData);
+                        } catch (error) {
+                            console.error('Error getting user role:', error);
+                            setUserRole({ role: USER_ROLES.USER, permissions: [] });
+                        }
+                    } else {
+                        console.log('No user, setting userRole to null');
+                        setUserRole(null);
+                    }
+                    
                     setLoading(false);
                 });
 
@@ -47,15 +67,39 @@ export const AuthProvider = ({ children }) => {
         try {
             await signOut(auth);
             setUser(null);
+            setUserRole(null);
         } catch (error) {
             console.error('Error signing out:', error);
             throw error;
         }
     };
 
+    // Helper functions for role checking
+    const isAdmin = () => {
+        const result = userRole?.role === USER_ROLES.ADMIN || userRole?.role === USER_ROLES.SUPER_ADMIN;
+        console.log('isAdmin check:', { userRole: userRole?.role, result });
+        return result;
+    };
+
+    const isSuperAdmin = () => {
+        const result = userRole?.role === USER_ROLES.SUPER_ADMIN;
+        console.log('isSuperAdmin check:', { userRole: userRole?.role, result });
+        return result;
+    };
+
+    const hasPermission = (permission) => {
+        const result = userRole?.permissions?.includes(permission) || false;
+        console.log('hasPermission check:', { permission, permissions: userRole?.permissions, result });
+        return result;
+    };
+
     const value = {
         user,
+        userRole,
         isAuthenticated: !!user,
+        isAdmin: isAdmin(),
+        isSuperAdmin, // Pass the function reference, not the result
+        hasPermission,
         loading,
         logout
     };

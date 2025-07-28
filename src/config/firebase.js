@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,17 +17,20 @@ const isValidConfig = firebaseConfig.apiKey && firebaseConfig.authDomain && fire
 
 let app;
 let auth;
+let db;
 
 if (typeof window !== 'undefined' && isValidConfig) {
   // Only initialize Firebase on the client side with valid config
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  db = getFirestore(app);
 } else if (isValidConfig) {
   // Server side with valid config (for some server functions if needed)
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  db = getFirestore(app);
 } else {
   console.warn('Firebase configuration incomplete. Authentication features will be disabled.');
 }
 
-export { auth };
+export { auth, db };
