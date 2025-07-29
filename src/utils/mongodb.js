@@ -47,6 +47,28 @@ async function getCollection(collectionName) {
   }
 }
 
+// Store CV data to MongoDB
+async function storeCV(cvData) {
+  try {
+    const collection = await getCollection('cv_audits');
+    
+    // Add timestamp
+    const documentToInsert = {
+      ...cvData,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    const result = await collection.insertOne(documentToInsert);
+    console.log(`💾 CV stored successfully with ID: ${result.insertedId}`);
+    
+    return result.insertedId.toString();
+  } catch (error) {
+    console.error('❌ Error storing CV to MongoDB:', error);
+    throw error;
+  }
+}
+
 // Close MongoDB connection
 async function closeConnection() {
   try {
@@ -70,5 +92,6 @@ async function closeConnection() {
 export {
   getDatabase,
   getCollection,
-  closeConnection
+  closeConnection,
+  storeCV
 }; 
