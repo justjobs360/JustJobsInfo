@@ -124,7 +124,7 @@ export default function VerifyEmailPage() {
                         <h2>Email Verification Required</h2>
                         <p>Your email address ({unverifiedEmail}) has not been verified yet.</p>
                         <p>We've sent a verification email to your inbox. Please check your email and click the verification link.</p>
-                        <p>If you didn't receive the email, you can request a new one below.</p>
+                        <p>If you didn&apos;t receive the email, you can request a new one below.</p>
                         <div className="action-buttons">
                             <button 
                                 onClick={handleResendVerification}

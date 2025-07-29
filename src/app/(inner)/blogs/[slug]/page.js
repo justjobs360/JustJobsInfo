@@ -428,7 +428,7 @@ export default function BlogDetails() {
           <div className="container">
             <div className="row">
               <div className="col-12 text-center">
-                <p>The blog post you're looking for doesn't exist.</p>
+                <p>The blog post you&apos;re looking for doesn&apos;t exist.</p>
                 <Link href="/blogs" className="rts-btn btn-primary">
                   Back to Blogs
                 </Link>
