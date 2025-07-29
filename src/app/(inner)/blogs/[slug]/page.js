@@ -1,30 +1,31 @@
 "use client"
 import { useState, useRef, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useParams } from "next/navigation";
 import HeaderOne from "@/components/header/HeaderOne";
+import Link from "next/link";
+
 import BackToTop from "@/components/common/BackToTop";
+
 import FooterOne from "@/components/footer/FooterOne";
 import ReCaptcha from "@/components/security/ReCaptcha";
 import toast from 'react-hot-toast';
 
 export default function BlogDetails() {
-  const params = useParams();
-  const router = useRouter();
+  const { slug } = useParams(); // Get the slug from URL parameters
+  
+  // State for blog data
   const [blogPost, setBlogPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [galleryPosts, setGalleryPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  // Declare hooks unconditionally at the top
   const [comments, setComments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
   const recaptchaRef = useRef();
-  
-  // Sidebar data states
-  const [categories, setCategories] = useState([]);
-  const [recentPosts, setRecentPosts] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState('');
-  const [galleryPosts, setGalleryPosts] = useState([]);
-  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -36,94 +37,51 @@ export default function BlogDetails() {
   // Helper function to get the correct image URL
   const getImageUrl = (imagePath) => {
     if (!imagePath) {
-      console.log('📸 No image path provided, using default');
       return '/assets/images/blog/01.webp';
     }
-    
-    // If it's already a full URL (starts with /uploads/ or http), use it as is
-    if (imagePath.startsWith('/uploads/') || imagePath.startsWith('http')) {
-      console.log('📸 Using uploaded image:', imagePath);
+    if (imagePath.startsWith('/') || imagePath.startsWith('http')) {
       return imagePath;
     }
-    
-    // Otherwise, assume it's a static image in the assets directory
-    const staticUrl = `/assets/images/blog/${imagePath}`;
-    console.log('📸 Using static image:', staticUrl);
-    return staticUrl;
+    return `/assets/images/blog/${imagePath}`;
   };
 
   // Helper function to get the correct author image URL
   const getAuthorImageUrl = (authorImagePath) => {
-    if (!authorImagePath) return '/assets/images/blog/details/author.jpg';
-    
-    // If it's already a full URL (starts with /uploads/ or http), use it as is
-    if (authorImagePath.startsWith('/uploads/') || authorImagePath.startsWith('http')) {
+    if (!authorImagePath) return '/assets/images/testimonials/01.png';
+    if (authorImagePath.startsWith('/') || authorImagePath.startsWith('http')) {
       return authorImagePath;
     }
-    
-    // Otherwise, assume it's a static image in the assets directory
-    return `/assets/images/blog/details/${authorImagePath}`;
+    return `/assets/images/testimonials/${authorImagePath}`;
   };
 
-  // Debounce search keyword
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchKeyword(searchKeyword);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchKeyword]);
-
-  // Fetch blog post from API
-  const fetchBlogPost = async (slugParam) => {
+  // Fetch blog post by slug
+  const fetchBlogPost = async () => {
     try {
       setLoading(true);
-      console.log('📡 Fetching blog post for slug:', slugParam);
-      
-      const response = await fetch(`/api/blogs/${slugParam}`);
+      const response = await fetch(`/api/blogs/${slug}`);
       const result = await response.json();
 
       if (result.success) {
-        console.log('✅ Successfully fetched blog post');
         setBlogPost(result.data);
-        // Load existing comments
-        if (result.data.comments) {
-          setComments(result.data.comments);
-        }
       } else {
-        console.error('❌ Blog post not found:', result.message);
-        toast.error('Blog post not found');
+        toast.error('Failed to fetch blog post');
       }
     } catch (error) {
-      console.error('❌ Error fetching blog post:', error);
+      console.error('Error fetching blog post:', error);
       toast.error('Failed to fetch blog post');
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch categories
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/blogs/categories');
-      const result = await response.json();
-      
-      if (result.success) {
-        setCategories(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
-
   // Fetch recent posts
   const fetchRecentPosts = async () => {
     try {
-      const response = await fetch('/api/blogs?limit=5');
+      const response = await fetch('/api/blogs?limit=3');
       const result = await response.json();
-      
+
       if (result.success) {
-        setRecentPosts(result.data);
+        setRecentPosts(result.data.blogs);
       }
     } catch (error) {
       console.error('Error fetching recent posts:', error);
@@ -135,12 +93,26 @@ export default function BlogDetails() {
     try {
       const response = await fetch('/api/blogs?limit=6');
       const result = await response.json();
-      
+
       if (result.success) {
-        setGalleryPosts(result.data);
+        setGalleryPosts(result.data.blogs);
       }
     } catch (error) {
       console.error('Error fetching gallery posts:', error);
+    }
+  };
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/blogs/categories');
+      const result = await response.json();
+
+      if (result.success) {
+        setCategories(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
     }
   };
 
@@ -148,16 +120,35 @@ export default function BlogDetails() {
   const handleSidebarSearch = (e) => {
     e.preventDefault();
     if (searchKeyword.trim()) {
-      router.push(`/blogs?search=${encodeURIComponent(searchKeyword.trim())}`);
+      window.location.href = `/blogs?search=${encodeURIComponent(searchKeyword.trim())}`;
+    } else {
+      toast.error('Please enter a search term');
+    }
+  };
+
+  // Handle search input key press
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSidebarSearch(e);
     }
   };
 
   // Handle category click
   const handleCategoryClick = (category) => {
-    router.push(`/blogs?category=${encodeURIComponent(category)}`);
+    window.location.href = `/blogs?category=${encodeURIComponent(category)}`;
   };
 
-  // Handle form input changes
+  // Load data on component mount
+  useEffect(() => {
+    if (slug) {
+      fetchBlogPost();
+      fetchRecentPosts();
+      fetchGalleryPosts();
+      fetchCategories();
+    }
+  }, [slug]);
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -166,40 +157,31 @@ export default function BlogDetails() {
     }));
   };
 
-  // Validate form
   const validateForm = () => {
     if (!formData.name.trim()) {
-      toast.error('Please enter your name');
+      toast.error('Name is required');
       return false;
     }
     if (!formData.email.trim()) {
-      toast.error('Please enter your email');
-      return false;
-    }
-    if (!formData.email.includes('@')) {
-      toast.error('Please enter a valid email address');
-      return false;
-    }
-    if (!formData.topic.trim()) {
-      toast.error('Please enter a topic');
+      toast.error('Email is required');
       return false;
     }
     if (!formData.comment.trim()) {
-      toast.error('Please enter a comment');
+      toast.error('Comment is required');
       return false;
     }
     if (!formData.agree) {
-      toast.error('Please agree to the terms and conditions');
+      toast.error('You must agree to our terms of service');
       return false;
     }
     if (!recaptchaToken) {
-      toast.error('Please complete the reCAPTCHA');
+      toast.error('Please complete the reCAPTCHA verification');
       return false;
     }
     return true;
   };
 
-  // Handle comment submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -210,103 +192,65 @@ export default function BlogDetails() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/blogs/${params.slug}`, {
+      // Verify reCAPTCHA on server side
+      const recaptchaResponse = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          topic: formData.topic,
-          comment: formData.comment,
-          recaptchaToken: recaptchaToken
-        }),
+        body: JSON.stringify({ token: recaptchaToken }),
       });
 
-      const result = await response.json();
+      if (!recaptchaResponse.ok) {
+        throw new Error('reCAPTCHA verification failed');
+      }
 
-      if (result.success) {
-        toast.success('Comment submitted successfully!');
-        
-        // Reset form
-        setFormData({
-          name: "",
-          email: "",
-          topic: "",
-          comment: "",
-          agree: false
-        });
-        
-        // Reset reCAPTCHA
-        if (recaptchaRef.current) {
-          recaptchaRef.current.reset();
-        }
-        setRecaptchaToken(null);
-        
-        // Refresh comments
-        if (blogPost && blogPost.comments) {
-          setComments([...blogPost.comments, {
-            _id: Date.now().toString(),
-            name: formData.name,
-            topic: formData.topic,
-            comment: formData.comment,
-            createdAt: new Date().toISOString()
-          }]);
-        }
-      } else {
-        toast.error(result.message || 'Failed to submit comment');
+      // Add comment to the list
+      const newComment = {
+        ...formData,
+        date: new Date().toLocaleDateString(),
+        id: Date.now()
+      };
+      
+      setComments([newComment, ...comments]);
+      toast.success("Comment posted successfully!");
+      
+      // Clear form
+      setFormData({ 
+        name: "", 
+        email: "", 
+        topic: "", 
+        comment: "",
+        agree: false 
+      });
+      setRecaptchaToken(null);
+      if (recaptchaRef.current?.reset) {
+        recaptchaRef.current.reset();
       }
     } catch (error) {
-      console.error('Error submitting comment:', error);
-      toast.error('Failed to submit comment');
+      console.error('Error:', error);
+      toast.error("Failed to post comment. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handle reCAPTCHA verification
   const handleRecaptchaVerify = (token) => {
     setRecaptchaToken(token);
   };
 
-  // Handle reCAPTCHA error
   const handleRecaptchaError = (error) => {
     console.error('reCAPTCHA error:', error);
-    toast.error('reCAPTCHA verification failed');
+    toast.error('reCAPTCHA verification failed. Please try again.');
+    setRecaptchaToken(null);
   };
 
-  // Handle reCAPTCHA expire
   const handleRecaptchaExpire = () => {
     setRecaptchaToken(null);
-    toast.error('reCAPTCHA expired, please try again');
+    toast.warning('reCAPTCHA expired. Please verify again.');
   };
 
-  // Initialize data with proper slug handling
-  useEffect(() => {
-    const initializeData = async () => {
-      // Wait for params to be available
-      if (!params || !params.slug) {
-        console.log('⏳ Waiting for slug parameter...');
-        return;
-      }
-
-      const slug = params.slug;
-      console.log('✅ Slug parameter available:', slug);
-      
-      // Fetch all data
-      await Promise.all([
-        fetchBlogPost(slug),
-        fetchCategories(),
-        fetchRecentPosts(),
-        fetchGalleryPosts()
-      ]);
-    };
-
-    initializeData();
-  }, [params]);
-
-  // If loading, show loading state
+  // Show loading state
   if (loading) {
     return (
       <div className="">
@@ -316,9 +260,7 @@ export default function BlogDetails() {
             <div className="row">
               <div className="col-lg-12">
                 <div className="career-page-single-banner blog-page">
-                  <div className="placeholder-glow">
-                    <div className="placeholder col-6"></div>
-                  </div>
+                  <h1 className="title">Loading...</h1>
                 </div>
               </div>
             </div>
@@ -326,14 +268,9 @@ export default function BlogDetails() {
         </div>
         <div className="rts-blog-list-area rts-section-gapTop">
           <div className="container">
-            <div className="row g-5">
-              <div className="col-xl-8 col-md-12 col-sm-12 col-12">
-                <div className="placeholder-glow">
-                  <div className="placeholder col-12" style={{ height: '300px' }}></div>
-                  <div className="placeholder col-8 mt-3"></div>
-                  <div className="placeholder col-6 mt-2"></div>
-                  <div className="placeholder col-12 mt-3"></div>
-                </div>
+            <div className="row">
+              <div className="col-12 text-center">
+                <p>Loading blog post...</p>
               </div>
             </div>
           </div>
@@ -364,8 +301,10 @@ export default function BlogDetails() {
           <div className="container">
             <div className="row">
               <div className="col-12 text-center">
-                <p>The blog post you&apos;re looking for doesn&apos;t exist.</p>
-                <Link href="/blogs" className="btn btn-primary">Back to Blogs</Link>
+                <p>The blog post you're looking for doesn't exist.</p>
+                <Link href="/blogs" className="rts-btn btn-primary">
+                  Back to Blogs
+                </Link>
               </div>
             </div>
           </div>
@@ -378,6 +317,7 @@ export default function BlogDetails() {
 
   return (
     <div className="">
+
       <HeaderOne />
 
       <>
@@ -386,7 +326,7 @@ export default function BlogDetails() {
             <div className="row">
               <div className="col-lg-12">
                 <div className="career-page-single-banner blog-page">
-                  <h1 className="title">{blogPost.title}</h1>
+                  <h1 className="title">{blogPost.title || 'Blog Post'}</h1>
                 </div>
               </div>
             </div>
@@ -395,8 +335,10 @@ export default function BlogDetails() {
         <div className="rts-blog-list-area rts-section-gapTop">
           <div className="container">
             <div className="row g-5">
+              {/* rts blo post area */}
               <div className="col-xl-8 col-md-12 col-sm-12 col-12">
-                <div className="blog-single-content">
+                {/* single post */}
+                <div className="blog-single-post-listing details mb--0">
                   <div className="thumbnail">
                     <img 
                       src={getImageUrl(blogPost.bannerImg)}
@@ -407,266 +349,383 @@ export default function BlogDetails() {
                       }}
                     />
                   </div>
-                  
-                  <div className="blog-meta">
-                    <div className="author">
-                      <img
-                        src={getAuthorImageUrl(blogPost.authorImg)}
-                        alt="finbiz_buseness"
-                        onError={(e) => {
-                          console.log('❌ Author image failed to load:', e.target.src);
-                          e.target.src = '/assets/images/blog/details/author.jpg';
-                        }}
-                      />
-                      <span>{blogPost.author}</span>
+                  <div className="blog-listing-content">
+                    <div className="user-info">
+                      {/* single info */}
+                      <div className="single">
+                        <i className="far fa-user-circle" />
+                        <span>by {blogPost.author || 'Unknown Author'}</span>
+                      </div>
+                      {/* single info end */}
+                      {/* single info */}
+                      <div className="single">
+                        <i className="far fa-clock" />
+                        <span>{new Date(blogPost.publishedDate).toLocaleDateString()}</span>
+                      </div>
+                      {/* single info end */}
+                      {/* single info */}
+                      <div className="single">
+                        <i className="far fa-tags" />
+                        <span>{blogPost.category || 'Uncategorized'}</span>
+                      </div>
+                      {/* single info end */}
                     </div>
-                    <div className="date">
-                      <span>{new Date(blogPost.publishedDate).toLocaleDateString()}</span>
+                    <h3 className="title animated fadeIn">
+                      {blogPost.title}
+                    </h3>
+                    <div className="disc para-1">
+                      <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
                     </div>
-                    <div className="category">
-                      <span>{blogPost.category}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="blog-content">
-                    <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
-                  </div>
-                  
-                  {blogPost.tags && blogPost.tags.length > 0 && (
-                    <div className="blog-tags">
-                      <h5>Tags:</h5>
-                      <div className="tags">
-                        {blogPost.tags.map((tag, index) => (
-                          <span key={index} className="tag">{tag}</span>
-                        ))}
+                    <div className="row  align-items-center">
+                      <div className="col-lg-6 col-md-12">
+                        {/* tags details */}
+                        {blogPost.tags && blogPost.tags.length > 0 && (
+                          <div className="details-tag">
+                            <h6>Tags:</h6>
+                            {blogPost.tags.map((tag, index) => (
+                              <button key={index}>{tag}</button>
+                            ))}
+                          </div>
+                        )}
+                        {/* tags details End */}
+                      </div>
+                      <div className="col-lg-6 col-md-12">
+                        <div className="details-share">
+                          <h6>Share:</h6>
+                          <button>
+                            <i className="fab fa-facebook-f" />
+                          </button>
+                          <button>
+                            <span style={{ fontWeight: 'bold', fontSize: '16px' }}>𝕏</span>
+                          </button>
+                          <button>
+                            <i className="fab fa-instagram" />
+                          </button>
+                          <button>
+                            <i className="fab fa-linkedin-in" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  )}
-                </div>
-                
-                {/* Comments Section */}
-                <div className="comments-section">
-                  <h3>Comments ({comments.length})</h3>
-                  
-                  {comments.length > 0 ? (
-                    <div className="comments-list">
-                      {comments.map((comment, index) => (
-                        <div key={comment._id || index} className="comment">
-                          <div className="comment-header">
-                            <strong>{comment.name}</strong>
-                            <span className="comment-date">
-                              {new Date(comment.createdAt).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <div className="comment-topic">
-                            <strong>Topic:</strong> {comment.topic}
-                          </div>
-                          <div className="comment-content">
-                            {comment.comment}
-                          </div>
-                        </div>
-                      ))}
+                    <div className="author-area">
+                      <div className="thumbnail details mb_sm--15">
+                        <img
+                          src={getAuthorImageUrl(blogPost.authorImg)}
+                          alt={blogPost.author}
+                          onError={(e) => {
+                            console.log('❌ Author image failed to load:', e.target.src);
+                            e.target.src = '/assets/images/blog/details/author.jpg';
+                          }}
+                        />
+                      </div>
+                      <div className="author-details team">
+                        <span className="desig">{blogPost.authorRole || 'Author'}</span>
+                        <h5>{blogPost.author}</h5>
+                        <p className="disc">
+                          {blogPost.authorBio || 'No author bio available.'}
+                        </p>
+                      </div>
                     </div>
-                  ) : (
-                    <p>No comments yet. Be the first to comment!</p>
-                  )}
-                  
-                  {/* Comment Form */}
-                  <div className="comment-form">
-                    <h4>Leave a Comment</h4>
-                    <form onSubmit={handleSubmit}>
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="form-group">
-                            <label>Name *</label>
+                    <div className="comments-area">
+                      <div id="comments-container">
+                        {/* Display existing comments */}
+                        {comments.length > 0 && (
+                          <div className="comments-list">
+                            <h4>Comments ({comments.length})</h4>
+                            {comments.map((comment) => (
+                              <div key={comment.id} className="single-comment" style={{
+                                border: '1px solid #eee',
+                                padding: '20px',
+                                marginBottom: '20px',
+                                borderRadius: '5px'
+                              }}>
+                                <div className="comment-header" style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  marginBottom: '10px'
+                                }}>
+                                  <strong>{comment.name}</strong>
+                                  <span style={{ color: '#666', fontSize: '14px' }}>{comment.date}</span>
+                                </div>
+                                {comment.topic && (
+                                  <div style={{ marginBottom: '10px', fontStyle: 'italic', color: '#666' }}>
+                                    Topic: {comment.topic}
+                                  </div>
+                                )}
+                                <p>{comment.comment}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="replay-area-details">
+                      <h4 className="title">Leave a Reply</h4>
+                      <form id="comment-form" onSubmit={handleSubmit}>
+                        <div className="row g-4">
+                          <div className="col-lg-6">
                             <input
                               type="text"
+                              id="name"
                               name="name"
+                              placeholder="Your Name *"
                               value={formData.name}
                               onChange={handleChange}
                               required
                             />
                           </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="form-group">
-                            <label>Email *</label>
+                          <div className="col-lg-6">
                             <input
                               type="email"
+                              id="email"
                               name="email"
+                              placeholder="Your Email *"
                               value={formData.email}
                               onChange={handleChange}
                               required
                             />
                           </div>
+                          <div className="col-12">
+                            <input
+                              type="text"
+                              id="topic"
+                              name="topic"
+                              placeholder="Select Topic (Optional)"
+                              value={formData.topic}
+                              onChange={handleChange}
+                            />
+                            <textarea
+                              id="comment"
+                              name="comment"
+                              placeholder="Type your message *"
+                              value={formData.comment}
+                              onChange={handleChange}
+                              required
+                            />
+                          </div>
+                          
+                          {/* reCAPTCHA */}
+                          <div className="col-12">
+                            <ReCaptcha
+                              ref={recaptchaRef}
+                              onVerify={handleRecaptchaVerify}
+                              onError={handleRecaptchaError}
+                              onExpire={handleRecaptchaExpire}
+                            />
+                          </div>
+
+                          {/* Terms agreement */}
+                          <div className="col-12">
+                            <div className="form-check">
+                              <label className="form-check-label" htmlFor="agree" style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="agree"
+                                name="agree"
+                                checked={formData.agree}
+                                onChange={handleChange}
+                                required
+                                  style={{marginRight: '8px'}}
+                              />
+                                <span>I agree to the <a href="/terms-of-use" target="_blank">Terms of Service</a> and <a href="/privacy-policy" target="_blank">Privacy Policy</a> *</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="col-12">
+                            <button 
+                              className="rts-btn btn-primary" 
+                              type="submit"
+                              disabled={isSubmitting}
+                            >
+                              {isSubmitting ? 'Posting...' : 'Submit Comment'}
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="form-group">
-                        <label>Topic *</label>
-                        <input
-                          type="text"
-                          name="topic"
-                          value={formData.topic}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                      
-                      <div className="form-group">
-                        <label>Comment *</label>
-                        <textarea
-                          name="comment"
-                          value={formData.comment}
-                          onChange={handleChange}
-                          rows="5"
-                          required
-                        ></textarea>
-                      </div>
-                      
-                      <div className="form-group">
-                        <label className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            name="agree"
-                            checked={formData.agree}
-                            onChange={handleChange}
-                            required
-                          />
-                          I agree to the terms and conditions
-                        </label>
-                      </div>
-                      
-                      <ReCaptcha
-                        ref={recaptchaRef}
-                        onVerify={handleRecaptchaVerify}
-                        onError={handleRecaptchaError}
-                        onExpire={handleRecaptchaExpire}
-                      />
-                      
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="btn btn-primary"
-                      >
-                        {isSubmitting ? 'Submitting...' : 'Submit Comment'}
-                      </button>
-                    </form>
+                      </form>
+                    </div>
                   </div>
                 </div>
+                {/* single post End*/}
               </div>
-              
-              <div className="col-xl-4 col-md-12 col-sm-12 col-12">
-                <div className="blog-sidebar">
-                  {/* Search */}
-                  <div className="sidebar-widget">
-                    <h4>Search</h4>
+              {/* rts-blog post end area */}
+              {/*rts blog wizered area */}
+              <div className="col-xl-4 col-md-12 col-sm-12 col-12  pd-control-bg--40">
+                {/* single wizered start */}
+                <div className="rts-single-wized search">
+                  <div className="wized-header">
+                    <h5 className="title">Search here</h5>
+                  </div>
+                  <div className="wized-body">
                     <form onSubmit={handleSidebarSearch}>
-                      <div className="search-box">
+                      <div className="rts-search-wrapper">
                         <input
+                          className="Search"
                           type="text"
-                          placeholder="Search blogs..."
+                          placeholder="Enter Keyword"
                           value={searchKeyword}
                           onChange={(e) => setSearchKeyword(e.target.value)}
+                          onKeyPress={handleSearchKeyPress}
                         />
                         <button type="submit">
-                          <i className="fas fa-search"></i>
+                          <i className="fal fa-search" />
                         </button>
                       </div>
                     </form>
                   </div>
-                  
-                  {/* Categories */}
-                  <div className="sidebar-widget">
-                    <h4>Categories</h4>
-                    <ul className="categories-list">
-                      {categories.map((category, index) => (
-                        <li key={index}>
-                          <button
-                            onClick={() => handleCategoryClick(category)}
-                            className="category-link"
-                          >
-                            {category}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                </div>
+                {/* single wizered End */}
+                {/* single wizered start */}
+                <div className="rts-single-wized Categories">
+                  <div className="wized-header">
+                    <h5 className="title">Categories</h5>
                   </div>
-                  
-                  {/* Recent Posts */}
-                  <div className="sidebar-widget">
-                    <h4>Recent Posts</h4>
-                    <div className="recent-posts">
-                      {recentPosts.map((post, index) => (
-                        <div key={post._id || index} className="recent-post">
-                          <div className="post-image">
-                            <img
-                              src={getImageUrl(post.image)}
-                              alt={post.title}
+                  <div className="wized-body">
+                    {categories && categories.length > 0 ? categories.map((category, index) => (
+                      /* single categoris */
+                      <ul key={index} className="single-categories">
+                        <li>
+                          <a href="#" onClick={() => handleCategoryClick(category)}>
+                            {category} <i className="far fa-long-arrow-right" />
+                          </a>
+                        </li>
+                      </ul>
+                    )) : (
+                      <ul className="single-categories">
+                        <li>
+                          <a href="#">
+                            No categories available <i className="far fa-long-arrow-right" />
+                          </a>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                {/* single wizered End */}
+                {/* single wizered start */}
+                <div className="rts-single-wized Recent-post">
+                  <div className="wized-header">
+                    <h5 className="title">Recent Posts</h5>
+                  </div>
+                  <div className="wized-body">
+                    {recentPosts && recentPosts.length > 0 ? recentPosts.map((post, index) => (
+                      /* recent-post */
+                      <div key={post._id || index} className="recent-post-single">
+                        <div className="thumbnail">
+                          <Link href={`/blogs/${post.slug}`}>
+                            <img 
+                              src={getImageUrl(post.image)} 
+                              alt="Blog_post" 
                               onError={(e) => {
                                 console.log('❌ Recent post image failed to load:', e.target.src);
                                 e.target.src = '/assets/images/blog/01.webp';
                               }}
                             />
-                          </div>
-                          <div className="post-content">
-                            <h6>
-                              <Link href={`/blogs/${post.slug}`}>{post.title}</Link>
-                            </h6>
-                            <span>{new Date(post.publishedDate).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Gallery Posts */}
-                  <div className="sidebar-widget">
-                    <h4>Gallery</h4>
-                    <div className="gallery-posts">
-                      {galleryPosts.map((post, index) => (
-                        <div key={post._id || index} className="gallery-post">
-                          <Link href={`/blogs/${post.slug}`}>
-                            <img
-                              src={getImageUrl(post.image)}
-                              alt={post.title}
-                              onError={(e) => {
-                                console.log('❌ Gallery post image failed to load:', e.target.src);
-                                e.target.src = '/assets/images/blog/01.webp';
-                              }}
-                            />
                           </Link>
                         </div>
-                      ))}
-                    </div>
+                        <div className="content-area">
+                          <div className="user">
+                            <i className="fal fa-clock" />
+                            <span>{new Date(post.publishedDate).toLocaleDateString()}</span>
+                          </div>
+                          <Link className="post-title" href={`/blogs/${post.slug}`}>
+                            <h6 className="title">
+                              {post.title}
+                            </h6>
+                          </Link>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="recent-post-single">
+                        <div className="content-area">
+                          <h6 className="title">No recent posts available</h6>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  
-                  {/* Social Links */}
-                  <div className="sidebar-widget">
-                    <h4>Follow Us</h4>
-                    <div className="social-links">
-                      <a href="#" className="social-link">
-                        <i className="fab fa-facebook-f"></i>
-                      </a>
-                      <a href="#" className="social-link">
-                        <i className="fab fa-twitter"></i>
-                      </a>
-                      <a href="#" className="social-link">
-                        <img src="/xlogo.png" alt="X" style={{ width: '16px', height: '16px' }} />
-                      </a>
-                      <a href="#" className="social-link">
-                        <i className="fab fa-linkedin-in"></i>
-                      </a>
+                </div>
+                {/* single wizered End */}
+                {/* single wizered start */}
+                <div className="rts-single-wized Recent-post">
+                  <div className="wized-header">
+                    <h5 className="title">Gallery Posts</h5>
+                  </div>
+                  <div className="wized-body">
+                    <div className="gallery-inner">
+                      {galleryPosts && galleryPosts.length > 0 ? (
+                        <>
+                          <div className="row-1 single-row">
+                            {galleryPosts.slice(0, 3).map((post, index) => (
+                              <Link key={post._id || index} href={`/blogs/${post.slug}`}>
+                                <img 
+                                  src={getImageUrl(post.image)} 
+                                  alt="Gallery" 
+                                  onError={(e) => {
+                                    console.log('❌ Gallery post image failed to load:', e.target.src);
+                                    e.target.src = '/assets/images/blog/01.webp';
+                                  }}
+                                />
+                              </Link>
+                            ))}
+                          </div>
+                          <div className="row-2 single-row">
+                            {galleryPosts.slice(3, 6).map((post, index) => (
+                              <Link key={post._id || index} href={`/blogs/${post.slug}`}>
+                                <img 
+                                  src={getImageUrl(post.image)} 
+                                  alt="Gallery" 
+                                  onError={(e) => {
+                                    console.log('❌ Gallery post image failed to load:', e.target.src);
+                                    e.target.src = '/assets/images/blog/01.webp';
+                                  }}
+                                />
+                              </Link>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="row-1 single-row">
+                          <div>No gallery posts available</div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
+                {/* single wizered End */}
+                {/* single wizered start */}
+                <div className="rts-single-wized">
+                  <div className="wized-header">
+                    <h5 className="title">Popular Tags</h5>
+                  </div>
+                  <div className="wized-body">
+                    <div className="tags-wrapper">
+                      <a href="#">Services</a>
+                      <a href="#">Business</a>
+                      <a href="#">Growth</a>
+                      <a href="#">Finance</a>
+                      <a href="#">UI/UX Design</a>
+                      <a href="#">Solution</a>
+                      <a href="#">Speed</a>
+                      <a href="#">Strategy</a>
+                      <a href="#">Technology</a>
+                    </div>
+                  </div>
+                </div>
+                {/* single wizered End */}
               </div>
+              {/* rts- blog wizered end area */}
             </div>
           </div>
         </div>
       </>
 
+
+
+
       <FooterOne />
+
+
       <BackToTop />
     </div>
   );

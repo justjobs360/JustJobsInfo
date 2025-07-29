@@ -1,47 +1,11 @@
-import { MongoClient, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
+import { getCollection } from './mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const DOWNLOADABLE_RESOURCES_COLLECTION = 'downloadableResources';
 
-if (!MONGODB_URI) {
-    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
-
-let client;
-let clientPromise;
-
-if (process.env.NODE_ENV === 'development') {
-    // In development mode, use a global variable so that the value
-    // is preserved across module reloads caused by HMR (Hot Module Replacement).
-    if (!global._mongoClientPromise) {
-        client = new MongoClient(MONGODB_URI);
-        global._mongoClientPromise = client.connect();
-    }
-    clientPromise = global._mongoClientPromise;
-} else {
-    // In production mode, it's best to not use a global variable.
-    client = new MongoClient(MONGODB_URI);
-    clientPromise = client.connect();
-}
-
-async function connectToMongoDB() {
-    try {
-        const client = await clientPromise;
-        const db = client.db('resumeCollection'); // Use resumeCollection database
-        return db;
-    } catch (error) {
-        console.error('❌ Error connecting to MongoDB:', error);
-        throw error;
-    }
-}
-
+// Get downloadable resources collection instance
 async function getDownloadableResourcesCollection() {
-    try {
-        const db = await connectToMongoDB();
-        return db.collection('downloadableResources');
-    } catch (error) {
-        console.error('❌ Error getting downloadableResources collection:', error);
-        throw error;
-    }
+  return getCollection(DOWNLOADABLE_RESOURCES_COLLECTION);
 }
 
 // Get all downloadable resources with categories
@@ -276,13 +240,4 @@ export async function initializeDownloadableResources() {
     }
 }
 
-export async function closeConnection() {
-    try {
-        if (client) {
-            await client.close();
-            console.log('✅ MongoDB connection closed');
-        }
-    } catch (error) {
-        console.error('❌ Error closing MongoDB connection:', error);
-    }
-} 
+ 

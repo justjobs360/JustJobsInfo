@@ -1,64 +1,11 @@
-import { MongoClient, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
+import { getCollection } from './mongodb';
 
-let client = null;
-let db = null;
-
-// MongoDB connection configuration
-const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = 'resumeCollection';
 const BLOG_COLLECTION = 'Blogs';
-
-// Connect to MongoDB
-async function connectToMongoDB() {
-  if (client) {
-    console.log('🔌 Using existing MongoDB connection');
-    return client;
-  }
-
-  try {
-    console.log('🔌 Connecting to MongoDB for Blogs...');
-    console.log('🔌 MongoDB URI:', MONGODB_URI ? 'Set' : 'Not set');
-    console.log('🔌 Database name:', DB_NAME);
-    console.log('🔌 Collection name:', BLOG_COLLECTION);
-    
-    if (!MONGODB_URI) {
-      throw new Error('MONGODB_URI environment variable is not set');
-    }
-    
-    client = new MongoClient(MONGODB_URI);
-    await client.connect();
-    
-    db = client.db(DB_NAME);
-    console.log('✅ Connected to MongoDB successfully for Blogs');
-    
-    // Test the connection by listing collections
-    const collections = await db.listCollections().toArray();
-    console.log('📚 Available collections:', collections.map(c => c.name));
-    
-    return client;
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
-    console.error('❌ Error details:', {
-      message: error.message,
-      code: error.code,
-      name: error.name
-    });
-    throw error;
-  }
-}
-
-// Get database instance
-async function getDatabase() {
-  if (!db) {
-    await connectToMongoDB();
-  }
-  return db;
-}
 
 // Get blog collection instance
 async function getBlogCollection() {
-  const database = await getDatabase();
-  return database.collection(BLOG_COLLECTION);
+  return getCollection(BLOG_COLLECTION);
 }
 
 // Create a new blog post
@@ -525,19 +472,7 @@ async function initializeBlogs() {
   }
 }
 
-// Close MongoDB connection
-async function closeConnection() {
-  if (client) {
-    await client.close();
-    client = null;
-    db = null;
-    console.log('🔌 MongoDB connection closed for Blogs');
-  }
-}
-
 export {
-  connectToMongoDB,
-  getDatabase,
   getBlogCollection,
   createBlog,
   getBlogs,
@@ -550,6 +485,5 @@ export {
   addComment,
   getBlogComments,
   getBlogStats,
-  initializeBlogs,
-  closeConnection
+  initializeBlogs
 }; 
