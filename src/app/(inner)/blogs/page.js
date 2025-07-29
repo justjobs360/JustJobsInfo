@@ -6,6 +6,29 @@ import FooterOne from "@/components/footer/FooterOne";
 import BlogMain from './BlogMain';
 import toast from 'react-hot-toast';
 
+// Skeleton component for blog cards
+const BlogSkeleton = () => (
+  <div className="single-blog-area-start border-none">
+    <div className="thumbnail">
+      <div className="skeleton-image"></div>
+    </div>
+    <div className="inner-content-area">
+      <div className="top-area">
+        <div className="skeleton-category"></div>
+        <div className="skeleton-title"></div>
+        <div className="skeleton-description"></div>
+        <div className="bottom-author-area">
+          <div className="skeleton-author-img"></div>
+          <div className="author-area-info">
+            <div className="skeleton-author-name"></div>
+            <div className="skeleton-date"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 function BlogsPage() {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -124,13 +147,7 @@ function BlogsPage() {
                                 // Loading skeleton
                                 Array.from({ length: 6 }).map((_, index) => (
                                     <div key={index} className="col-lg-4 col-md-6 col-sm-12">
-                                        <div className="single-blog-area-start border-none">
-                                            <div className="placeholder-glow">
-                                                <div className="placeholder col-12" style={{ height: '200px' }}></div>
-                                                <div className="placeholder col-8 mt-3"></div>
-                                                <div className="placeholder col-6 mt-2"></div>
-                                            </div>
-                                        </div>
+                                        <BlogSkeleton />
                                     </div>
                                 ))
                             ) : blogs.length > 0 ? (
@@ -274,6 +291,84 @@ function BlogsPage() {
                 
                 .search-btn:active {
                     transform: translateY(0);
+                }
+
+                /* Skeleton Loading Styles */
+                .skeleton-image {
+                    width: 100%;
+                    height: 200px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 8px;
+                }
+
+                .skeleton-category {
+                    width: 80px;
+                    height: 20px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 4px;
+                    margin-bottom: 10px;
+                }
+
+                .skeleton-title {
+                    width: 100%;
+                    height: 24px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 4px;
+                    margin-bottom: 10px;
+                }
+
+                .skeleton-description {
+                    width: 100%;
+                    height: 16px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 4px;
+                    margin-bottom: 15px;
+                }
+
+                .skeleton-author-img {
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 50%;
+                    margin-right: 10px;
+                }
+
+                .skeleton-author-name {
+                    width: 80px;
+                    height: 16px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 4px;
+                    margin-bottom: 5px;
+                }
+
+                .skeleton-date {
+                    width: 60px;
+                    height: 14px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
+                    border-radius: 4px;
+                }
+
+                @keyframes loading {
+                    0% {
+                        background-position: 200% 0;
+                    }
+                    100% {
+                        background-position: -200% 0;
+                    }
                 }
                 
                 @media (max-width: 768px) {

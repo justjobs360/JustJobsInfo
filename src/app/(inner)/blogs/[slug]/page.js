@@ -10,6 +10,141 @@ import FooterOne from "@/components/footer/FooterOne";
 import ReCaptcha from "@/components/security/ReCaptcha";
 import toast from 'react-hot-toast';
 
+// Skeleton components for blog detail page
+const BlogDetailSkeleton = () => (
+  <div className="rts-blog-list-area rts-section-gapTop">
+    <div className="container">
+      <div className="row g-5">
+        {/* Main content skeleton */}
+        <div className="col-xl-8 col-md-12 col-sm-12 col-12">
+          <div className="blog-single-post-listing details mb--0">
+            {/* Banner image skeleton */}
+            <div className="thumbnail">
+              <div className="skeleton-banner-image"></div>
+            </div>
+            <div className="blog-listing-content">
+              {/* User info skeleton */}
+              <div className="user-info">
+                <div className="single">
+                  <div className="skeleton-user-info"></div>
+                </div>
+                <div className="single">
+                  <div className="skeleton-user-info"></div>
+                </div>
+                <div className="single">
+                  <div className="skeleton-user-info"></div>
+                </div>
+              </div>
+              {/* Title skeleton */}
+              <div className="skeleton-title-large"></div>
+              {/* Content skeleton */}
+              <div className="skeleton-content">
+                <div className="skeleton-paragraph"></div>
+                <div className="skeleton-paragraph"></div>
+                <div className="skeleton-paragraph"></div>
+                <div className="skeleton-paragraph short"></div>
+              </div>
+              {/* Tags and share skeleton */}
+              <div className="row align-items-center">
+                <div className="col-lg-6 col-md-12">
+                  <div className="skeleton-tags"></div>
+                </div>
+                <div className="col-lg-6 col-md-12">
+                  <div className="skeleton-share"></div>
+                </div>
+              </div>
+              {/* Author area skeleton */}
+              <div className="author-area">
+                <div className="thumbnail details mb_sm--15">
+                  <div className="skeleton-author-image"></div>
+                </div>
+                <div className="author-details team">
+                  <div className="skeleton-author-role"></div>
+                  <div className="skeleton-author-name"></div>
+                  <div className="skeleton-author-bio"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Sidebar skeleton */}
+        <div className="col-xl-4 col-md-12 col-sm-12 col-12 pd-control-bg--40">
+          {/* Search skeleton */}
+          <div className="rts-single-wized search">
+            <div className="wized-header">
+              <div className="skeleton-sidebar-title"></div>
+            </div>
+            <div className="wized-body">
+              <div className="skeleton-search-input"></div>
+            </div>
+          </div>
+          
+          {/* Categories skeleton */}
+          <div className="rts-single-wized Categories">
+            <div className="wized-header">
+              <div className="skeleton-sidebar-title"></div>
+            </div>
+            <div className="wized-body">
+              <div className="skeleton-category-item"></div>
+              <div className="skeleton-category-item"></div>
+              <div className="skeleton-category-item"></div>
+            </div>
+          </div>
+          
+          {/* Recent posts skeleton */}
+          <div className="rts-single-wized Recent-post">
+            <div className="wized-header">
+              <div className="skeleton-sidebar-title"></div>
+            </div>
+            <div className="wized-body">
+              <div className="recent-post-single">
+                <div className="thumbnail">
+                  <div className="skeleton-recent-image"></div>
+                </div>
+                <div className="content-area">
+                  <div className="skeleton-recent-date"></div>
+                  <div className="skeleton-recent-title"></div>
+                </div>
+              </div>
+              <div className="recent-post-single">
+                <div className="thumbnail">
+                  <div className="skeleton-recent-image"></div>
+                </div>
+                <div className="content-area">
+                  <div className="skeleton-recent-date"></div>
+                  <div className="skeleton-recent-title"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Gallery skeleton */}
+          <div className="rts-single-wized Recent-post">
+            <div className="wized-header">
+              <div className="skeleton-sidebar-title"></div>
+            </div>
+            <div className="wized-body">
+              <div className="gallery-inner">
+                <div className="row-1 single-row">
+                  <div className="skeleton-gallery-image"></div>
+                  <div className="skeleton-gallery-image"></div>
+                  <div className="skeleton-gallery-image"></div>
+                </div>
+                <div className="row-2 single-row">
+                  <div className="skeleton-gallery-image"></div>
+                  <div className="skeleton-gallery-image"></div>
+                  <div className="skeleton-gallery-image"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function BlogDetails() {
   const { slug } = useParams(); // Get the slug from URL parameters
   
@@ -266,15 +401,7 @@ export default function BlogDetails() {
             </div>
           </div>
         </div>
-        <div className="rts-blog-list-area rts-section-gapTop">
-          <div className="container">
-            <div className="row">
-              <div className="col-12 text-center">
-                <p>Loading blog post...</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <BlogDetailSkeleton />
         <FooterOne />
         <BackToTop />
       </div>
@@ -720,13 +847,189 @@ export default function BlogDetails() {
         </div>
       </>
 
-
-
-
       <FooterOne />
-
-
       <BackToTop />
+
+      <style jsx>{`
+        /* Skeleton Loading Styles for Blog Detail Page */
+        .skeleton-banner-image {
+          width: 100%;
+          height: 400px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 8px;
+        }
+
+        .skeleton-user-info {
+          width: 120px;
+          height: 16px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+        }
+
+        .skeleton-title-large {
+          width: 100%;
+          height: 32px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin: 20px 0;
+        }
+
+        .skeleton-content {
+          margin: 20px 0;
+        }
+
+        .skeleton-paragraph {
+          width: 100%;
+          height: 16px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin-bottom: 12px;
+        }
+
+        .skeleton-paragraph.short {
+          width: 60%;
+        }
+
+        .skeleton-tags {
+          width: 200px;
+          height: 40px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+        }
+
+        .skeleton-share {
+          width: 150px;
+          height: 40px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+        }
+
+        .skeleton-author-image {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 50%;
+        }
+
+        .skeleton-author-role {
+          width: 60px;
+          height: 16px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+
+        .skeleton-author-name {
+          width: 120px;
+          height: 20px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+
+        .skeleton-author-bio {
+          width: 100%;
+          height: 16px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+        }
+
+        .skeleton-sidebar-title {
+          width: 120px;
+          height: 20px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin-bottom: 15px;
+        }
+
+        .skeleton-search-input {
+          width: 100%;
+          height: 50px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 25px;
+        }
+
+        .skeleton-category-item {
+          width: 100%;
+          height: 20px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin-bottom: 10px;
+        }
+
+        .skeleton-recent-image {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+        }
+
+        .skeleton-recent-date {
+          width: 80px;
+          height: 14px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin-bottom: 5px;
+        }
+
+        .skeleton-recent-title {
+          width: 100%;
+          height: 16px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+        }
+
+        .skeleton-gallery-image {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+          border-radius: 4px;
+          margin: 2px;
+        }
+
+        @keyframes loading {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+      `}</style>
     </div>
   );
 } 

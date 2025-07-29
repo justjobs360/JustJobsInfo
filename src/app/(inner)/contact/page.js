@@ -3,7 +3,6 @@ import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import React, { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
 import { ReactSVG } from 'react-svg';
 import HeaderOne from "@/components/header/HeaderOne";
 import ReCaptcha from "@/components/security/ReCaptcha";
@@ -59,15 +58,12 @@ export default function Home() {
         return true;
     };
 
-    const sendEmail = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
         if (!validateForm()) {
             return;
         }
-
         setIsSubmitting(true);
-
         try {
             // Verify reCAPTCHA on server side
             const recaptchaResponse = await fetch('/api/verify-recaptcha', {
@@ -77,35 +73,33 @@ export default function Home() {
                 },
                 body: JSON.stringify({ token: recaptchaToken }),
             });
-
             if (!recaptchaResponse.ok) {
                 throw new Error('reCAPTCHA verification failed');
             }
-
-            // Send email
-            const result = await emailjs.sendForm(
-                "your_service_id", // Replace with your Service ID
-                "your_template_id", // Replace with your Template ID
-                form.current,
-                "your_public_key"  // Replace with your Public Key
-            );
-
-            toast.success("Message sent successfully!");
-            setFormData({
-                first_name: '',
-                last_name: '',
-                email: '',
-                phone: '',
-                message: '',
-                agree: false
+            // Save to backend
+            const response = await fetch('/api/contact-forms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...formData, formType: 'contact' }),
             });
-            setRecaptchaToken(null);
-            if (recaptchaRef.current?.reset) {
-                recaptchaRef.current.reset();
+            const result = await response.json();
+            if (result.success) {
+                toast.success("Message sent successfully!");
+                setFormData({
+                    first_name: '',
+                    last_name: '',
+                    email: '',
+                    phone: '',
+                    message: '',
+                    agree: false
+                });
+                setRecaptchaToken(null);
+                if (recaptchaRef.current?.reset) recaptchaRef.current.reset();
+            } else {
+                toast.error(result.error || 'Failed to send message.');
             }
         } catch (error) {
-            console.error('Error:', error);
-            toast.error("Failed to send the message. Please try again later.");
+            toast.error("Failed to send message. Please try again later.");
         } finally {
             setIsSubmitting(false);
         }
@@ -147,7 +141,7 @@ export default function Home() {
                             <div className="col-lg-12">
                                 <form
                                     ref={form}
-                                    onSubmit={sendEmail}
+                                    onSubmit={handleSubmit}
                                     className="contact-form"
                                     id="contact-form"
                                 >

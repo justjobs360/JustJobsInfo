@@ -110,6 +110,7 @@ class UserRoleService {
       querySnapshot.forEach((doc) => {
         admins.push({
           id: doc.id,
+          uid: doc.id, // Ensure uid is available for compatibility
           ...doc.data()
         });
       });

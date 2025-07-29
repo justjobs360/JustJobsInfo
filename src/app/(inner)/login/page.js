@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -76,9 +76,25 @@ export default function LoginPage() {
           formData.email,
           formData.password
         );
+
+        // Check if email is verified
+        if (!userCredential.user.emailVerified) {
+          // Sign out the user since they're not verified
+          await auth.signOut();
+          
+          // Show a more user-friendly message with options
+          toast.error('Please verify your email before logging in. Check your inbox for the verification link.');
+          
+          // Store email for potential resend
+          sessionStorage.setItem('unverifiedEmail', formData.email);
+          
+          // Redirect to a verification page or show modal
+          router.push('/verify-email?unverified=true');
+          return;
+        }
             
-            toast.success('Successfully logged in!');
-            router.push('/'); // or your desired redirect path
+        toast.success('Successfully logged in!');
+        router.push('/'); // or your desired redirect path
       } catch (error) {
             let errorMessage = 'An error occurred during login';
             

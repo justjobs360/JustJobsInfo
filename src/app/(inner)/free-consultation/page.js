@@ -8,10 +8,20 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import HeaderOne from "@/components/header/HeaderOne";
 import ReCaptcha from "@/components/security/ReCaptcha";
+import toast from 'react-hot-toast';
+
 export default function Home() {
     const [recaptchaToken, setRecaptchaToken] = useState(null);
     const [recaptchaError, setRecaptchaError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        help: '',
+        message: ''
+    });
 
     useEffect(() => {
         AOS.init({
@@ -20,16 +30,19 @@ export default function Home() {
         });
     }, []);
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
     const handleRecaptchaVerify = (token) => {
         setRecaptchaToken(token);
         setRecaptchaError(null);
     };
-
     const handleRecaptchaError = (error) => {
         setRecaptchaError(error);
         setRecaptchaToken(null);
     };
-
     const handleRecaptchaExpire = () => {
         setRecaptchaToken(null);
         setRecaptchaError('reCAPTCHA has expired. Please verify again.');
@@ -37,32 +50,27 @@ export default function Home() {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        
         if (!recaptchaToken) {
             setRecaptchaError('Please complete the reCAPTCHA verification');
             return;
         }
-
         setIsSubmitting(true);
-        
         try {
-            // Here you would typically send the form data along with the reCAPTCHA token
-            // to your backend for verification and processing
-            console.log('Form submitted with reCAPTCHA token:', recaptchaToken);
-            
-            // Simulate form submission
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Reset form and reCAPTCHA
-            e.target.reset();
-            setRecaptchaToken(null);
-            setRecaptchaError(null);
-            
-            // You could show a success message here
-            alert('Thank you for your message! We will get back to you soon.');
-            
+            // Save to backend
+            const response = await fetch('/api/contact-forms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...formData, formType: 'consultation' }),
+            });
+            const result = await response.json();
+            if (result.success) {
+                toast.success('Thank you for your message! We will get back to you soon.');
+                setFormData({ first_name: '', last_name: '', email: '', phone: '', help: '', message: '' });
+                setRecaptchaToken(null);
+            } else {
+                setRecaptchaError(result.error || 'Failed to send message.');
+            }
         } catch (error) {
-            console.error('Form submission error:', error);
             setRecaptchaError('An error occurred. Please try again.');
         } finally {
             setIsSubmitting(false);
@@ -286,27 +294,28 @@ export default function Home() {
                                         <p>Looking forward to hearing from you. Drop us a note!</p>
                                         <div className="input-half-wrapper">
                                             <div className="single">
-                                                <input type="text" placeholder="First name" required="" />
+                                                <input type="text" placeholder="First name" required="" name="first_name" value={formData.first_name} onChange={handleChange} />
                                             </div>
                                             <div className="single">
-                                                <input type="text" placeholder="Last name" required="" />
+                                                <input type="text" placeholder="Last name" required="" name="last_name" value={formData.last_name} onChange={handleChange} />
                                             </div>
                                         </div>
                                         <div className="input-half-wrapper">
                                             <div className="single">
-                                                <input type="email" placeholder="Company email" required="" />
+                                                <input type="email" placeholder="Company email" required="" name="email" value={formData.email} onChange={handleChange} />
                                             </div>
                                             <div className="single">
-                                                <input type="tel" placeholder="Phone Number" />
+                                                <input type="tel" placeholder="Phone Number" name="phone" value={formData.phone} onChange={handleChange} />
                                             </div>
                                         </div>
-                                        <input type="text" placeholder="How can we Help You?" />
+                                        <input type="text" placeholder="How can we Help You?" name="help" value={formData.help} onChange={handleChange} />
                                         <textarea
                                             name="message"
                                             id="message"
                                             placeholder="Write a Message "
                                             required=""
-                                            defaultValue={""}
+                                            value={formData.message}
+                                            onChange={handleChange}
                                         />
                                         
                                         {/* reCAPTCHA Component */}

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef } from 'react';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -258,8 +258,22 @@ export default function RegisterPage() {
                 displayName: formData.name
             });
 
-            toast.success('Account created successfully! Please login.');
-            router.push('/login');
+            // 5. Send email verification
+            await sendEmailVerification(userCredential.user, {
+                url: `${window.location.origin}/verify-email`,
+                handleCodeInApp: false
+            });
+
+            // 6. Sign out the user immediately after registration
+            await auth.signOut();
+
+            // Store email for verification page
+            if (typeof window !== 'undefined') {
+                sessionStorage.setItem('unverifiedEmail', formData.email);
+            }
+
+            toast.success('Account created successfully! Please check your email to verify your account before logging in.');
+            router.push('/verify-email?unverified=true');
 
         } catch (error) {
             // Reset reCAPTCHA on error
