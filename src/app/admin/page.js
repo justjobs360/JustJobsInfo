@@ -13,8 +13,7 @@ export default function AdminDashboard() {
         totalBlogs: 0,
         totalImportantLinks: 0,
         totalDownloadableResources: 0,
-        seoScore: 0,
-        recentActivity: []
+        seoScore: 0
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -355,43 +354,7 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Recent Activity */}
-                <div className="recent-activity-section">
-                    <h2 style={{ fontSize: '20px', fontWeight: '500', color: 'var(--color-heading-1)', margin: '0 0 20px 0' }}>Recent Activity</h2>
-                    <div className="activity-card">
-                        <div style={{ padding: '24px' }}>
-                            {stats.recentActivity.length > 0 ? (
-                                <div className="activity-list">
-                                    {stats.recentActivity.map((activity) => (
-                                        <div key={activity.id} className="activity-item">
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <span style={{ 
-                                                    fontSize: '14px', 
-                                                    color: 'var(--color-body)', 
-                                                    marginRight: '12px' 
-                                                }}>
-                                                    {activity.type === 'blog' ? '📰' : 
-                                                     activity.type === 'system' ? '⚙️' : 
-                                                     activity.type === 'content' ? '📝' : '🔄'}
-                                                </span>
-                                                <div>
-                                                    <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-heading-1)', margin: '0 0 2px 0' }}>{activity.action}</p>
-                                                    <p style={{ fontSize: '12px', color: 'var(--color-body)', margin: 0 }}>{activity.user}</p>
-                                                </div>
-                                            </div>
-                                            <span style={{ fontSize: '12px', color: 'var(--color-body)' }}>{activity.time}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                                    <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: '0 0 8px 0' }}>No recent activity</p>
-                                    <p style={{ fontSize: '14px', color: 'var(--color-body)', margin: 0 }}>Start managing your content to see activity here</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </AdminLayout>
     );

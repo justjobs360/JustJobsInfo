@@ -68,13 +68,7 @@ const AdminLayout = ({ children }) => {
             permission: ADMIN_PERMISSIONS.MANAGE_ROBOTS_TXT
         },
         
-        // Resume Management (for both super admin and admin)
-        {
-            name: 'Resume Templates',
-            href: '/admin/resume/templates',
-            icon: '📋',
-            permission: ADMIN_PERMISSIONS.MANAGE_CONTENT
-        },
+
         {
             name: 'Resume Audit Stats',
             href: '/admin/resume/stats',

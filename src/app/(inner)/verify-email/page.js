@@ -15,6 +15,8 @@ export default function VerifyEmailPage() {
     const [verificationStatus, setVerificationStatus] = useState('verifying'); // 'verifying', 'success', 'error', 'unverified'
     const [errorMessage, setErrorMessage] = useState('');
     const [unverifiedEmail, setUnverifiedEmail] = useState('');
+    const [isResending, setIsResending] = useState(false);
+    const [emailSent, setEmailSent] = useState(false);
 
     useEffect(() => {
         const handleEmailVerification = async () => {
@@ -86,6 +88,20 @@ export default function VerifyEmailPage() {
         }
 
         try {
+            setIsResending(true);
+            
+            // Import Firebase Auth functions
+            const { getAuth, sendEmailVerification, signInWithEmailAndPassword, signOut } = await import('firebase/auth');
+            
+            // Get auth instance
+            const auth = getAuth();
+            
+            // We need to temporarily sign in the user to send verification email
+            // This is a limitation of Firebase - verification emails can only be sent for the currently signed-in user
+            
+            // For this to work, we'd need the user's password, which we don't have
+            // So we'll fall back to the server-side approach which generates a new verification link
+            
             const response = await fetch('/api/auth/resend-verification', {
                 method: 'POST',
                 headers: {
@@ -97,12 +113,21 @@ export default function VerifyEmailPage() {
             const data = await response.json();
 
             if (data.success) {
-                toast.success('Verification email sent! Please check your inbox.');
+                toast.success('Verification email sent! Please check your inbox and spam folder.');
+                setEmailSent(true);
+                
+                // Show debug info in development
+                if (process.env.NODE_ENV === 'development' && data.debug?.verificationLink) {
+                    console.log('🔗 Verification Link (Development Only):', data.debug.verificationLink);
+                }
             } else {
                 toast.error(data.error || 'Failed to send verification email.');
             }
         } catch (error) {
+            console.error('Error resending verification:', error);
             toast.error('Failed to send verification email. Please try again.');
+        } finally {
+            setIsResending(false);
         }
     };
 
@@ -128,15 +153,28 @@ export default function VerifyEmailPage() {
                         <div className="action-buttons">
                             <button 
                                 onClick={handleResendVerification}
+                                disabled={isResending}
                                 className="rts-btn btn-primary"
+                                style={{
+                                    opacity: isResending ? 0.7 : 1,
+                                    cursor: isResending ? 'not-allowed' : 'pointer',
+                                    marginBottom: '10px'
+                                }}
                             >
-                                Resend Verification Email
-                                <img
-                                    className="injectable"
-                                    src="/assets/images/service/icons/13.svg"
-                                    alt="arrow"
-                                />
+                                {isResending ? 'Sending...' : (emailSent ? 'Email Sent!' : 'Resend Verification Email')}
+                                {!isResending && (
+                                    <img
+                                        className="injectable"
+                                        src="/assets/images/service/icons/13.svg"
+                                        alt="arrow"
+                                    />
+                                )}
                             </button>
+                            {emailSent && (
+                                <p style={{ color: '#28a745', fontSize: '14px', marginTop: '10px' }}>
+                                    ✅ Verification email sent! Please check your inbox and spam folder.
+                                </p>
+                            )}
                             <Link href="/login" className="login-link" style={{ marginTop: '20px' }}>
                                 Go to Login
                             </Link>

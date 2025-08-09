@@ -82,7 +82,7 @@ function FooterOne() {
                                                     href="/askgenie"
                                                     style={isActive('/askgenie') ? { color: 'var(--color-primary)' } : {}}
                                                 >
-                                                    Ask Genie (Coming Soon)
+                                                    Ask Genie 
                                                 </Link>
                                             </li>
                                             <li>

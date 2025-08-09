@@ -13,6 +13,7 @@
     "aos": "^2.3.4",
     "cors": "^2.8.5",
     "disposable-email-domains": "^1.0.62",
+    "docx": "^9.5.1",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "firebase": "^11.9.1",

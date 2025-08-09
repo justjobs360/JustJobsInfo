@@ -3,32 +3,109 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
+import toast from 'react-hot-toast';
 import '../../admin.css';
 
 export default function SEOSettingsPage() {
     const { hasPermission } = useAuth();
-    const [settings, setSettings] = useState({});
+    const [settings, setSettings] = useState({
+        siteTitle: '',
+        siteDescription: '',
+        siteLogo: '',
+        siteUrl: '',
+        googleAnalyticsId: '',
+        googleSearchConsole: '',
+        socialMedia: {
+            facebook: '',
+            twitter: '',
+            linkedin: ''
+        }
+    });
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        // Mock data
-        setTimeout(() => {
-            setSettings({
-                siteTitle: 'JustJobsInfo - Professional Resume and Career Services',
-                siteDescription: 'Professional resume writing services, career guidance, and job search resources',
-                siteLogo: '/images/logo/justjobslogo.png',
-                siteUrl: 'https://justjobsinfo.com',
-                googleAnalyticsId: 'GA-123456789',
-                googleSearchConsole: 'https://search.google.com/search-console',
-                socialMedia: {
-                    facebook: 'https://facebook.com/justjobsinfo',
-                    twitter: 'https://twitter.com/justjobsinfo',
-                    linkedin: 'https://linkedin.com/company/justjobsinfo'
-                }
-            });
-            setLoading(false);
-        }, 1000);
+        loadSettings();
     }, []);
+
+    const loadSettings = async () => {
+        try {
+            setLoading(true);
+            // Try to load from localStorage first
+            const savedSettings = localStorage.getItem('seo_settings');
+            if (savedSettings) {
+                setSettings(JSON.parse(savedSettings));
+            } else {
+                // Set default values
+                setSettings({
+                    siteTitle: 'JustJobsInfo - Professional Resume and Career Services',
+                    siteDescription: 'Professional resume writing services, career guidance, and job search resources',
+                    siteLogo: '/images/logo/justjobslogo.png',
+                    siteUrl: 'https://justjobsinfo.com',
+                    googleAnalyticsId: '',
+                    googleSearchConsole: '',
+                    socialMedia: {
+                        facebook: '',
+                        twitter: '',
+                        linkedin: ''
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            toast.error('Failed to load SEO settings');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            setSaving(true);
+            
+            // Validate required fields
+            if (!settings.siteTitle.trim()) {
+                toast.error('Site title is required');
+                return;
+            }
+            if (!settings.siteDescription.trim()) {
+                toast.error('Site description is required');
+                return;
+            }
+            if (!settings.siteUrl.trim()) {
+                toast.error('Site URL is required');
+                return;
+            }
+
+            // Save to localStorage (in a real app, this would be an API call)
+            localStorage.setItem('seo_settings', JSON.stringify(settings));
+            
+            toast.success('SEO settings saved successfully');
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            toast.error('Failed to save SEO settings');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleInputChange = (field, value) => {
+        if (field.includes('.')) {
+            const [parent, child] = field.split('.');
+            setSettings(prev => ({
+                ...prev,
+                [parent]: {
+                    ...prev[parent],
+                    [child]: value
+                }
+            }));
+        } else {
+            setSettings(prev => ({
+                ...prev,
+                [field]: value
+            }));
+        }
+    };
 
     if (!hasPermission(ADMIN_PERMISSIONS.MANAGE_SEO)) {
         return (
@@ -66,6 +143,7 @@ export default function SEOSettingsPage() {
                                     <input
                                         type="text"
                                         value={settings.siteTitle}
+                                        onChange={(e) => handleInputChange('siteTitle', e.target.value)}
                                         style={{
                                             width: '100%',
                                             padding: '12px',
@@ -82,6 +160,7 @@ export default function SEOSettingsPage() {
                                     <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Site Description:</label>
                                     <textarea
                                         value={settings.siteDescription}
+                                        onChange={(e) => handleInputChange('siteDescription', e.target.value)}
                                         rows="3"
                                         style={{
                                             width: '100%',
@@ -101,6 +180,7 @@ export default function SEOSettingsPage() {
                                     <input
                                         type="url"
                                         value={settings.siteUrl}
+                                        onChange={(e) => handleInputChange('siteUrl', e.target.value)}
                                         style={{
                                             width: '100%',
                                             padding: '12px',
@@ -118,6 +198,7 @@ export default function SEOSettingsPage() {
                                     <input
                                         type="text"
                                         value={settings.googleAnalyticsId}
+                                        onChange={(e) => handleInputChange('googleAnalyticsId', e.target.value)}
                                         style={{
                                             width: '100%',
                                             padding: '12px',
@@ -137,7 +218,8 @@ export default function SEOSettingsPage() {
                                             <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Facebook:</label>
                                             <input
                                                 type="url"
-                                                value={settings.socialMedia?.facebook}
+                                                value={settings.socialMedia?.facebook || ''}
+                                                onChange={(e) => handleInputChange('socialMedia.facebook', e.target.value)}
                                                 style={{
                                                     width: '100%',
                                                     padding: '8px 12px',
@@ -152,7 +234,8 @@ export default function SEOSettingsPage() {
                                             <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Twitter:</label>
                                             <input
                                                 type="url"
-                                                value={settings.socialMedia?.twitter}
+                                                value={settings.socialMedia?.twitter || ''}
+                                                onChange={(e) => handleInputChange('socialMedia.twitter', e.target.value)}
                                                 style={{
                                                     width: '100%',
                                                     padding: '8px 12px',
@@ -167,7 +250,8 @@ export default function SEOSettingsPage() {
                                             <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>LinkedIn:</label>
                                             <input
                                                 type="url"
-                                                value={settings.socialMedia?.linkedin}
+                                                value={settings.socialMedia?.linkedin || ''}
+                                                onChange={(e) => handleInputChange('socialMedia.linkedin', e.target.value)}
                                                 style={{
                                                     width: '100%',
                                                     padding: '8px 12px',
@@ -184,19 +268,21 @@ export default function SEOSettingsPage() {
                                 {/* Save Button */}
                                 <div style={{ marginTop: '20px' }}>
                                     <button
+                                        onClick={handleSave}
+                                        disabled={saving}
                                         style={{
                                             padding: '12px 24px',
-                                            backgroundColor: 'var(--color-success)',
+                                            backgroundColor: saving ? '#ccc' : 'var(--color-success)',
                                             color: '#fff',
                                             border: 'none',
                                             borderRadius: '4px',
-                                            cursor: 'pointer',
+                                            cursor: saving ? 'not-allowed' : 'pointer',
                                             fontSize: '14px',
                                             fontWeight: '500',
                                             width: '250px'
                                         }}
                                     >
-                                        Save Settings
+                                        {saving ? 'Saving...' : 'Save Settings'}
                                     </button>
                                 </div>
                             </div>

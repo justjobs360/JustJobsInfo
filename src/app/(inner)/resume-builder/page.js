@@ -28,9 +28,9 @@ export default function ResumeBuilderPage() {
     const templates = [
         {
             id: 1,
-            title: "Modern Professional",
+            title: "Harvard Professional",
             category: "free",
-            tags: ["modern", "professional", "clean"],
+            tags: ["modern", "professional", "clean", "harvard"],
             thumbnail: "/assets/resumes/templateone.webp",
             editableHtml: `
                 <div class="resume-template modern-professional">
@@ -70,6 +70,55 @@ export default function ResumeBuilderPage() {
                             <li>Skill 1</li>
                             <li>Skill 2</li>
                             <li>Skill 3</li>
+                        </ul>
+                    </section>
+                </div>
+            `
+        },
+        {
+            id: 2,
+            title: "Modern Creative",
+            category: "free",
+            tags: ["modern", "creative", "design", "colorful"],
+            thumbnail: "/assets/resumes/templatetwo.png",
+            editableHtml: `
+                <div class="resume-template modern-creative">
+                    <header data-section="header" contenteditable="true">
+                        <h1 class="name">Jane Smith</h1>
+                        <div class="contact-info">
+                            <span class="email">jane.smith@email.com</span>
+                            <span class="phone">+1 (555) 987-6543</span>
+                            <span class="location">San Francisco, CA</span>
+                        </div>
+                    </header>
+                    <section data-section="summary" contenteditable="true">
+                        <h2>Professional Summary</h2>
+                        <p>Creative professional with a passion for innovation and design thinking.</p>
+                    </section>
+                    <section data-section="experience" contenteditable="true">
+                        <h2>Work Experience</h2>
+                        <div class="job">
+                            <h3>Creative Director</h3>
+                            <div class="company-date">Design Studio | 2019 - Present</div>
+                            <ul>
+                                <li>Led creative direction for major brands</li>
+                                <li>Managed team of 15 designers</li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section data-section="education" contenteditable="true">
+                        <h2>Education</h2>
+                        <div class="education-item">
+                            <h3>Bachelor of Design</h3>
+                            <div class="school-date">Design Institute | 2019</div>
+                        </div>
+                    </section>
+                    <section data-section="skills" contenteditable="true">
+                        <h2>Skills</h2>
+                        <ul class="skills-list">
+                            <li>Adobe Creative Suite</li>
+                            <li>UI/UX Design</li>
+                            <li>Brand Strategy</li>
                         </ul>
                     </section>
                 </div>
