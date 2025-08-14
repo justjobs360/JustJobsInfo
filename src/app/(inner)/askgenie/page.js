@@ -11,7 +11,7 @@ export default function AskGenie() {
         {
             id: 1,
             type: 'assistant',
-            content: "Hello! I'm your AI Genie. I'm here to help you with career advice, resume tips, job search strategies, and more. What would you like to know?",
+            content: "Hello! I'm here to help with career advice, resumes tips, job search strategies, and more. What's on your mind today?",
             timestamp: new Date()
         }
     ]);
@@ -108,7 +108,7 @@ export default function AskGenie() {
                         </div>
                         <div className="header-text">
                             <h2>Ask Genie</h2>
-                            <p>Your AI Career Assistant - Get personalized advice on resumes, job search strategies, career planning, and professional development.</p>
+                            <p>Smart Career Advice on Demand - Get personalized advice on resumes, job search strategies, career planning, and professional development.</p>
                         </div>
                     </div>
                 </div>

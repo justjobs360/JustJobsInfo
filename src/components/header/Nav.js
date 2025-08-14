@@ -144,11 +144,11 @@ function Nav() {
                         </li>
                         <li>
                             <Link 
-                                className={`nav-link ${isActive('/contact') ? 'active' : ''}`} 
-                                href="/contact"
-                                style={isActive('/contact') ? { color: 'var(--color-primary)' } : {}}
+                                className={`nav-link ${isActive('/askgenie') ? 'active' : ''}`} 
+                                href="/askgenie"
+                                style={isActive('/askgenie') ? { color: 'var(--color-primary)' } : {}}
                             >
-                                Contact
+                                Ask Genie
                             </Link>
                         </li>
                     </ul>
