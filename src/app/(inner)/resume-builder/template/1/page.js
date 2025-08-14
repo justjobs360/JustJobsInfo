@@ -5,12 +5,13 @@ import HeaderOne from "@/components/header/HeaderOne";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
 import ResumeBuilderForm from "@/components/resume/ResumeBuilderForm";
+
 import html2pdf from 'html2pdf.js';
 import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, TabStopType } from 'docx';
 
 export default function ResumeEditorPage({ params }) {
   const router = useRouter();
-  const [form, setForm] = useState({ tagline: "", firstName: "annedithB" });
+  const [form, setForm] = useState({ tagline: "", firstName: "Alex", lastName: "Rivera" });
   const [progress, setProgress] = useState(0);
   const [sections, setSections] = useState(["personal", "summary", "employment", "education", "skills"]);
   const [customSections, setCustomSections] = useState([]);
@@ -143,9 +144,9 @@ export default function ResumeEditorPage({ params }) {
           `;
         }
         if (section === 'skills' && form.skills) {
-          // Handle skills as array or string for backward compatibility
+          // Handle skills as array of objects with competency levels
           const skillsArray = Array.isArray(form.skills) 
-            ? form.skills.filter(s => s && typeof s === 'string' && s.trim()) 
+            ? form.skills.filter(s => s && (typeof s === 'string' ? s.trim() : (s.name && s.name.trim()))) 
             : form.skills.split(',').map(s => s.trim()).filter(s => s);
           
           if (skillsArray.length > 0) {
@@ -159,13 +160,25 @@ export default function ResumeEditorPage({ params }) {
                 <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">SKILLS</div>
                 <div style="display: flex; margin-top: 4px;">
                   <div style="flex: 1; margin-right: 16px;">
-                    ${column1.map(skill => `<div style="font-size: 9px; margin-bottom: 1px;">• ${skill}</div>`).join('')}
+                    ${column1.map(skill => {
+                      const skillName = typeof skill === 'string' ? skill : skill.name;
+                      const skillLevel = typeof skill === 'string' ? '' : (skill.level ? ` (${skill.level})` : '');
+                      return `<div style="font-size: 10px; margin-bottom: 1px;">• ${skillName}${skillLevel}</div>`;
+                    }).join('')}
                   </div>
                   <div style="flex: 1; margin-right: 16px;">
-                    ${column2.map(skill => `<div style="font-size: 9px; margin-bottom: 1px;">• ${skill}</div>`).join('')}
+                    ${column2.map(skill => {
+                      const skillName = typeof skill === 'string' ? skill : skill.name;
+                      const skillLevel = typeof skill === 'string' ? '' : (skill.level ? ` (${skill.level})` : '');
+                      return `<div style="font-size: 10px; margin-bottom: 1px;">• ${skillName}${skillLevel}</div>`;
+                    }).join('')}
                   </div>
                   <div style="flex: 1;">
-                    ${column3.map(skill => `<div style="font-size: 9px; margin-bottom: 1px;">• ${skill}</div>`).join('')}
+                    ${column3.map(skill => {
+                      const skillName = typeof skill === 'string' ? skill : skill.name;
+                      const skillLevel = typeof skill === 'string' ? '' : (skill.level ? ` (${skill.level})` : '');
+                      return `<div style="font-size: 10px; margin-bottom: 1px;">• ${skillName}${skillLevel}</div>`;
+                    }).join('')}
                   </div>
                 </div>
               </div>
@@ -369,7 +382,7 @@ export default function ResumeEditorPage({ params }) {
       const url = URL.createObjectURL(docxBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${form.firstName || 'resume'}_${form.lastName || ''}.docx`;
+      link.download = `${form?.firstName || 'resume'}_${form?.lastName || ''}.docx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -747,7 +760,7 @@ export default function ResumeEditorPage({ params }) {
 
             if (section === 'skills' && form.skills) {
               const skillsArray = Array.isArray(form.skills) 
-                ? form.skills.filter(s => s && typeof s === 'string' && s.trim()) 
+                ? form.skills.filter(s => s && (typeof s === 'string' ? s.trim() : (s.name && s.name.trim()))) 
                 : form.skills.split(',').map(s => s.trim()).filter(s => s);
               
               if (skillsArray.length > 0) {
@@ -776,7 +789,7 @@ export default function ResumeEditorPage({ params }) {
             );
 
             // Create a table for skills in 3 columns like the live preview
-                const skillsPerColumn = Math.ceil(skillsArray.length / 3);
+            const skillsPerColumn = Math.ceil(skillsArray.length / 3);
             const tableRows = [];
             
             for (let i = 0; i < skillsPerColumn; i++) {
@@ -785,49 +798,67 @@ export default function ResumeEditorPage({ params }) {
                   new TableCell({
                     children: [
                       new Paragraph({
-                                                 children: [
-                           new TextRun({
-                             text: skillsArray[i] ? `• ${skillsArray[i]}` : '',
-                             size: 11 * 2,
-                             font: 'Times New Roman',
-                           }),
-                         ],
-                         spacing: { after: 40 }, // 2px margin-bottom
+                        children: [
+                          new TextRun({
+                            text: skillsArray[i] ? `• ${typeof skillsArray[i] === 'string' ? skillsArray[i] : skillsArray[i].name}${typeof skillsArray[i] === 'string' ? '' : (skillsArray[i].level ? ` (${skillsArray[i].level})` : '')}` : '',
+                            size: 10 * 2, // Consistent with live preview (10px)
+                            font: 'Times New Roman',
+                          }),
+                        ],
+                        spacing: { after: 40 }, // 2px margin-bottom
                       }),
                     ],
                     width: { size: 33, type: WidthType.PERCENTAGE },
                     margins: { right: 400 }, // 20px margin-right
+                    borders: { // Remove all borders
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE }
+                    }
                   }),
                   new TableCell({
                     children: [
                       new Paragraph({
                         children: [
                           new TextRun({
-                            text: skillsArray[i + skillsPerColumn] ? `• ${skillsArray[i + skillsPerColumn]}` : '',
-                            size: 12 * 2,
-                            font: 'Arial',
+                            text: skillsArray[i + skillsPerColumn] ? `• ${typeof skillsArray[i + skillsPerColumn] === 'string' ? skillsArray[i + skillsPerColumn] : skillsArray[i + skillsPerColumn].name}${typeof skillsArray[i + skillsPerColumn] === 'string' ? '' : (skillsArray[i + skillsPerColumn].level ? ` (${skillsArray[i + skillsPerColumn].level})` : '')}` : '',
+                            size: 10 * 2, // Consistent with live preview (10px)
+                            font: 'Times New Roman',
                           }),
                         ],
-                        spacing: { after: 80 }, // 4px margin-bottom
+                        spacing: { after: 40 }, // 2px margin-bottom
                       }),
                     ],
                     width: { size: 33, type: WidthType.PERCENTAGE },
                     margins: { right: 400 }, // 20px margin-right
+                    borders: { // Remove all borders
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE }
+                    }
                   }),
                   new TableCell({
                     children: [
                       new Paragraph({
                         children: [
                           new TextRun({
-                            text: skillsArray[i + skillsPerColumn * 2] ? `• ${skillsArray[i + skillsPerColumn * 2]}` : '',
-                            size: 12 * 2,
-                            font: 'Arial',
+                            text: skillsArray[i + skillsPerColumn * 2] ? `• ${typeof skillsArray[i + skillsPerColumn * 2] === 'string' ? skillsArray[i + skillsPerColumn * 2] : skillsArray[i + skillsPerColumn * 2].name}${typeof skillsArray[i + skillsPerColumn * 2] === 'string' ? '' : (skillsArray[i + skillsPerColumn * 2].level ? ` (${skillsArray[i + skillsPerColumn * 2].level})` : '')}` : '',
+                            size: 10 * 2, // Consistent with live preview (10px)
+                            font: 'Times New Roman',
                           }),
                         ],
-                        spacing: { after: 80 }, // 4px margin-bottom
+                        spacing: { after: 40 }, // 2px margin-bottom
                       }),
                     ],
                     width: { size: 34, type: WidthType.PERCENTAGE },
+                    borders: { // Remove all borders
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE }
+                    }
                   }),
                 ],
               });
@@ -839,6 +870,14 @@ export default function ResumeEditorPage({ params }) {
                 rows: tableRows,
                 width: { size: 100, type: WidthType.PERCENTAGE },
                 margins: { top: 240 }, // 12px margin-top
+                borders: { // Remove ALL table borders including internal ones
+                  top: { style: BorderStyle.NONE },
+                  bottom: { style: BorderStyle.NONE },
+                  left: { style: BorderStyle.NONE },
+                  right: { style: BorderStyle.NONE },
+                  insideHorizontal: { style: BorderStyle.NONE },
+                  insideVertical: { style: BorderStyle.NONE }
+                }
               })
             );
           }
@@ -1198,33 +1237,177 @@ export default function ResumeEditorPage({ params }) {
       <HeaderOne />
       <div style={{ background: "#F5F7FA", minHeight: "100vh", padding: 0, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <style>{`
-          /* Desktop-only preview: hide preview column below 1024px */
-          @media (max-width: 1023px) {
-            .rb-preview-col { display: none !important; }
-            .rb-two-col { gap: 0 !important; padding: 0 16px !important; }
+          /* Responsive layout - always show both columns but stack on mobile */
+          @media (max-width: 1200px) {
+            .rb-two-col { 
+              gap: 20px !important; 
+              padding: 0 20px !important; 
+            }
+            .rb-preview-col { 
+              flex: 1 !important; 
+              min-width: 600px !important; 
+            }
           }
-          /* Form responsiveness on smaller screens */
-          @media (max-width: 1023px) {
-            .rb-form-col { width: 100% !important; }
+          
+          @media (max-width: 1024px) {
+            .rb-two-col { 
+              flex-direction: column !important; 
+              gap: 24px !important; 
+              padding: 0 16px !important; 
+            }
+            .rb-form-col { 
+              width: 100% !important; 
+              order: 1; 
+              min-width: 0 !important; 
+            }
+            .rb-preview-col { 
+              width: 100% !important; 
+              min-width: 100% !important; 
+              order: 2;
+            }
+            .rb-preview-wrapper { 
+              height: 600px !important; 
+            }
           }
+          
+          @media (max-width: 768px) {
+            .rb-two-col { 
+              padding: 0 12px !important; 
+              gap: 20px !important; 
+            }
+            .rb-preview-col { 
+              min-width: 100% !important; 
+            }
+            .rb-preview-wrapper { 
+              height: 500px !important; 
+            }
+            .rb-preview-scale { 
+              transform: scale(0.8) !important; 
+            }
+          }
+          
           @media (max-width: 640px) {
-            .rb-form-col > div { padding: 24px !important; }
+            .rb-two-col { 
+              padding: 0 8px !important; 
+              gap: 16px !important; 
+            }
+            .rb-form-col { 
+              width: 100% !important; 
+              min-width: 0 !important; 
+            }
+            .rb-form-col > div { 
+              padding: 20px !important; 
+            }
+            .rb-preview-wrapper { 
+              height: 400px !important; 
+            }
+            .rb-preview-scale { 
+              transform: scale(0.7) !important; 
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .rb-two-col { 
+              padding: 0 4px !important; 
+              gap: 12px !important; 
+            }
+            .rb-form-col { 
+              width: 100% !important; 
+              min-width: 0 !important; 
+            }
+            .rb-preview-wrapper { 
+              height: 350px !important; 
+            }
+            .rb-preview-scale { 
+              transform: scale(0.6) !important; 
+            }
+          }
+          
+          /* Hide preview on very small screens but keep download buttons accessible */
+          @media (max-width: 480px) {
+            .rb-preview-col { 
+              display: none !important; 
+            }
+            .rb-two-col { 
+              gap: 0 !important; 
+            }
+          }
+          
+          /* Download section responsiveness */
+          @media (max-width: 768px) {
+            .rb-download-section { 
+              padding: 20px !important; 
+              margin: 32px 16px 24px 16px !important; 
+            }
+            .rb-download-section > div:first-child > div:first-child { 
+              font-size: 18px !important; 
+            }
+            .rb-download-section > div:first-child > div:last-child { 
+              font-size: 13px !important; 
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .rb-download-section { 
+              padding: 16px !important; 
+              margin: 24px 8px 20px 8px !important; 
+              border-radius: 12px !important; 
+            }
+            .rb-download-section > div:first-child > div:first-child { 
+              font-size: 16px !important; 
+            }
+            .rb-download-section > div:first-child > div:last-child { 
+              font-size: 12px !important; 
+            }
+            .rb-download-section button { 
+              padding: 14px 24px !important; 
+              font-size: 15px !important; 
+              min-width: 140px !important; 
+            }
           }
 
           /* Topbar responsiveness */
           @media (max-width: 1023px) {
-            .rb-topbar { height: auto !important; padding: 8px 16px !important; gap: 8px !important; flex-wrap: wrap !important; }
-            .rb-progress-percent { font-size: 14px !important; margin-right: 8px !important; }
-            .rb-progress-wrap { flex: 1 1 100% !important; height: 6px !important; margin-right: 0 !important; order: 3; }
-            .rb-step-text { font-size: 13px !important; margin-right: 8px !important; order: 2; }
-            .rb-change-template-btn { padding: 8px 14px !important; font-size: 13px !important; order: 1; }
+            .rb-topbar { 
+              height: auto !important; 
+              padding: 8px 16px !important; 
+              gap: 8px !important; 
+              flex-wrap: wrap !important; 
+            }
+            .rb-progress-percent { 
+              font-size: 14px !important; 
+              margin-right: 8px !important; 
+            }
+            .rb-progress-wrap { 
+              flex: 1 1 100% !important; 
+              height: 6px !important; 
+              margin-right: 0 !important; 
+              order: 3; 
+            }
+            .rb-step-text { 
+              font-size: 13px !important; 
+              margin-right: 8px !important; 
+              order: 2; 
+            }
+            .rb-change-template-btn { 
+              padding: 8px 14px !important; 
+              font-size: 13px !important; 
+              order: 1; 
+            }
           }
+          
           @media (max-width: 640px) {
-            .rb-topbar { padding: 8px 12px !important; }
-            .rb-change-template-btn { width: 100% !important; text-align: center !important; order: 4; }
+            .rb-topbar { 
+              padding: 8px 12px !important; 
+            }
+            .rb-change-template-btn { 
+              width: 100% !important; 
+              text-align: center !important; 
+              order: 4; 
+            }
           }
         `}</style>
-        <div style={{ maxWidth: 1800, margin: "0 auto", flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <div style={{ maxWidth: 1800, margin: "0 auto", flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, width: '100%' }}>
           {/* Progress Bar */}
           <div className="rb-topbar" style={{ height: 48, background: "#fff", borderBottom: "1.5px solid #E3E8F0", display: "flex", alignItems: "center", padding: "0 32px", position: "sticky", top: 0, zIndex: 10 }}>
             <div className="rb-progress-percent" style={{ fontWeight: 700, color: "#F36", fontSize: 16, marginRight: 18 }}>{progress}%</div>
@@ -1236,9 +1419,9 @@ export default function ResumeEditorPage({ params }) {
           </div>
 
           {/* Main Two-Column Layout */}
-          <div className="rb-two-col" style={{ flex: 1, display: "flex", gap: 40, alignItems: "flex-start", marginTop: 32, padding: "0 32px", minHeight: 0 }}>
+          <div className="rb-two-col" style={{ flex: 1, display: "flex", gap: 40, alignItems: "flex-start", marginTop: 32, padding: "0 32px", minHeight: 0, width: '100%' }}>
             {/* Left: Form Wizard */}
-            <div className="rb-form-col" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <div className="rb-form-col" style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%', minWidth: 0 }}>
             <ResumeBuilderForm 
               onFormChange={handleFormChange} 
               onProgressChange={handleProgressChange}
@@ -1246,6 +1429,7 @@ export default function ResumeEditorPage({ params }) {
               onCustomSectionsChange={handleCustomSectionsChange}
               onStepChange={handleStepChange}
               initialFormData={form} 
+              onDownloadDOCX={handleDownloadDOCXButton}
             />
             </div>
 
@@ -1253,6 +1437,7 @@ export default function ResumeEditorPage({ params }) {
             <div className="rb-preview-col" style={{ flex: 1.2, minWidth: 800, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: 'flex-start', minHeight: 0 }}>
               <div
                 ref={previewWrapperRef}
+                className="rb-preview-wrapper"
                 style={{
                   width: '100%',
                   height: 'calc(100vh - 140px)',
@@ -1268,6 +1453,7 @@ export default function ResumeEditorPage({ params }) {
               >
                 <div
                   id="cv-preview-export"
+                  className="rb-preview-scale"
                   style={{
                     width: A4_WIDTH,
                     height: A4_HEIGHT,
@@ -1358,45 +1544,16 @@ export default function ResumeEditorPage({ params }) {
                   Next →
                 </button>
               </div>
-              {/* Download buttons at the bottom, centered, only on last step */}
-              {step === allSectionsWithReview.length - 1 && (
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 40, marginBottom: 24 }}>
-                  <button
-                    type="button"
-                    className="rts-btn btn-primary"
-                    style={{
-                      fontSize: 16,
-                      padding: '12px 32px',
-                      minWidth: 140,
-                      borderRadius: 8,
-                      background: 'linear-gradient(90deg, #6ee7b7 0%, #10b981 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      fontWeight: 600,
-                      letterSpacing: 0.5,
-                      boxShadow: '0 2px 8px rgba(16,185,129,0.10)',
-                      fontFamily: 'inherit',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      transition: 'background 0.2s, box-shadow 0.2s',
-                      cursor: 'pointer',
-                    }}
-                    onMouseOver={handleDownloadBtnMouseOver}
-                    onMouseOut={handleDownloadBtnMouseOut}
-                    onClick={handleDownloadDOCXButton}
-                  >
-                    <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M9 2v10m0 0l-3.5-3.5M9 12l3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="3" y="14" width="12" height="2" rx="1" fill="#fff" opacity=".3"/></svg>
-                    Download DOCX
-                  </button>
-                </div>
-              )}
+
+
+
             </div>
           </div>
         </div>
       </div>
       <BackToTop />
       <FooterOne />
+
     </>
   );
 } 

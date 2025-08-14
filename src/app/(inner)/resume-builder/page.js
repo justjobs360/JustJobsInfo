@@ -19,9 +19,7 @@ export default function ResumeBuilderPage() {
         'All templates',
         'Free',
         'Simple',
-        'Premium',
-
-        'Google Docs',
+        'Premium'
     ];
 
     // Mock templates data - in production, this would come from your database
@@ -30,7 +28,8 @@ export default function ResumeBuilderPage() {
             id: 1,
             title: "Harvard Professional",
             category: "free",
-            tags: ["modern", "professional", "clean", "harvard"],
+            filterCategories: ["free", "simple"],
+            tags: ["modern", "professional", "clean", "harvard", "simple"],
             thumbnail: "/assets/resumes/templateone.webp",
             editableHtml: `
                 <div class="resume-template modern-professional">
@@ -79,7 +78,8 @@ export default function ResumeBuilderPage() {
             id: 2,
             title: "Modern Creative",
             category: "free",
-            tags: ["modern", "creative", "design", "colorful"],
+            filterCategories: ["free", "simple"],
+            tags: ["modern", "creative", "design", "simple"],
             thumbnail: "/assets/resumes/templatetwo.png",
             editableHtml: `
                 <div class="resume-template modern-creative">
@@ -126,10 +126,16 @@ export default function ResumeBuilderPage() {
         }
     ];
 
-    // Filter logic (for demo, just show all for now)
+    // Filter logic - show templates based on selected category
     const filteredTemplates = activeFilter === 'All templates'
         ? templates
-        : templates.filter(t => t.tags.map(tag => tag.toLowerCase()).includes(activeFilter.toLowerCase()));
+        : activeFilter === 'Free'
+        ? templates.filter(t => t.category === 'free')
+        : activeFilter === 'Simple'
+        ? templates.filter(t => t.filterCategories && t.filterCategories.includes('simple'))
+        : activeFilter === 'Premium'
+        ? templates.filter(t => t.category === 'premium')
+        : templates;
 
     // When a template is selected, navigate to the dynamic page
     const handleTemplateSelect = (template) => {
@@ -151,8 +157,10 @@ export default function ResumeBuilderPage() {
                             Resume templates
                         </h1>
                         <p className="subtitle" style={{ fontSize: '20px', color: 'var(--color-body)', marginBottom: '24px' }}>
-                            Each resume template is designed to follow the exact rules you need to get hired faster.<br />
-                            Use our resume templates and get free access to 18 more career tools!
+                        No-nonsense resume templates. Cut the fluff and get real results.
+                        <br />
+                        Skip the guesswork. Use proven templates that speak for you and help you stand out.
+
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
                             <button className="rts-btn btn-primary" style={{ fontSize: '18px', padding: '14px 36px', marginBottom: 0, minWidth: '220px' }}

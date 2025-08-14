@@ -24,24 +24,20 @@ const initialForm = {
   country: "",
   moreDetails: false,
   summary: "",
-  summaryLines: [],
-  employment: [{ jobTitle: "", company: "", start: "", end: "", location: "", desc: "", lines: [] }],
-  education: [{ degree: "", school: "", start: "", end: "", location: "", desc: "", lines: [] }],
-  skills: [""],
-  skillsLines: [],
+  employment: [{ jobTitle: "", company: "", start: "", end: "", location: "", desc: "" }],
+  education: [{ degree: "", school: "", start: "", end: "", location: "", desc: "" }],
+  skills: [{ name: "", level: "Intermediate" }],
   certifications: [""],
-  certificationsLines: [],
   languages: [""],
-  languagesLines: [],
-  projects: [{ name: "", date: "", desc: "", lines: [] }],
+  projects: [{ name: "", date: "", desc: "" }],
   profileImage: null, // Add profile image field
 };
 
 const DEFAULT_SECTIONS = ["personal", "summary", "employment", "education", "skills"];
 
-export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSectionsChange, onCustomSectionsChange, onStepChange, initialFormData = {} }) {
+export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSectionsChange, onCustomSectionsChange, onStepChange, initialFormData = {}, onDownloadDOCX }) {
   const router = useRouter();
-  const [form, setForm] = useState({ ...initialForm, ...initialFormData, tagline: "", firstName: "annedithB" });
+  const [form, setForm] = useState({ ...initialForm, ...initialFormData });
   const [step, setStep] = useState(0);
   const [saved, setSaved] = useState(true);
   const [sections, setSections] = useState([...DEFAULT_SECTIONS]);
@@ -183,7 +179,7 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
       : section === "projects"
       ? { name: "", date: "", desc: "", lines: [] }
       : section === "skills"
-      ? ""
+      ? { name: "", level: "Intermediate" }
       : customSections.find(cs => cs.key === section)
       ? { title: "", date: "", subtitle: "", location: "", description: "" }
       : "";
@@ -202,44 +198,81 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
   // Insert line handler
   function insertLine(section, idx) {
     setForm(prev => {
+      // Ensure the section exists and has the required structure
+      if (!prev[section]) {
+        return prev;
+      }
+
       if (section === 'summary') {
-        return { ...prev, summaryLines: [...prev.summaryLines, true] };
+        // For summary, add a new bullet point to the existing text
+        const currentSummary = prev.summary || '';
+        const newSummary = currentSummary + (currentSummary ? '\n• ' : '• ');
+        return { ...prev, summary: newSummary };
       }
+      
       if (section === 'skills') {
-        return { ...prev, skillsLines: [...prev.skillsLines, true] };
+        // For skills, add a new empty skill with default level
+        const currentSkills = Array.isArray(prev.skills) ? prev.skills : [{ name: '', level: 'Intermediate' }];
+        return { ...prev, skills: [...currentSkills, { name: '', level: 'Intermediate' }] };
       }
+      
       if (section === 'certifications') {
-        return { ...prev, certificationsLines: [...prev.certificationsLines, true] };
+        // For certifications, add a new empty certification
+        const currentCerts = Array.isArray(prev.certifications) ? prev.certifications : [''];
+        return { ...prev, certifications: [...currentCerts, ''] };
       }
+      
       if (section === 'languages') {
-        return { ...prev, languagesLines: [...prev.languagesLines, true] };
+        // For languages, add a new empty language
+        const currentLangs = Array.isArray(prev.languages) ? prev.languages : [''];
+        return { ...prev, languages: [...currentLangs, ''] };
       }
+      
       if (section === 'employment') {
+        // For employment, add a bullet point to the description
         const arr = [...prev.employment];
-        const currentDesc = arr[idx].desc || '';
-        arr[idx].desc = currentDesc + '\n• ';
-        return { ...prev, employment: arr };
+        if (arr[idx] && typeof arr[idx] === 'object') {
+          const currentDesc = arr[idx].desc || '';
+          arr[idx] = { ...arr[idx], desc: currentDesc + (currentDesc ? '\n• ' : '• ') };
+          return { ...prev, employment: arr };
+        }
+        return prev;
       }
+      
       if (section === 'education') {
+        // For education, add a bullet point to the description
         const arr = [...prev.education];
-        const currentDesc = arr[idx].desc || '';
-        arr[idx].desc = currentDesc + '\n• ';
-        return { ...prev, education: arr };
+        if (arr[idx] && typeof arr[idx] === 'object') {
+          const currentDesc = arr[idx].desc || '';
+          arr[idx] = { ...arr[idx], desc: currentDesc + (currentDesc ? '\n• ' : '• ') };
+          return { ...prev, education: arr };
+        }
+        return prev;
       }
+      
       if (section === 'projects') {
+        // For projects, add a bullet point to the description
         const arr = [...prev.projects];
-        const currentDesc = arr[idx].desc || '';
-        arr[idx].desc = currentDesc + '\n• ';
-        return { ...prev, projects: arr };
+        if (arr[idx] && typeof arr[idx] === 'object') {
+          const currentDesc = arr[idx].desc || '';
+          arr[idx] = { ...arr[idx], desc: currentDesc + (currentDesc ? '\n• ' : '• ') };
+          return { ...prev, projects: arr };
+        }
+        return prev;
       }
+      
       // Handle custom sections
       const customSection = customSections.find(cs => cs.key === section);
       if (customSection) {
         const arr = [...prev[section]];
-        const currentDesc = arr[idx].description || '';
-        arr[idx].description = currentDesc + '\n• ';
-        return { ...prev, [section]: arr };
+        if (arr[idx] && typeof arr[idx] === 'object') {
+          const currentDesc = arr[idx].description || '';
+          arr[idx] = { ...arr[idx], description: currentDesc + (currentDesc ? '\n• ' : '• ') };
+          return { ...prev, [section]: arr };
+        }
+        return prev;
       }
+      
       return prev;
     });
     
@@ -336,8 +369,8 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
       <div style={{ marginBottom: 32 }}>
         <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 6 }}>Summary</div>
         <textarea name="summary" value={form.summary} onChange={handleChange} placeholder="Write a short professional summary..." style={{ width: "100%", padding: "8px 12px", borderRadius: 6, border: "1.5px solid #E3E8F0", fontSize: 14, minHeight: 60, background: "#F8FAFF" }} />
-        <button type="button" className="rts-btn btn-secondary" style={{ fontSize: 12, padding: "4px 14px", minWidth: 0, background: '#e3e8f0', color: '#222', border: 'none', marginTop: 6, borderRadius: 6 }} onClick={() => insertLine('summary')}>
-          Insert Line
+        <button type="button" className="rts-btn btn-secondary" style={{ fontSize: 12, padding: "4px 14px", minWidth: 0, background: '#e3e8f0', color: '#222', border: 'none', marginTop: 6, borderRadius: 6 }} onClick={() => insertLine('summary', 0)}>
+          + Add Bullet Point
         </button>
       </div>
     ),
@@ -471,13 +504,93 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
         </div>
         {Array.isArray(form.skills) ? (
           form.skills.map((skill, idx) => (
-            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <input name="skill" value={skill || ''} onChange={e => handleArrayChange("skills", idx, undefined, e.target.value)} placeholder="Skill" style={{ flex: 1, padding: '6px 10px', borderRadius: 4, border: '1px solid #E3E8F0', fontSize: 13 }} />
+            <div key={idx} className="rb-skills-row" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <input 
+                name="skill" 
+                value={typeof skill === 'object' ? skill.name || '' : skill || ''} 
+                onChange={e => {
+                  if (typeof skill === 'object') {
+                    handleArrayChange("skills", idx, "name", e.target.value);
+                  } else {
+                    // Convert simple string to object format
+                    const newSkill = { name: e.target.value, level: 'Intermediate' };
+                    handleArrayChange("skills", idx, undefined, newSkill);
+                  }
+                }} 
+                placeholder="Skill" 
+                style={{ flex: 1, padding: '6px 10px', borderRadius: 4, border: '1px solid #E3E8F0', fontSize: 13 }} 
+              />
+              <select
+                value={typeof skill === 'object' ? skill.level || 'Intermediate' : 'Intermediate'}
+                onChange={e => {
+                  if (typeof skill === 'object') {
+                    handleArrayChange("skills", idx, "level", e.target.value);
+                  } else {
+                    // Convert simple string to object format
+                    const newSkill = { name: skill || '', level: e.target.value };
+                    handleArrayChange("skills", idx, undefined, newSkill);
+                  }
+                }}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: 4,
+                  border: '1px solid #E3E8F0',
+                  fontSize: 13,
+                  background: '#fff',
+                  width: 100,
+                  cursor: 'pointer',
+                  color: '#222',
+                  fontFamily: 'inherit'
+                }}
+              >
+                <option value="Basic">Basic</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Expert">Expert</option>
+              </select>
               {form.skills.length > 1 && <button type="button" className="rts-btn btn-primary" style={{ fontSize: 11, padding: "3px 10px", minWidth: 0, background: '#F36', height: "28px" }} onClick={() => handleRemoveArrayItem("skills", idx)}>Remove</button>}
             </div>
           ))
         ) : (
-          <input name="skills" value={form.skills || ''} onChange={handleChange} placeholder="e.g. JavaScript, React, Leadership" style={{ width: "100%", padding: "8px 12px", borderRadius: 6, border: "1.5px solid #E3E8F0", fontSize: 14, marginBottom: 0, background: "#F8FAFF" }} />
+          <div className="rb-skills-row" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <input 
+              name="skills" 
+              value={typeof form.skills === 'object' ? form.skills.name || '' : form.skills || ''} 
+              onChange={e => {
+                if (typeof form.skills === 'object') {
+                  handleChange({ target: { name: 'skills', value: { ...form.skills, name: e.target.value } } });
+                } else {
+                  handleChange({ target: { name: 'skills', value: { name: e.target.value, level: 'Intermediate' } } });
+                }
+              }} 
+              placeholder="e.g. JavaScript, React, Leadership" 
+              style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1.5px solid #E3E8F0", fontSize: 14, marginBottom: 0, background: "#F8FAFF" }} 
+            />
+            <select
+              value={typeof form.skills === 'object' ? form.skills.level || 'Intermediate' : 'Intermediate'}
+              onChange={e => {
+                if (typeof form.skills === 'object') {
+                  handleChange({ target: { name: 'skills', value: { ...form.skills, level: e.target.value } } });
+                } else {
+                  handleChange({ target: { name: 'skills', value: { name: form.skills || '', level: e.target.value } } });
+                }
+              }}
+              style={{
+                padding: '8px 12px',
+                borderRadius: 6,
+                border: '1.5px solid #E3E8F0',
+                fontSize: 14,
+                background: '#fff',
+                width: 100,
+                cursor: 'pointer',
+                color: '#222',
+                fontFamily: 'inherit'
+              }}
+            >
+              <option value="Basic">Basic</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
         )}
       </div>
     ),
@@ -491,9 +604,7 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
           <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
             <input name="certification" value={cert} onChange={e => handleArrayChange("certifications", idx, undefined, e.target.value)} placeholder="Certification" style={{ flex: 1, padding: '6px 10px', borderRadius: 4, border: '1px solid #E3E8F0', fontSize: 13 }} />
             {form.certifications.length > 1 && <button type="button" className="rts-btn btn-primary" style={{ fontSize: 11, padding: "3px 10px", minWidth: 0, background: '#F36', height: "28px" }} onClick={() => handleRemoveArrayItem("certifications", idx)}>Remove</button>}
-            <button type="button" className="rts-btn btn-secondary" style={{ fontSize: 11, padding: "4px 14px", minWidth: 0, background: '#e3e8f0', color: '#222', border: 'none', marginTop: 6, borderRadius: 4 }} onClick={() => insertLine('certifications', idx)}>
-              Insert Line
-            </button>
+
           </div>
         ))}
       </div>
@@ -508,9 +619,7 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
           <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
             <input name="language" value={lang} onChange={e => handleArrayChange("languages", idx, undefined, e.target.value)} placeholder="Language" style={{ flex: 1, padding: '6px 10px', borderRadius: 4, border: '1px solid #E3E8F0', fontSize: 13 }} />
             {form.languages.length > 1 && <button type="button" className="rts-btn btn-primary" style={{ fontSize: 11, padding: "3px 10px", minWidth: 0, background: '#F36', height: "28px" }} onClick={() => handleRemoveArrayItem("languages", idx)}>Remove</button>}
-            <button type="button" className="rts-btn btn-secondary" style={{ fontSize: 11, padding: "4px 14px", minWidth: 0, background: '#e3e8f0', color: '#222', border: 'none', marginTop: 6, borderRadius: 4 }} onClick={() => insertLine('languages', idx)}>
-              Insert Line
-            </button>
+
           </div>
         ))}
       </div>
@@ -731,6 +840,82 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
               {renderSection(sec)}
             </div>
           ))}
+          
+          {/* Download Section - Always visible in form */}
+          <div className="rb-download-section" style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center', 
+            gap: 20, 
+            marginTop: 40, 
+            marginBottom: 24,
+            padding: '24px',
+            background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+            borderRadius: '16px',
+            border: '2px solid #0ea5e9',
+            boxShadow: '0 4px 20px rgba(14, 165, 233, 0.15)'
+          }}>
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '16px'
+            }}>
+              <div style={{
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#0c4a6e',
+                marginBottom: '8px'
+              }}>
+                🎉 Your Resume is Ready!
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#64748b',
+                lineHeight: '1.5'
+              }}>
+                Download your professionally formatted resume
+              </div>
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: 16,
+              flexWrap: 'wrap'
+            }}>
+                                  <button
+                      type="button"
+                      className="rts-btn btn-primary"
+                      style={{
+                        fontSize: 18,
+                        padding: "14px 36px",
+                        minWidth: 120,
+                        borderRadius: 999,
+                        boxShadow: '0 2px 8px rgba(16,185,129,0.08)',
+                        background: '#10b981',
+                        color: '#fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        transition: 'all 0.3s ease',
+                      }}
+                      onClick={() => {
+                        // Trigger download from parent component
+                        if (onDownloadDOCX) {
+                          onDownloadDOCX();
+                        } else {
+                          // Fallback: show message to user
+                          alert('Please use the download button in the preview area to download your resume.');
+                        }
+                      }}
+                    >
+                      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M9 2v10m0 0l-3.5-3.5M9 12l3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="3" y="14" width="12" height="2" rx="1" fill="#fff" opacity=".3"/></svg>
+                      Download DOCX
+                    </button>
+            </div>
+          </div>
         </div>
       );
     }
@@ -738,32 +923,168 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
   };
 
   return (
-    <div className="rb-form" style={{ flex: 1, maxWidth: 700, background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: 48, minWidth: 340, minHeight: 900, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 0 }}>
+    <div className="rb-form" style={{ flex: 1, width: '100%', background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 0 }}>
       <style>{`
-        /* Stack inputs on small screens */
+        /* Responsive form container */
+        @media (max-width: 1200px) {
+          .rb-form { 
+            padding: 40px !important; 
+            max-width: 100% !important; 
+          }
+        }
+        
+        @media (max-width: 1024px) {
+          .rb-form { 
+            padding: 32px !important; 
+            width: 100% !important; 
+            max-width: 100% !important; 
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .rb-form { 
+            padding: 24px !important; 
+            border-radius: 12px !important; 
+          }
+          .rb-form input, .rb-form textarea, .rb-form button { 
+            font-size: 14px !important; 
+          }
+          .rb-form .rts-btn { 
+            padding: 10px 18px !important; 
+          }
+        }
+        
         @media (max-width: 640px) {
-          .rb-form { padding: 24px !important; }
-          .rb-row { flex-direction: column !important; }
+          .rb-form { 
+            padding: 20px !important; 
+            margin: 0 8px !important; 
+          }
+          .rb-row { 
+            flex-direction: column !important; 
+            gap: 12px !important; 
+          }
+          .rb-form input, .rb-form textarea, .rb-form select { 
+            width: 100% !important; 
+            max-width: 100% !important; 
+            min-width: 0 !important; 
+          }
         }
-        /* Medium screens adjustments */
-        @media (max-width: 1023px) {
-          .rb-form { max-width: 100% !important; }
-          .rb-form input, .rb-form textarea, .rb-form button { font-size: 14px !important; }
-          .rb-form .rts-btn { padding: 10px 18px !important; }
+        
+                @media (max-width: 480px) {
+          .rb-form { 
+            padding: 16px !important; 
+            border-radius: 12px !important; 
+            margin: 0 4px !important; 
+            box-shadow: 0 1px 8px rgba(0,0,0,0.05) !important; 
+          }
+          .rb-row { 
+            gap: 8px !important; 
+          }
+          .rb-form input, .rb-form textarea, .rb-form select { 
+            font-size: 13px !important; 
+            padding: 10px 12px !important; 
+          }
+          .rb-form .rts-btn { 
+            font-size: 13px !important; 
+            padding: 10px 14px !important; 
+            min-width: 0 !important; 
+          }
+          .rb-tabs { 
+            gap: 6px !important; 
+          }
+          .rb-tabs > div { 
+            min-width: auto !important; 
+            padding: 6px 10px !important; 
+            font-size: 11px !important; 
+          }
+          .rb-card { 
+            padding: 10px !important; 
+          }
+          .rb-sections-bar { 
+            flex-direction: column !important; 
+            align-items: stretch !important; 
+            gap: 10px !important; 
+          }
+          .rb-add-menu { 
+            left: 0 !important; 
+            right: 0 !important; 
+            min-width: 100% !important; 
+          }
+          .rb-form-nav { 
+            flex-direction: column !important; 
+            gap: 12px !important; 
+            }
+          .rb-form-nav .rts-btn { 
+            width: 100% !important; 
+            border-radius: 10px !important; 
+          }
         }
-        /* Small phones (≤480px): tighter spacing and full width controls */
+        
+        /* Skills section responsiveness */
+        @media (max-width: 640px) {
+          .rb-form .rb-skills-row { 
+            flex-direction: column !important; 
+            gap: 8px !important; 
+          }
+          .rb-form .rb-skills-row select { 
+            min-width: 100% !important; 
+          }
+        }
+        
+        /* Download section responsiveness */
+        @media (max-width: 768px) {
+          .rb-download-section { 
+            padding: 20px !important; 
+            margin: 32px 16px 24px 16px !important; 
+          }
+          .rb-download-section > div:first-child > div:first-child { 
+            font-size: 18px !important; 
+          }
+          .rb-download-section > div:first-child > div:last-child { 
+            font-size: 13px !important; 
+          }
+        }
+        
         @media (max-width: 480px) {
-          .rb-form { padding: 16px !important; border-radius: 12px !important; min-width: 0 !important; min-height: auto !important; box-shadow: 0 1px 8px rgba(0,0,0,0.05) !important; }
-          .rb-row { gap: 8px !important; }
-          .rb-form input, .rb-form textarea, .rb-form select { width: 100% !important; max-width: 100% !important; min-width: 0 !important; font-size: 13px !important; padding: 10px 12px !important; }
-          .rb-form .rts-btn { font-size: 13px !important; padding: 10px 14px !important; min-width: 0 !important; }
-          .rb-tabs { gap: 6px !important; }
-          .rb-tabs > div { min-width: auto !important; padding: 6px 10px !important; font-size: 11px !important; }
-          .rb-card { padding: 10px !important; }
-          .rb-sections-bar { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
-          .rb-add-menu { left: 0 !important; right: 0 !important; min-width: 100% !important; }
-          .rb-form-nav { flex-direction: column !important; gap: 12px !important; }
-          .rb-form-nav .rts-btn { width: 100% !important; border-radius: 10px !important; }
+          .rb-download-section { 
+            padding: 16px !important; 
+            margin: 24px 8px 20px 8px !important; 
+            border-radius: 12px !important; 
+          }
+          .rb-download-section > div:first-child > div:first-child { 
+            font-size: 16px !important; 
+          }
+          .rb-download-section > div:first-child > div:last-child { 
+            font-size: 12px !important; 
+          }
+          .rb-download-section button { 
+            padding: 14px 24px !important; 
+            font-size: 15px !important; 
+            min-width: 140px !important; 
+          }
+        }
+        
+        /* Navigation responsiveness */
+        @media (max-width: 768px) {
+          .rb-form-nav { 
+            flex-direction: column !important; 
+            gap: 12px !important; 
+            margin-left: 0 !important;
+          }
+          .rb-form-nav .rts-btn { 
+            width: 100% !important; 
+            border-radius: 10px !important; 
+            font-size: 16px !important;
+            padding: 12px 24px !important;
+            min-width: 100px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .rb-form-nav .rts-btn { 
+            font-size: 14px !important;
+            padding: 10px 20px !important;
+          }
         }
       `}</style>
       {/* Add Section Button and Section Navigation */}
@@ -836,7 +1157,7 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
       </div>
 
       {/* Navigation */}
-      <div style={{ display: "flex", justifyContent: "center", alignItems: 'center', marginTop: 32, gap: 18 }}>
+      <div className="rb-form-nav" style={{ display: "flex", justifyContent: "center", alignItems: 'center', marginTop: 32, gap: 18 }}>
         <div style={{ display: 'flex', gap: 8 }}>
           {allSectionsWithReview.map((s, i) => (
             <span key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: i === step ? '#0963D3' : '#E3E8F0', display: 'inline-block' }} />
@@ -852,6 +1173,29 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
           >
             Back
           </button>
+          
+          {/* Review Button - Only show when not on review step and not on second-to-last step */}
+          {step < allSectionsWithReview.length - 2 && (
+            <button
+              type="button"
+              className="rts-btn btn-primary"
+              style={{ 
+                fontSize: 18, 
+                padding: "14px 36px", 
+                minWidth: 120, 
+                borderRadius: 999, 
+                boxShadow: '0 2px 8px rgba(16,185,129,0.08)', 
+                background: '#10b981', 
+                color: '#fff', 
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onClick={() => setStep(allSectionsWithReview.length - 1)}
+            >
+              Review
+            </button>
+          )}
+          
           {step < allSectionsWithReview.length - 1 ? (
             <button type="button" className="rts-btn btn-primary" style={{ fontSize: 18, padding: "14px 36px", minWidth: 120, borderRadius: 999, boxShadow: '0 2px 8px rgba(9,99,211,0.08)', border: 'none' }} onClick={goNext}>
               {step === allSectionsWithReview.length - 2 ? 'Review' : 'Next'}
