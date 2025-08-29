@@ -75,17 +75,21 @@ export default function ResumeEditorPage({ params }) {
 
 
 
-  // Resume preview content (WYSIWYG) - Harvard Template (Matches DOCX exactly)
+  // Resume preview content (WYSIWYG) - Modern Blue Template (Matches target design)
   const previewHtml = `
-    <div style="padding: 40px 40px; font-family: 'Times New Roman', serif; color: #000; min-height: 1040px; font-size: 10px; line-height: 1.0;">
+    <div style="padding: 32px 40px; font-family: 'Arial', 'Helvetica', sans-serif; color: #333; min-height: 1040px; font-size: 11px; line-height: 1.4;">
       
-      <!-- Header Section - Centered -->
+      <!-- Header Section - Name left, contact right -->
       ${form.firstName ? `
-        <div style="text-align: center; margin-bottom: 15px;">
-          <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px;">${form.firstName} ${form.lastName || ''}</div>
-          ${form.tagline ? `<div style="font-size: 10px; font-weight: normal; margin-bottom: 8px; color: #333;">${form.tagline}</div>` : ''}
-          <div style="font-size: 9px; color: #333;">
-            ${form.phone ? form.phone : ''}${form.phone && form.email ? ' • ' : ''}${form.email ? form.email : ''}${(form.phone || form.email) && form.linkedin ? ' • ' : ''}${form.linkedin ? form.linkedin : ''}${(form.phone || form.email || form.linkedin) && (form.city || form.country) ? ' • ' : ''}${form.city ? form.city : ''}${form.city && form.country ? ', ' : ''}${form.country ? form.country : ''}
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 2px solid #4A90E2; padding-bottom: 16px;">
+          <div style="flex: 1;">
+            <div style="font-size: 28px; font-weight: bold; color: #4A90E2; margin-bottom: 6px; font-family: 'Arial', sans-serif;">${form.firstName} ${form.lastName || ''}</div>
+            ${form.tagline ? `<div style="font-size: 14px; color: #666; font-weight: normal; margin-bottom: 0;">${form.tagline}</div>` : ''}
+          </div>
+          <div style="text-align: right; font-size: 11px; color: #4A90E2; line-height: 1.5;">
+            ${form.email ? `<div style="margin-bottom: 2px;">${form.email}</div>` : ''}
+            ${form.phone ? `<div style="margin-bottom: 2px;">${form.phone}</div>` : ''}
+            ${(form.city || form.country) ? `<div style="margin-bottom: 2px;">${form.city ? form.city : ''}${form.city && form.country ? ', ' : ''}${form.country ? form.country : ''}</div>` : ''}
           </div>
         </div>
       ` : ''}
@@ -93,28 +97,25 @@ export default function ResumeEditorPage({ params }) {
       ${sections.map(section => {
         if (section === 'summary' && form.summary) {
           return `
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">SUMMARY</div>
-              <div style="font-size: 10px; margin-top: 4px; text-align: left; line-height: 1.0; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">${form.summary}</div>
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 8px; font-family: 'Arial', sans-serif;">Summary</div>
+              <div style="font-size: 11px; margin-top: 0; text-align: left; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: #333;">${form.summary}</div>
             </div>
           `;
         }
         if (section === 'employment' && form.employment && form.employment[0].jobTitle) {
           return `
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">EXPERIENCE</div>
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">Professional Experience</div>
               ${form.employment.map((job, idx) => `
-                <div style="margin-top: 4px;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1px;">
-                    <div style="font-size: 10px; font-weight: bold;">${job.jobTitle}</div>
-                    <div style="font-size: 10px;">${job.start}${job.start && job.end ? ' - ' : ''}${job.end}</div>
-                  </div>
+                <div style="margin-bottom: 16px;">
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                    <div style="font-size: 10px; font-style: italic;">${job.company}</div>
-                    <div style="font-size: 10px;">${job.location || ''}</div>
+                    <div style="font-size: 12px; font-weight: bold; color: #333;">${job.company}</div>
+                    <div style="font-size: 11px; color: #4A90E2; font-weight: 500;">${job.start}${job.start && job.end ? ' – ' : ''}${job.end}</div>
                   </div>
-                  <div style="font-size: 9px; margin-left: 16px;">
-                    ${job.desc ? job.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                  <div style="font-size: 11px; color: #666; font-style: italic; margin-bottom: 6px;">${job.jobTitle}</div>
+                  <div style="font-size: 11px; color: #333; line-height: 1.4;">
+                    ${job.desc ? job.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 4px;">• ${line.trim()}</div>`).join('') : ''}
                   </div>
                 </div>
               `).join('')}
@@ -123,21 +124,15 @@ export default function ResumeEditorPage({ params }) {
         }
         if (section === 'education' && form.education && form.education[0].degree) {
           return `
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">EDUCATION</div>
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">Education</div>
               ${form.education.map((edu, idx) => `
-                <div style="margin-top: 4px;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1px;">
-                    <div style="font-size: 10px; font-weight: bold;">${edu.school}</div>
-                    <div style="font-size: 10px;">${edu.start}${edu.start && edu.end ? ' - ' : ''}${edu.end || ''}</div>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                    <div style="font-size: 10px; font-style: italic;">${edu.degree}</div>
-                    <div style="font-size: 10px;">${edu.location || ''}</div>
-                  </div>
-                  <div style="font-size: 9px; margin-left: 16px;">
-                    ${edu.desc ? edu.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
-                  </div>
+                <div style="margin-bottom: 12px;">
+                  <div style="font-size: 12px; font-weight: bold; color: #333; margin-bottom: 2px;">${edu.degree}</div>
+                  <div style="font-size: 11px; color: #333; margin-bottom: 2px;">${edu.school}${edu.location ? `, ${edu.location}` : ''}</div>
+                  ${edu.desc ? `<div style="font-size: 11px; color: #333; line-height: 1.4; margin-top: 4px;">
+                    ${edu.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 2px;">• ${line.trim()}</div>`).join('')}
+                  </div>` : ''}
                 </div>
               `).join('')}
             </div>
@@ -156,28 +151,28 @@ export default function ResumeEditorPage({ params }) {
             const column3 = skillsArray.slice(skillsPerColumn * 2);
             
             return `
-              <div style="margin-bottom: 10px;">
-                <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">SKILLS</div>
-                <div style="display: flex; margin-top: 4px;">
-                  <div style="flex: 1; margin-right: 16px;">
+              <div style="margin-bottom: 20px;">
+                <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">Areas of Expertise</div>
+                <div style="display: flex; gap: 24px; margin-top: 0;">
+                  <div style="flex: 1;">
                     ${column1.map(skill => {
                       const skillName = typeof skill === 'string' ? skill : skill.name;
                       const skillLevel = typeof skill === 'string' ? '' : (skill.level ? ` (${skill.level})` : '');
-                      return `<div style="font-size: 10px; margin-bottom: 1px;">• ${skillName}${skillLevel}</div>`;
+                      return `<div style="font-size: 11px; margin-bottom: 4px; color: #333;">• ${skillName}${skillLevel}</div>`;
                     }).join('')}
                   </div>
-                  <div style="flex: 1; margin-right: 16px;">
+                  <div style="flex: 1;">
                     ${column2.map(skill => {
                       const skillName = typeof skill === 'string' ? skill : skill.name;
                       const skillLevel = typeof skill === 'string' ? '' : (skill.level ? ` (${skill.level})` : '');
-                      return `<div style="font-size: 10px; margin-bottom: 1px;">• ${skillName}${skillLevel}</div>`;
+                      return `<div style="font-size: 11px; margin-bottom: 4px; color: #333;">• ${skillName}${skillLevel}</div>`;
                     }).join('')}
                   </div>
                   <div style="flex: 1;">
                     ${column3.map(skill => {
                       const skillName = typeof skill === 'string' ? skill : skill.name;
                       const skillLevel = typeof skill === 'string' ? '' : (skill.level ? ` (${skill.level})` : '');
-                      return `<div style="font-size: 10px; margin-bottom: 1px;">• ${skillName}${skillLevel}</div>`;
+                      return `<div style="font-size: 11px; margin-bottom: 4px; color: #333;">• ${skillName}${skillLevel}</div>`;
                     }).join('')}
                   </div>
                 </div>
@@ -188,16 +183,16 @@ export default function ResumeEditorPage({ params }) {
         }
         if (section === 'projects' && form.projects && form.projects[0].name) {
           return `
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">PROJECTS</div>
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">Projects</div>
               ${form.projects.map((proj, idx) => `
-                <div style="margin-top: 4px;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                    <div style="font-size: 10px; font-weight: bold;">${proj.name}</div>
-                    <div style="font-size: 10px;">${proj.date || ''}</div>
+                <div style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                    <div style="font-size: 12px; font-weight: bold; color: #333;">${proj.name}</div>
+                    <div style="font-size: 11px; color: #4A90E2; font-weight: 500;">${proj.date || ''}</div>
                   </div>
-                  <div style="font-size: 9px; margin-left: 16px;">
-                    ${proj.desc ? proj.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                  <div style="font-size: 11px; color: #333; line-height: 1.4;">
+                    ${proj.desc ? proj.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 4px;">• ${line.trim()}</div>`).join('') : ''}
                   </div>
                 </div>
               `).join('')}
@@ -206,17 +201,17 @@ export default function ResumeEditorPage({ params }) {
         }
         if (section === 'certifications' && form.certifications && form.certifications[0]) {
           return `
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">CERTIFICATIONS</div>
-              ${form.certifications.map(cert => `<div style="font-size: 9px; margin-top: 4px;">• ${cert}</div>`).join('')}
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">Certifications</div>
+              ${form.certifications.map(cert => `<div style="font-size: 11px; margin-bottom: 4px; color: #333;">• ${cert}</div>`).join('')}
             </div>
           `;
         }
         if (section === 'languages' && form.languages && form.languages[0]) {
           return `
-            <div style="margin-bottom: 10px;">
-              <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">LANGUAGES</div>
-              ${form.languages.map(lang => `<div style="font-size: 9px; margin-top: 4px;">• ${lang}</div>`).join('')}
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">Languages</div>
+              ${form.languages.map(lang => `<div style="font-size: 11px; margin-bottom: 4px; color: #333;">• ${lang}</div>`).join('')}
             </div>
           `;
         }
@@ -227,20 +222,17 @@ export default function ResumeEditorPage({ params }) {
           if (customData && typeof customData === 'object' && Array.isArray(customData) && customData.length > 0) {
             // Structured format with multiple entries
           return `
-              <div style="margin-bottom: 10px;">
-                <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">${custom.label.toUpperCase()}</div>
+              <div style="margin-bottom: 20px;">
+                <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">${custom.label}</div>
                 ${customData.map((entry, idx) => `
-                  <div style="margin-top: 4px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1px;">
-                      <div style="font-size: 10px; font-weight: bold;">${entry.title || entry.name || ''}</div>
-                      <div style="font-size: 10px;">${entry.date || entry.start || ''}${(entry.date || entry.start) && (entry.end) ? ' - ' : ''}${entry.end || ''}</div>
-                    </div>
+                  <div style="margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                      <div style="font-size: 10px; font-style: italic;">${entry.subtitle || entry.company || entry.institution || ''}</div>
-                      <div style="font-size: 10px;">${entry.location || ''}</div>
+                      <div style="font-size: 12px; font-weight: bold; color: #333;">${entry.title || entry.name || ''}</div>
+                      <div style="font-size: 11px; color: #4A90E2; font-weight: 500;">${entry.date || entry.start || ''}${(entry.date || entry.start) && (entry.end) ? ' – ' : ''}${entry.end || ''}</div>
                     </div>
-                    <div style="font-size: 9px; margin-left: 16px;">
-                      ${entry.description ? entry.description.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                    <div style="font-size: 11px; color: #666; font-style: italic; margin-bottom: 6px;">${entry.subtitle || entry.company || entry.institution || ''}</div>
+                    <div style="font-size: 11px; color: #333; line-height: 1.4;">
+                      ${entry.description ? entry.description.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 4px;">• ${line.trim()}</div>`).join('') : ''}
                     </div>
                   </div>
                 `).join('')}
@@ -249,9 +241,9 @@ export default function ResumeEditorPage({ params }) {
           } else {
             // Simple text format
             return `
-              <div style="margin-bottom: 10px;">
-                <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">${custom.label.toUpperCase()}</div>
-                <div style="font-size: 10px; margin-top: 4px; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">${form[custom.key] || ''}</div>
+              <div style="margin-bottom: 20px;">
+                <div style="font-size: 16px; font-weight: bold; color: #4A90E2; margin-bottom: 12px; font-family: 'Arial', sans-serif;">${custom.label}</div>
+                <div style="font-size: 11px; margin-top: 0; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: #333; line-height: 1.4;">${form[custom.key] || ''}</div>
             </div>
           `;
           }
@@ -271,9 +263,9 @@ export default function ResumeEditorPage({ params }) {
       left: -9999px;
       top: -9999px;
       width: ${A4_WIDTH}px;
-      font-family: 'Times New Roman', serif;
+      font-family: 'Arial', 'Helvetica', sans-serif;
       font-size: 11px;
-      line-height: 1.0;
+      line-height: 1.4;
       padding: 72px;
       box-sizing: border-box;
       white-space: pre-wrap;
@@ -442,191 +434,221 @@ export default function ResumeEditorPage({ params }) {
       // Create document sections
       const children = [];
 
-      // Header section - Centered like Harvard template
+      // Header section - Modern Blue Template (Name left, contact right with blue border)
       if (form.firstName) {
-        // Name - 18pt font, bold, centered
-        children.push(
+        // Create header table for layout
+        const headerTable = new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          borders: { // Remove all borders except bottom
+            top: { style: BorderStyle.NONE },
+            bottom: { color: '4A90E2', space: 1, style: BorderStyle.SINGLE, size: 4 },
+            left: { style: BorderStyle.NONE },
+            right: { style: BorderStyle.NONE },
+            insideHorizontal: { style: BorderStyle.NONE },
+            insideVertical: { style: BorderStyle.NONE }
+          },
+          rows: [
+            new TableRow({
+              children: [
+                new TableCell({
+                  children: [
+                    // Name - 28pt font, bold, blue color, left-aligned
           new Paragraph({
             children: [
               new TextRun({
                 text: `${form.firstName} ${form.lastName || ''}`,
-                size: 18 * 2, // Convert pt to docx units (1pt = 2 units)
+                          size: 28 * 2,
                 bold: true,
-                font: 'Times New Roman',
+                          color: '4A90E2',
+                          font: 'Arial',
               }),
             ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 240 }, // 12px margin-bottom
-          })
-        );
-
-        // Tagline - 11pt font, normal weight, centered
-        if (form.tagline) {
-          children.push(
-            new Paragraph({
+                      alignment: AlignmentType.LEFT,
+                      spacing: { after: 120 }, // 6px margin-bottom
+                    }),
+                    // Tagline - 14pt font, normal weight, gray color
+                    ...(form.tagline ? [new Paragraph({
               children: [
                 new TextRun({
                   text: form.tagline,
-                  size: 11 * 2,
+                          size: 14 * 2,
                   bold: false,
-                  color: '333333',
-                  font: 'Times New Roman',
+                          color: '666666',
+                          font: 'Arial',
                 }),
               ],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 240 }, // 12px margin-bottom
-            })
-          );
-        }
-
-        // Contact info - 10pt font, centered
-        const contactInfo = [
-          form.phone,
-          form.email,
-          form.linkedin,
-          form.city && form.country ? `${form.city}, ${form.country}` : form.city || form.country
-        ].filter(Boolean).join(' • ');
-
-        if (contactInfo) {
-          children.push(
-            new Paragraph({
+                      alignment: AlignmentType.LEFT,
+                      spacing: { after: 0 },
+                    })] : []),
+                  ],
+                  width: { size: 70, type: WidthType.PERCENTAGE },
+                  borders: { // Remove all cell borders
+                    top: { style: BorderStyle.NONE },
+                    bottom: { style: BorderStyle.NONE },
+                    left: { style: BorderStyle.NONE },
+                    right: { style: BorderStyle.NONE }
+                  },
+                  verticalAlign: "top"
+                }),
+                new TableCell({
+                  children: [
+                    // Contact info - 11pt font, blue color, right-aligned
+                    ...(form.email ? [new Paragraph({
               children: [
                 new TextRun({
-                  text: contactInfo,
-                  size: 10 * 2,
-                  color: '333333',
-                  font: 'Times New Roman',
+                          text: form.email,
+                          size: 11 * 2,
+                          color: '4A90E2',
+                          font: 'Arial',
                 }),
               ],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 360 }, // 18px margin-bottom for section spacing
-            })
-          );
-        }
+                      alignment: AlignmentType.RIGHT,
+                      spacing: { after: 40 },
+                    })] : []),
+                    ...(form.phone ? [new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: form.phone,
+                          size: 11 * 2,
+                          color: '4A90E2',
+                          font: 'Arial',
+                        }),
+                      ],
+                      alignment: AlignmentType.RIGHT,
+                      spacing: { after: 40 },
+                    })] : []),
+                    ...((form.city || form.country) ? [new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: `${form.city ? form.city : ''}${form.city && form.country ? ', ' : ''}${form.country ? form.country : ''}`,
+                          size: 11 * 2,
+                          color: '4A90E2',
+                          font: 'Arial',
+                        }),
+                      ],
+                      alignment: AlignmentType.RIGHT,
+                      spacing: { after: 0 },
+                    })] : []),
+                  ],
+                  width: { size: 30, type: WidthType.PERCENTAGE },
+                  borders: { // Remove all cell borders
+                    top: { style: BorderStyle.NONE },
+                    bottom: { style: BorderStyle.NONE },
+                    left: { style: BorderStyle.NONE },
+                    right: { style: BorderStyle.NONE }
+                  },
+                  verticalAlign: "top"
+                }),
+              ],
+            }),
+          ],
+          margins: { bottom: 480 }, // 24px margin-bottom
+        });
+        
+        children.push(headerTable);
       }
 
-      // Process sections with Harvard template formatting
+      // Process sections with Modern Blue template formatting
       sections.forEach(section => {
             if (section === 'summary' && form.summary) {
-          // Section title - 12pt, bold, uppercase, with bottom border
+          // Section title - 16pt, bold, blue color
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: 'SUMMARY',
-                  size: 12 * 2,
+                  text: 'Summary',
+                  size: 16 * 2,
                   bold: true,
-                  font: 'Times New Roman',
-                  allCaps: true,
+                  color: '4A90E2',
+                  font: 'Arial',
                 }),
               ],
-              spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
-              border: {
-                bottom: {
-                  color: '000000',
-                  space: 1,
-                  style: BorderStyle.SINGLE,
-                  size: 1,
-                },
-              },
+              spacing: { before: 480, after: 160 }, // 24px margin-top, 8px after title
             })
           );
           
-          // Summary content - 11pt, left-aligned
+          // Summary content - 11pt, gray color, left-aligned
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
                   text: form.summary,
                   size: 11 * 2,
-                  font: 'Times New Roman',
+                  color: '333333',
+                  font: 'Arial',
                 }),
               ],
-              spacing: { after: 240 }, // 12px margin-bottom
+              spacing: { after: 400 }, // 20px margin-bottom
               alignment: AlignmentType.LEFT,
             })
           );
         }
 
             if (section === 'employment' && form.employment && form.employment[0].jobTitle) {
-          // Section title
+          // Section title - 16pt, bold, blue color
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: 'EXPERIENCE',
-                  size: 12 * 2,
+                  text: 'Professional Experience',
+                  size: 16 * 2,
                   bold: true,
-                  font: 'Times New Roman',
-                  allCaps: true,
+                  color: '4A90E2',
+                  font: 'Arial',
                 }),
               ],
-              spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
-              border: {
-                bottom: {
-                  color: '000000',
-                  space: 1,
-                  style: BorderStyle.SINGLE,
-                  size: 1,
-                },
-              },
+              spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
             })
           );
 
           form.employment.forEach(job => {
-            // Job title and dates - flex layout with space-between, dates pushed to far right
+            // Company and dates - company name bold, dates in blue
             children.push(
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: job.jobTitle,
-                    size: 11 * 2,
+                    text: job.company,
+                    size: 12 * 2,
                     bold: true,
-                    font: 'Times New Roman',
+                    color: '333333',
+                    font: 'Arial',
                   }),
                   new TextRun({
                     text: '\t', // Tab for spacing
-                    size: 11 * 2,
+                    size: 12 * 2,
                   }),
                   new TextRun({
-                    text: `${job.start}${job.start && job.end ? ' - ' : ''}${job.end}`,
+                    text: `${job.start}${job.start && job.end ? ' – ' : ''}${job.end}`,
                     size: 11 * 2,
-                    font: 'Times New Roman',
+                    color: '4A90E2',
+                    font: 'Arial',
+                    bold: false,
                   }),
                 ],
-                spacing: { before: 120, after: 40 }, // 6px margin-top, 2px after
+                spacing: { before: 320, after: 80 }, // 16px margin-top, 4px after
                 tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
               })
             );
 
-            // Company and location - flex layout with space-between, location pushed to far right
-            if (job.company || job.location) {
+            // Job title - italic, gray
+            if (job.jobTitle) {
               children.push(
                 new Paragraph({
                   children: [
                     new TextRun({
-                      text: job.company || '',
+                      text: job.jobTitle,
                       size: 11 * 2,
                       italics: true,
-                      font: 'Times New Roman',
-                    }),
-                    new TextRun({
-                      text: '\t', // Tab for spacing
-                      size: 11 * 2,
-                    }),
-                    new TextRun({
-                      text: job.location || '',
-                      size: 11 * 2,
-                      font: 'Times New Roman',
+                      color: '666666',
+                      font: 'Arial',
                     }),
                   ],
                   spacing: { after: 120 }, // 6px margin-bottom
-                  tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
                 })
               );
             }
 
-            // Job description bullets - 11pt, indented
+            // Job description bullets - 11pt, gray color
             if (job.desc) {
               const lines = job.desc.split('\n').filter(line => line.trim());
               lines.forEach(line => {
@@ -636,16 +658,17 @@ export default function ResumeEditorPage({ params }) {
                       new TextRun({
                         text: '• ',
                         size: 11 * 2,
-                        font: 'Times New Roman',
+                        color: '333333',
+                        font: 'Arial',
                       }),
                       new TextRun({
                         text: line.trim(),
                         size: 11 * 2,
-                        font: 'Times New Roman',
+                        color: '333333',
+                        font: 'Arial',
                       }),
                     ],
-                    spacing: { after: 40 }, // 2px margin-bottom
-                    indent: { left: 400 }, // 20px left margin
+                    spacing: { after: 80 }, // 4px margin-bottom
                   })
                 );
               });
@@ -654,84 +677,55 @@ export default function ResumeEditorPage({ params }) {
         }
 
             if (section === 'education' && form.education && form.education[0].degree) {
-          // Section title
+          // Section title - 16pt, bold, blue color
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: 'EDUCATION',
-                  size: 12 * 2,
+                  text: 'Education',
+                  size: 16 * 2,
                   bold: true,
-                  font: 'Times New Roman',
-                  allCaps: true,
+                  color: '4A90E2',
+                  font: 'Arial',
                 }),
               ],
-              spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
-              border: {
-                bottom: {
-                  color: '000000',
-                  space: 1,
-                  style: BorderStyle.SINGLE,
-                  size: 1,
-                },
-              },
+              spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
             })
           );
 
           form.education.forEach(edu => {
-            // School and date - flex layout with space-between, date pushed to far right
+            // Degree - bold, gray color
             children.push(
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: edu.school,
-                    size: 11 * 2,
+                    text: edu.degree,
+                    size: 12 * 2,
                     bold: true,
-                    font: 'Times New Roman',
-                  }),
-                  new TextRun({
-                    text: '\t', // Tab for spacing
-                    size: 11 * 2,
-                  }),
-                  new TextRun({
-                    text: `${edu.start}${edu.start && edu.end ? ' - ' : ''}${edu.end || ''}`,
-                    size: 11 * 2,
-                    font: 'Times New Roman',
+                    color: '333333',
+                    font: 'Arial',
                   }),
                 ],
-                spacing: { before: 120, after: 40 }, // 6px margin-top, 2px after
-                tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
+                spacing: { before: 240, after: 40 }, // 12px margin-top, 2px after
               })
             );
 
-            // Degree and location - flex layout with space-between, location pushed to far right
-            if (edu.degree || edu.location) {
+            // School and location - normal weight, gray color
               children.push(
                 new Paragraph({
                   children: [
                     new TextRun({
-                      text: edu.degree || '',
+                    text: `${edu.school}${edu.location ? `, ${edu.location}` : ''}`,
                       size: 11 * 2,
-                      italics: true,
-                      font: 'Times New Roman',
-                    }),
-                    new TextRun({
-                      text: '\t', // Tab for spacing
-                      size: 11 * 2,
-                    }),
-                    new TextRun({
-                      text: edu.location || '',
-                      size: 11 * 2,
-                      font: 'Times New Roman',
+                    color: '333333',
+                    font: 'Arial',
                     }),
                   ],
                   spacing: { after: 120 }, // 6px margin-bottom
-                  tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
                 })
               );
-            }
 
-            // Education description bullets - 11pt, indented
+            // Education description bullets - 11pt, gray color
             if (edu.desc) {
               const lines = edu.desc.split('\n').filter(line => line.trim());
               lines.forEach(line => {
@@ -741,16 +735,17 @@ export default function ResumeEditorPage({ params }) {
                       new TextRun({
                         text: '• ',
                         size: 11 * 2,
-                        font: 'Times New Roman',
+                        color: '333333',
+                        font: 'Arial',
                       }),
                       new TextRun({
                         text: line.trim(),
                         size: 11 * 2,
-                        font: 'Times New Roman',
+                        color: '333333',
+                        font: 'Arial',
                       }),
                     ],
                     spacing: { after: 40 }, // 2px margin-bottom
-                    indent: { left: 400 }, // 20px left margin
                   })
                 );
               });
@@ -764,27 +759,19 @@ export default function ResumeEditorPage({ params }) {
                 : form.skills.split(',').map(s => s.trim()).filter(s => s);
               
               if (skillsArray.length > 0) {
-            // Section title
+            // Section title - 16pt, bold, blue color
             children.push(
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: 'SKILLS',
-                    size: 12 * 2,
+                    text: 'Areas of Expertise',
+                    size: 16 * 2,
                     bold: true,
-                    font: 'Times New Roman',
-                    allCaps: true,
+                    color: '4A90E2',
+                    font: 'Arial',
                   }),
                 ],
-                spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
-                border: {
-                  bottom: {
-                    color: '000000',
-                    space: 1,
-                    style: BorderStyle.SINGLE,
-                    size: 1,
-                  },
-                },
+                spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
               })
             );
 
@@ -801,15 +788,16 @@ export default function ResumeEditorPage({ params }) {
                         children: [
                           new TextRun({
                             text: skillsArray[i] ? `• ${typeof skillsArray[i] === 'string' ? skillsArray[i] : skillsArray[i].name}${typeof skillsArray[i] === 'string' ? '' : (skillsArray[i].level ? ` (${skillsArray[i].level})` : '')}` : '',
-                            size: 10 * 2, // Consistent with live preview (10px)
-                            font: 'Times New Roman',
+                            size: 11 * 2,
+                            color: '333333',
+                            font: 'Arial',
                           }),
                         ],
-                        spacing: { after: 40 }, // 2px margin-bottom
+                        spacing: { after: 80 }, // 4px margin-bottom
                       }),
                     ],
                     width: { size: 33, type: WidthType.PERCENTAGE },
-                    margins: { right: 400 }, // 20px margin-right
+                    margins: { right: 480 }, // 24px margin-right
                     borders: { // Remove all borders
                       top: { style: BorderStyle.NONE },
                       bottom: { style: BorderStyle.NONE },
@@ -823,15 +811,16 @@ export default function ResumeEditorPage({ params }) {
                         children: [
                           new TextRun({
                             text: skillsArray[i + skillsPerColumn] ? `• ${typeof skillsArray[i + skillsPerColumn] === 'string' ? skillsArray[i + skillsPerColumn] : skillsArray[i + skillsPerColumn].name}${typeof skillsArray[i + skillsPerColumn] === 'string' ? '' : (skillsArray[i + skillsPerColumn].level ? ` (${skillsArray[i + skillsPerColumn].level})` : '')}` : '',
-                            size: 10 * 2, // Consistent with live preview (10px)
-                            font: 'Times New Roman',
+                            size: 11 * 2,
+                            color: '333333',
+                            font: 'Arial',
                           }),
                         ],
-                        spacing: { after: 40 }, // 2px margin-bottom
+                        spacing: { after: 80 }, // 4px margin-bottom
                       }),
                     ],
                     width: { size: 33, type: WidthType.PERCENTAGE },
-                    margins: { right: 400 }, // 20px margin-right
+                    margins: { right: 480 }, // 24px margin-right
                     borders: { // Remove all borders
                       top: { style: BorderStyle.NONE },
                       bottom: { style: BorderStyle.NONE },
@@ -845,11 +834,12 @@ export default function ResumeEditorPage({ params }) {
                         children: [
                           new TextRun({
                             text: skillsArray[i + skillsPerColumn * 2] ? `• ${typeof skillsArray[i + skillsPerColumn * 2] === 'string' ? skillsArray[i + skillsPerColumn * 2] : skillsArray[i + skillsPerColumn * 2].name}${typeof skillsArray[i + skillsPerColumn * 2] === 'string' ? '' : (skillsArray[i + skillsPerColumn * 2].level ? ` (${skillsArray[i + skillsPerColumn * 2].level})` : '')}` : '',
-                            size: 10 * 2, // Consistent with live preview (10px)
-                            font: 'Times New Roman',
+                            size: 11 * 2,
+                            color: '333333',
+                            font: 'Arial',
                           }),
                         ],
-                        spacing: { after: 40 }, // 2px margin-bottom
+                        spacing: { after: 80 }, // 4px margin-bottom
                       }),
                     ],
                     width: { size: 34, type: WidthType.PERCENTAGE },
@@ -869,7 +859,7 @@ export default function ResumeEditorPage({ params }) {
               new Table({
                 rows: tableRows,
                 width: { size: 100, type: WidthType.PERCENTAGE },
-                margins: { top: 240 }, // 12px margin-top
+                margins: { top: 0 }, // No margin-top since title has margin
                 borders: { // Remove ALL table borders including internal ones
                   top: { style: BorderStyle.NONE },
                   bottom: { style: BorderStyle.NONE },
@@ -884,57 +874,52 @@ export default function ResumeEditorPage({ params }) {
         }
 
             if (section === 'projects' && form.projects && form.projects[0].name) {
-          // Section title
+          // Section title - 16pt, bold, blue color
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: 'PROJECTS',
+                  text: 'Projects',
                   size: 16 * 2,
                   bold: true,
+                  color: '4A90E2',
                   font: 'Arial',
-                  allCaps: true,
                 }),
               ],
-              spacing: { before: 400, after: 160 }, // 25px margin-bottom, 8px after title
-              border: {
-                bottom: {
-                  color: '000000',
-                  space: 1,
-                  style: BorderStyle.SINGLE,
-                  size: 2,
-                },
-              },
+              spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
             })
           );
 
           form.projects.forEach(proj => {
-            // Project name and date - flex layout with space-between, date pushed to far right
+            // Project name and date - project name bold, date in blue
             children.push(
               new Paragraph({
                 children: [
                   new TextRun({
                     text: proj.name,
-                    size: 13 * 2,
+                    size: 12 * 2,
                     bold: true,
+                    color: '333333',
                     font: 'Arial',
                   }),
                   new TextRun({
                     text: '\t', // Tab for spacing
-                    size: 13 * 2,
+                    size: 12 * 2,
                   }),
                   new TextRun({
                     text: proj.date || '',
-                    size: 13 * 2,
+                    size: 11 * 2,
+                    color: '4A90E2',
                     font: 'Arial',
+                    bold: false,
                   }),
                 ],
-                spacing: { before: 320, after: 240 }, // 16px margin-top, 12px after
+                spacing: { before: 320, after: 120 }, // 16px margin-top, 6px after
                 tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
               })
             );
 
-            // Project description bullets - 12px, indented
+            // Project description bullets - 11pt, gray color
             if (proj.desc) {
               const lines = proj.desc.split('\n').filter(line => line.trim());
               lines.forEach(line => {
@@ -943,17 +928,18 @@ export default function ResumeEditorPage({ params }) {
                     children: [
                       new TextRun({
                         text: '• ',
-                        size: 12 * 2,
+                        size: 11 * 2,
+                        color: '333333',
                         font: 'Arial',
                       }),
                       new TextRun({
                         text: line.trim(),
-                        size: 12 * 2,
+                        size: 11 * 2,
+                        color: '333333',
                         font: 'Arial',
                       }),
                     ],
                     spacing: { after: 80 }, // 4px margin-bottom
-                    indent: { left: 400 }, // 20px left margin
                   })
                 );
               });
@@ -962,27 +948,19 @@ export default function ResumeEditorPage({ params }) {
         }
 
             if (section === 'certifications' && form.certifications && form.certifications[0]) {
-          // Section title
+          // Section title - 16pt, bold, blue color
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: 'CERTIFICATIONS',
+                  text: 'Certifications',
                   size: 16 * 2,
                   bold: true,
+                  color: '4A90E2',
                   font: 'Arial',
-                  allCaps: true,
                 }),
               ],
-              spacing: { before: 400, after: 160 }, // 25px margin-bottom, 8px after title
-              border: {
-                bottom: {
-                  color: '000000',
-                  space: 1,
-                  style: BorderStyle.SINGLE,
-                  size: 2,
-                },
-              },
+              spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
             })
           );
 
@@ -992,43 +970,37 @@ export default function ResumeEditorPage({ params }) {
                 children: [
                   new TextRun({
                     text: '• ',
-                    size: 12 * 2,
+                    size: 11 * 2,
+                    color: '333333',
                     font: 'Arial',
                   }),
                   new TextRun({
                     text: cert,
-                    size: 12 * 2,
+                    size: 11 * 2,
+                    color: '333333',
                     font: 'Arial',
                   }),
                 ],
-                spacing: { after: 240 }, // 12px margin-top
+                spacing: { after: 80 }, // 4px margin-bottom
               })
             );
           });
         }
 
             if (section === 'languages' && form.languages && form.languages[0]) {
-          // Section title
+          // Section title - 16pt, bold, blue color
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: 'LANGUAGES',
+                  text: 'Languages',
                   size: 16 * 2,
                   bold: true,
+                  color: '4A90E2',
                   font: 'Arial',
-                  allCaps: true,
                 }),
               ],
-              spacing: { before: 400, after: 160 }, // 25px margin-bottom, 8px after title
-              border: {
-                bottom: {
-                  color: '000000',
-                  space: 1,
-                  style: BorderStyle.SINGLE,
-                  size: 2,
-                },
-              },
+              spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
             })
           );
 
@@ -1038,16 +1010,18 @@ export default function ResumeEditorPage({ params }) {
                 children: [
                   new TextRun({
                     text: '• ',
-                    size: 12 * 2,
+                    size: 11 * 2,
+                    color: '333333',
                     font: 'Arial',
                   }),
                   new TextRun({
                     text: lang,
-                    size: 12 * 2,
+                    size: 11 * 2,
+                    color: '333333',
                     font: 'Arial',
                   }),
                 ],
-                spacing: { after: 240 }, // 12px margin-top
+                spacing: { after: 80 }, // 4px margin-bottom
               })
             );
           });
@@ -1063,53 +1037,47 @@ export default function ResumeEditorPage({ params }) {
                   new Paragraph({
                     children: [
                       new TextRun({
-                        text: custom.label.toUpperCase(),
-                        size: 12 * 2,
+                        text: custom.label,
+                        size: 16 * 2,
                         bold: true,
-                        font: 'Times New Roman',
-                        allCaps: true,
+                        color: '4A90E2',
+                        font: 'Arial',
                       }),
                     ],
-                    spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
-                    border: {
-                      bottom: {
-                        color: '000000',
-                        space: 1,
-                        style: BorderStyle.SINGLE,
-                        size: 1,
-                      },
-                    },
+                    spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
                   })
                 );
 
                 customData.forEach(entry => {
-                  // Title and date - flex layout with space-between, date pushed to far right
+                  // Title and date - title bold, date in blue
                   children.push(
                     new Paragraph({
                       children: [
                         new TextRun({
                           text: entry.title || entry.name || '',
-                          size: 11 * 2,
+                          size: 12 * 2,
                           bold: true,
-                          font: 'Times New Roman',
+                          color: '333333',
+                          font: 'Arial',
                         }),
                         new TextRun({
                           text: '\t', // Tab for spacing
-                          size: 11 * 2,
+                          size: 12 * 2,
                         }),
                         new TextRun({
-                          text: `${entry.date || entry.start || ''}${(entry.date || entry.start) && entry.end ? ' - ' : ''}${entry.end || ''}`,
+                          text: `${entry.date || entry.start || ''}${(entry.date || entry.start) && entry.end ? ' – ' : ''}${entry.end || ''}`,
                           size: 11 * 2,
-                          font: 'Times New Roman',
+                          color: '4A90E2',
+                          font: 'Arial',
                         }),
                       ],
-                      spacing: { before: 120, after: 40 }, // 6px margin-top, 2px after
+                      spacing: { before: 320, after: 80 }, // 16px margin-top, 4px after
                       tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
                     })
                   );
 
-                  // Subtitle and location - flex layout with space-between, location pushed to far right
-                  if (entry.subtitle || entry.company || entry.institution || entry.location) {
+                  // Subtitle - italic, gray
+                  if (entry.subtitle || entry.company || entry.institution) {
                     children.push(
                       new Paragraph({
                         children: [
@@ -1117,25 +1085,16 @@ export default function ResumeEditorPage({ params }) {
                             text: entry.subtitle || entry.company || entry.institution || '',
                             size: 11 * 2,
                             italics: true,
-                            font: 'Times New Roman',
-                          }),
-                          new TextRun({
-                            text: '\t', // Tab for spacing
-                            size: 11 * 2,
-                          }),
-                          new TextRun({
-                            text: entry.location || '',
-                            size: 11 * 2,
-                            font: 'Times New Roman',
+                            color: '666666',
+                            font: 'Arial',
                           }),
                         ],
                         spacing: { after: 120 }, // 6px margin-bottom
-                        tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
                       })
                     );
                   }
 
-                  // Description bullets - 11pt, indented
+                  // Description bullets - 11pt, gray color
                   if (entry.description) {
                     const lines = entry.description.split('\n').filter(line => line.trim());
                     lines.forEach(line => {
@@ -1145,16 +1104,17 @@ export default function ResumeEditorPage({ params }) {
                             new TextRun({
                               text: '• ',
                               size: 11 * 2,
-                              font: 'Times New Roman',
+                              color: '333333',
+                              font: 'Arial',
                             }),
                             new TextRun({
                               text: line.trim(),
                               size: 11 * 2,
-                              font: 'Times New Roman',
+                              color: '333333',
+                              font: 'Arial',
                             }),
                           ],
-                          spacing: { after: 40 }, // 2px margin-bottom
-                          indent: { left: 400 }, // 20px left margin
+                          spacing: { after: 80 }, // 4px margin-bottom
                         })
                       );
                     });
@@ -1166,22 +1126,14 @@ export default function ResumeEditorPage({ params }) {
                   new Paragraph({
                     children: [
                       new TextRun({
-                        text: custom.label.toUpperCase(),
-                        size: 12 * 2,
+                        text: custom.label,
+                        size: 16 * 2,
                         bold: true,
-                        font: 'Times New Roman',
-                        allCaps: true,
+                        color: '4A90E2',
+                        font: 'Arial',
                       }),
                     ],
-                    spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
-                    border: {
-                      bottom: {
-                        color: '000000',
-                        space: 1,
-                        style: BorderStyle.SINGLE,
-                        size: 1,
-                      },
-                    },
+                    spacing: { before: 480, after: 240 }, // 24px margin-top, 12px after title
                   })
                 );
                 
@@ -1192,10 +1144,11 @@ export default function ResumeEditorPage({ params }) {
                         new TextRun({
                           text: form[custom.key],
                           size: 11 * 2,
-                          font: 'Times New Roman',
+                          color: '333333',
+                          font: 'Arial',
                         }),
                       ],
-                      spacing: { after: 240 }, // 12px margin-bottom
+                      spacing: { after: 400 }, // 20px margin-bottom
                     })
                   );
                 }
@@ -1428,7 +1381,7 @@ export default function ResumeEditorPage({ params }) {
               onSectionsChange={handleSectionsChange}
               onCustomSectionsChange={handleCustomSectionsChange}
               onStepChange={handleStepChange}
-              templateId="template-1"
+              templateId="template-4"
               onDownloadDOCX={handleDownloadDOCXButton}
             />
             </div>
@@ -1475,12 +1428,12 @@ export default function ResumeEditorPage({ params }) {
                     style={{
                       width: '100%',
                       height: '100%',
-                      padding: '40px 40px',
-                      fontFamily: "'Times New Roman', serif",
-                      color: "#000",
+                      padding: '32px 40px',
+                      fontFamily: "'Arial', 'Helvetica', sans-serif",
+                      color: "#333",
                       background: '#fff',
-                      fontSize: 10,
-                      lineHeight: 1.0,
+                      fontSize: 11,
+                      lineHeight: 1.4,
                       boxSizing: 'border-box',
                       overflow: 'hidden',
                       position: 'relative',

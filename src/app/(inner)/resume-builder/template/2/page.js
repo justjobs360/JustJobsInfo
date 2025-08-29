@@ -10,7 +10,7 @@ import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, Tabl
 
 export default function ResumeEditorPage({ params }) {
   const router = useRouter();
-  const [form, setForm] = useState({ tagline: "", firstName: "EMMA LOUISE", lastName: "CARTER" });
+  const [form, setForm] = useState({});
   const [progress, setProgress] = useState(0);
   const [sections, setSections] = useState(["personal", "summary", "employment", "education", "skills"]);
   const [customSections, setCustomSections] = useState([]);
@@ -1528,7 +1528,7 @@ export default function ResumeEditorPage({ params }) {
               onSectionsChange={handleSectionsChange}
               onCustomSectionsChange={handleCustomSectionsChange}
               onStepChange={handleStepChange}
-              initialFormData={form} 
+              templateId="template-2" 
               onDownloadDOCX={handleDownloadDOCXButton}
             />
             </div>

@@ -39,7 +39,7 @@ const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) =>
                             style={{
                                 background: '#F5F7FA',
                                 borderRadius: '18px',
-                                boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+                                boxShadow: isHovered ? '0 12px 32px rgba(0,0,0,0.15)' : '0 4px 24px rgba(0,0,0,0.06)',
                                 padding: '40px 32px 32px 32px',
                                 position: 'relative',
                                 display: 'flex',
@@ -48,8 +48,10 @@ const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) =>
                                 minHeight: '700px',
                                 maxWidth: '480px',
                                 width: '100%',
-                                transition: 'box-shadow 0.2s',
-                                textAlign:'left'
+                                transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+                                transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                                textAlign:'left',
+                                cursor: 'pointer'
                             }}
                             onMouseEnter={() => setHoveredIndex(idx)}
                             onMouseLeave={() => setHoveredIndex(null)}

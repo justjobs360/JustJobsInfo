@@ -1,6 +1,9 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import ResumeService from "@/utils/resumeService";
+import toast from "react-hot-toast";
 
 const SECTION_OPTIONS = [
   { key: "personal", label: "Personal Details" },
@@ -35,8 +38,9 @@ const initialForm = {
 
 const DEFAULT_SECTIONS = ["personal", "summary", "employment", "education", "skills"];
 
-export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSectionsChange, onCustomSectionsChange, onStepChange, initialFormData = {}, onDownloadDOCX }) {
+export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSectionsChange, onCustomSectionsChange, onStepChange, initialFormData = {}, onDownloadDOCX, templateId = null }) {
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
   const [form, setForm] = useState({ ...initialForm, ...initialFormData });
   const [step, setStep] = useState(0);
   const [saved, setSaved] = useState(true);
@@ -44,6 +48,8 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
   const [addSectionOpen, setAddSectionOpen] = useState(false);
   const [customSections, setCustomSections] = useState([]);
   const [newCustomSectionName, setNewCustomSectionName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
 
   // Progress calculation
   const REVIEW_TAB_KEY = "review";
@@ -84,6 +90,71 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
       onStepChange(step);
     }
   }, [step, onStepChange]);
+
+  // Load saved resume data from Firebase when component mounts
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      loadSavedResume();
+    } else {
+      // Fallback to localStorage for non-authenticated users
+      loadFromLocalStorage();
+    }
+  }, [isAuthenticated, user]);
+
+  // Auto-save resume data when form changes
+  useEffect(() => {
+    if (Object.keys(form).length > 0) {
+      // Debounce auto-save to avoid too many saves
+      const timeoutId = setTimeout(() => {
+        if (isAuthenticated && user) {
+          autoSaveResume();
+        } else {
+          // Auto-save to localStorage for non-authenticated users
+          saveToLocalStorage();
+        }
+      }, 2000); // Save after 2 seconds of inactivity
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [form, sections, customSections, isAuthenticated, user]);
+
+  // Additional auto-save triggers for specific changes
+  useEffect(() => {
+    if (Object.keys(form).length > 0 && saved === false) {
+      // Save immediately when user makes changes and hasn't saved
+      const timeoutId = setTimeout(() => {
+        if (isAuthenticated && user) {
+          autoSaveResume();
+        } else {
+          saveToLocalStorage();
+        }
+      }, 1000); // Faster save for unsaved changes
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [saved, isAuthenticated, user]);
+
+  // Save data when user leaves the page
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (!saved) {
+        // Try to save data before leaving
+        if (isAuthenticated && user) {
+          autoSaveResume();
+        } else {
+          saveToLocalStorage();
+        }
+        
+        // Show warning to user
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [saved, isAuthenticated, user]);
 
   // Section navigation
   const goNext = () => { if (step < allSectionsWithReview.length - 1) setStep(step + 1); };
@@ -135,17 +206,71 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
     setSaved(false);
   };
 
-  // Handle image upload
+  // Handle image upload with compression
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (event) => {
-        setForm({ ...form, profileImage: event.target.result });
-        setSaved(false);
+        // Compress image before saving
+        compressImage(event.target.result, (compressedImage) => {
+          setForm({ ...form, profileImage: compressedImage });
+          setSaved(false);
+          toast.success('Image uploaded successfully');
+        });
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Image compression function
+  const compressImage = (dataUrl, callback) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Set maximum dimensions
+      const maxWidth = 300;
+      const maxHeight = 300;
+      
+      let { width, height } = img;
+      
+      // Calculate new dimensions maintaining aspect ratio
+      if (width > height) {
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = (width * maxHeight) / height;
+          height = maxHeight;
+        }
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Draw and compress
+      ctx.drawImage(img, 0, 0, width, height);
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      
+      callback(compressedDataUrl);
+    };
+    img.src = dataUrl;
   };
 
   // Remove profile image
@@ -829,6 +954,287 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
     }, {}),
   };
 
+  // Firebase persistence functions
+  const loadSavedResume = async () => {
+    if (!isAuthenticated || !user) return;
+    
+    try {
+      setIsLoading(true);
+      const result = await ResumeService.loadUserResume(user.uid);
+      
+      if (result.success && result.data) {
+        // Merge saved data with current form, preserving any new fields
+        setForm(prev => ({ ...prev, ...result.data }));
+        
+        // Restore sections and custom sections
+        if (result.sections && result.sections.length > 0) {
+          setSections(result.sections);
+        }
+        if (result.customSections && result.customSections.length > 0) {
+          setCustomSections(result.customSections);
+        }
+        
+        setLastSaved(result.lastUpdated);
+        toast.success('Resume data loaded successfully!');
+        console.log('Resume data loaded from Firebase');
+      }
+    } catch (error) {
+      console.error('Error loading resume data:', error);
+      toast.error('Failed to load saved resume data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const autoSaveResume = async () => {
+    if (!isAuthenticated || !user) return;
+    
+    try {
+      // Validate and clean the form data
+      const cleanedFormData = validateAndCleanFormData(form);
+      
+      // Ensure all form data is properly serializable
+      const resumeDataToSave = {
+        ...cleanedFormData,
+        sections,
+        customSections,
+        templateId,
+        lastUpdated: new Date().toISOString()
+      };
+
+      // Validate that all data can be serialized
+      try {
+        JSON.stringify(resumeDataToSave);
+      } catch (serializeError) {
+        console.error('Data serialization error:', serializeError);
+        // Remove problematic data and try again
+        const cleanData = {
+          ...resumeDataToSave,
+          profileImage: null // Remove image if it causes serialization issues
+        };
+        
+        const result = await ResumeService.saveResumeProgress(
+          user.uid, 
+          cleanData, 
+          sections, 
+          customSections
+        );
+        
+        if (result.success) {
+          setLastSaved(new Date().toISOString());
+          setSaved(true);
+          console.log('Resume progress auto-saved to Firebase (without image)');
+        }
+        return;
+      }
+      
+      const result = await ResumeService.saveResumeProgress(
+        user.uid, 
+        resumeDataToSave, 
+        sections, 
+        customSections
+      );
+      
+      if (result.success) {
+        setLastSaved(new Date().toISOString());
+        setSaved(true);
+        console.log('Resume progress auto-saved to Firebase');
+      }
+    } catch (error) {
+      console.error('Error auto-saving resume:', error);
+      // Don't show error toast for auto-save failures
+    }
+  };
+
+  // Validate and clean form data before saving
+  const validateAndCleanFormData = (formData) => {
+    const cleanedData = { ...formData };
+    
+    // Ensure all required arrays exist
+    if (!cleanedData.employment) cleanedData.employment = [];
+    if (!cleanedData.education) cleanedData.education = [];
+    if (!cleanedData.skills) cleanedData.skills = [];
+    if (!cleanedData.certifications) cleanedData.certifications = [];
+    if (!cleanedData.languages) cleanedData.languages = [];
+    if (!cleanedData.projects) cleanedData.projects = [];
+    
+    // Clean employment data
+    cleanedData.employment = cleanedData.employment.map(job => ({
+      jobTitle: job.jobTitle || '',
+      company: job.company || '',
+      start: job.start || '',
+      end: job.end || '',
+      location: job.location || '',
+      desc: job.desc || ''
+    }));
+    
+    // Clean education data
+    cleanedData.education = cleanedData.education.map(edu => ({
+      degree: edu.degree || '',
+      school: edu.school || '',
+      start: edu.start || '',
+      end: edu.end || '',
+      location: edu.location || '',
+      desc: edu.desc || ''
+    }));
+    
+    // Clean skills data
+    cleanedData.skills = cleanedData.skills.map(skill => {
+      if (typeof skill === 'string') {
+        return { name: skill, level: 'Intermediate' };
+      }
+      return {
+        name: skill.name || '',
+        level: skill.level || 'Intermediate'
+      };
+    });
+    
+    // Clean projects data
+    cleanedData.projects = cleanedData.projects.map(proj => ({
+      name: proj.name || '',
+      date: proj.date || '',
+      desc: proj.desc || ''
+    }));
+    
+    // Clean custom sections data
+    customSections.forEach(customSection => {
+      if (cleanedData[customSection.key]) {
+        if (Array.isArray(cleanedData[customSection.key])) {
+          cleanedData[customSection.key] = cleanedData[customSection.key].map(item => ({
+            title: item.title || '',
+            date: item.date || '',
+            subtitle: item.subtitle || '',
+            location: item.location || '',
+            description: item.description || ''
+          }));
+        }
+      }
+    });
+    
+    return cleanedData;
+  };
+
+  const saveResumeManually = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Validate and clean the form data
+      const cleanedFormData = validateAndCleanFormData(form);
+      
+      const resumeDataToSave = {
+        ...cleanedFormData,
+        sections,
+        customSections,
+        templateId,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      if (!isAuthenticated || !user) {
+        // Fallback to localStorage for non-authenticated users
+        saveToLocalStorage();
+        return;
+      }
+      
+      const result = await ResumeService.saveUserResume(
+        user.uid, 
+        resumeDataToSave
+      );
+      
+      if (result.success) {
+        setLastSaved(new Date().toISOString());
+        setSaved(true);
+        toast.success(`Resume saved successfully! (Version ${result.version})`);
+        console.log('Resume saved to Firebase with version:', result.version);
+      }
+    } catch (error) {
+      console.error('Error saving resume:', error);
+      toast.error('Failed to save resume. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // LocalStorage fallback functions for non-authenticated users
+  const saveToLocalStorage = () => {
+    try {
+      // Validate and clean the form data
+      const cleanedFormData = validateAndCleanFormData(form);
+      
+      const resumeDataToSave = {
+        ...cleanedFormData,
+        sections,
+        customSections,
+        templateId,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      // Check if data is too large for localStorage (limit is ~5-10MB)
+      const dataString = JSON.stringify(resumeDataToSave);
+      if (dataString.length > 5 * 1024 * 1024) { // 5MB limit
+        console.warn('Resume data is large, attempting to save without image...');
+        
+        // Try saving without the image if data is too large
+        const dataWithoutImage = {
+          ...resumeDataToSave,
+          profileImage: null
+        };
+        
+        const dataStringWithoutImage = JSON.stringify(dataWithoutImage);
+        if (dataStringWithoutImage.length > 5 * 1024 * 1024) {
+          toast.error('Resume data is too large to save locally. Please sign in to save to cloud.');
+          return;
+        }
+        
+        localStorage.setItem('resume_builder_form', dataStringWithoutImage);
+        toast.warning('Resume saved without image due to size limit. Please sign in for full functionality.');
+      } else {
+        localStorage.setItem('resume_builder_form', dataString);
+      }
+      
+      localStorage.setItem('resume_builder_sections', JSON.stringify(sections));
+      localStorage.setItem('resume_builder_custom_sections', JSON.stringify(customSections));
+      
+      setLastSaved(new Date().toISOString());
+      setSaved(true);
+      toast.success('Resume saved to local storage!');
+      console.log('Resume saved to localStorage');
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+      
+      // Check if it's a QuotaExceededError
+      if (error.name === 'QuotaExceededError' || error.code === 22) {
+        toast.error('Local storage is full. Please sign in to save to cloud or clear some data.');
+      } else {
+        toast.error('Failed to save to local storage: ' + error.message);
+      }
+    }
+  };
+
+  const loadFromLocalStorage = () => {
+    try {
+      const savedForm = localStorage.getItem('resume_builder_form');
+      const savedSections = localStorage.getItem('resume_builder_sections');
+      const savedCustomSections = localStorage.getItem('resume_builder_custom_sections');
+      
+      if (savedForm) {
+        const parsedForm = JSON.parse(savedForm);
+        setForm(prev => ({ ...prev, ...parsedForm }));
+        setLastSaved(parsedForm.lastUpdated);
+        console.log('Resume data loaded from localStorage');
+      }
+      
+      if (savedSections) {
+        setSections(JSON.parse(savedSections));
+      }
+      
+      if (savedCustomSections) {
+        setCustomSections(JSON.parse(savedCustomSections));
+      }
+    } catch (error) {
+      console.error('Error loading from localStorage:', error);
+    }
+  };
+
   // Render the current section
   const renderSection = (key) => {
     if (key === REVIEW_TAB_KEY) {
@@ -924,6 +1330,82 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
 
   return (
     <div className="rb-form" style={{ flex: 1, width: '100%', background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', minHeight: 0 }}>
+      {/* Loading indicator */}
+      {isAuthenticated && isLoading && (
+        <div style={{
+          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+          border: '1px solid #f59e0b',
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: '600', color: '#92400e', marginBottom: '4px' }}>
+            🔄 Loading your saved resume...
+          </div>
+          <div style={{ fontSize: '14px', color: '#a16207' }}>
+            Please wait while we retrieve your data.
+          </div>
+        </div>
+      )}
+      
+      {/* Welcome message for returning users */}
+      {isAuthenticated && lastSaved && !isLoading && (
+        <div style={{
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+          border: '1px solid #0ea5e9',
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: '600', color: '#0c4a6e', marginBottom: '4px' }}>
+            🎉 Welcome back! Your resume data has been loaded.
+          </div>
+          <div style={{ fontSize: '14px', color: '#64748b' }}>
+            Continue editing where you left off. All changes are automatically saved.
+          </div>
+        </div>
+      )}
+      
+      {/* New user message */}
+      {isAuthenticated && !lastSaved && !isLoading && (
+        <div style={{
+          background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+          border: '1px solid #10b981',
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: '600', color: '#065f46', marginBottom: '4px' }}>
+            🚀 Start building your professional resume!
+          </div>
+          <div style={{ fontSize: '14px', color: '#047857' }}>
+            Fill out the form below and your progress will be automatically saved.
+          </div>
+        </div>
+      )}
+      
+      {/* Non-authenticated user message */}
+      {!isAuthenticated && (
+        <div style={{
+          background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+          border: '1px solid #ef4444',
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: '600', color: '#991b1b', marginBottom: '4px' }}>
+            ⚠️ Sign in to save your progress
+          </div>
+          <div style={{ fontSize: '14px', color: '#dc2626' }}>
+            Your resume data will be saved locally. Sign in to access your data across devices and templates.
+          </div>
+        </div>
+      )}
+      
       <style>{`
         /* Responsive form container */
         @media (max-width: 1200px) {
@@ -1087,22 +1569,90 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
           }
         }
       `}</style>
+      {/* Save Status Bar */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        padding: '8px 12px',
+        background: saved ? '#f0fdf4' : '#fef3c7',
+        border: `1px solid ${saved ? '#bbf7d0' : '#fde68a'}`,
+        borderRadius: '6px',
+        marginBottom: '16px',
+        fontSize: '12px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ 
+            color: saved ? '#166534' : '#92400e',
+            fontWeight: '500'
+          }}>
+            {isLoading ? '⏳ Saving...' : saved ? '✅ All changes saved' : '⚠️ Unsaved changes'}
+          </span>
+          {lastSaved && (
+            <span style={{ color: '#6b7280' }}>
+              (Last saved: {new Date(lastSaved).toLocaleTimeString()})
+            </span>
+          )}
+        </div>
+        {!isAuthenticated && (
+          <span style={{ color: '#6b7280', fontSize: '11px' }}>
+            Auto-saving to local storage
+          </span>
+        )}
+      </div>
+
       {/* Add Section Button and Section Navigation */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div style={{ fontWeight: 700, fontSize: 18 }}>Sections</div>
-        <div style={{ position: 'relative' }}>
-          <button type="button" className="rts-btn btn-primary" style={{ fontSize: 13, padding: "6px 18px", minWidth: 0, background: '#EAF1FF', color: '#0963D3', fontWeight: 700, border: 'none', boxShadow: 'none' }} onClick={() => setAddSectionOpen((v) => !v)}>
-            + Add Section
-          </button>
-          {addSectionOpen && (
-            <div style={{ position: 'absolute', right: 0, top: 40, background: '#fff', border: '1px solid #E3E8F0', borderRadius: 8, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', zIndex: 10, minWidth: 180 }}>
-              {SECTION_OPTIONS.filter(opt => !sections.includes(opt.key)).map(opt => (
-                <button key={opt.key} type="button" style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', fontSize: 13, color: '#222', cursor: 'pointer' }} onClick={() => handleAddSection(opt.key)}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Save Status and Button */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {lastSaved && (
+              <span style={{ fontSize: 12, color: '#10b981', fontWeight: 500 }}>
+                Last saved: {new Date(lastSaved).toLocaleTimeString()}
+              </span>
+            )}
+            <button 
+              type="button" 
+              className="rts-btn btn-primary" 
+              style={{ 
+                fontSize: 13, 
+                padding: "6px 18px", 
+                minWidth: 0, 
+                background: saved ? '#10b981' : '#f59e0b', 
+                color: '#fff', 
+                fontWeight: 700, 
+                border: 'none', 
+                boxShadow: 'none',
+                opacity: isLoading ? 0.7 : 1,
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }} 
+              onClick={saveResumeManually}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Saving...' : saved ? '✓ Saved' : isAuthenticated ? '💾 Save' : '💾 Save Local'}
+            </button>
+            {!saved && (
+              <span style={{ fontSize: 11, color: '#f59e0b', fontWeight: 500 }}>
+                {isAuthenticated ? 'Changes not saved' : 'Auto-saving to local storage'}
+              </span>
+            )}
+          </div>
+          
+          <div style={{ position: 'relative' }}>
+            <button type="button" className="rts-btn btn-primary" style={{ fontSize: 13, padding: "6px 18px", minWidth: 0, background: '#EAF1FF', color: '#0963D3', fontWeight: 700, border: 'none', boxShadow: 'none' }} onClick={() => setAddSectionOpen((v) => !v)}>
+              + Add Section
+            </button>
+            {addSectionOpen && (
+              <div style={{ position: 'absolute', right: 0, top: 40, background: '#fff', border: '1px solid #E3E8F0', borderRadius: 8, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', zIndex: 10, minWidth: 180 }}>
+                {SECTION_OPTIONS.filter(opt => !sections.includes(opt.key)).map(opt => (
+                  <button key={opt.key} type="button" style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', fontSize: 13, color: '#222', cursor: 'pointer' }} onClick={() => handleAddSection(opt.key)}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
