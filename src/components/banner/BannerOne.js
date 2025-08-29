@@ -34,7 +34,7 @@ function BannerOne() {
                             <div className="banner-wrapper-one align-items-center ">
                                 <span className="pre-title" data-aos="fade-up" data-aos-duration="1000"></span>
                                 <h1 className="title" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-                                Boost <span>Your Career </span><br></br>with AI Precision
+                                Boost <span>Your Career </span><br></br>with Precision
                                     
                                 </h1>
                                 <p data-aos="fade-up" data-aos-delay="500">

@@ -63,16 +63,23 @@ function Testimonials() {
                                                 &quot;As a dedicated software engineer, I value precision highly. This AI resume auditor impressed me with its grasp of the technical subtleties of my profession. It helped me refine the way I present my skills, making it an invaluable asset for anyone in the tech industry.&quot;
                                             </p>
                                             <div className="author-wrapper">
-                                                <div className="avatar">
-                                                    <img
-
-                                                        src="assets/images/testimonials/01.webp"
-                                                        alt="testimonails-avatar"
-                                                    />
+                                                <div className="avatar" style={{
+                                                    width: "60px",
+                                                    height: "60px",
+                                                    backgroundColor: "#10365C",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    borderRadius: "50%",
+                                                    color: "#fff",
+                                                    fontSize: "24px",
+                                                    fontWeight: "bold"
+                                                }}>
+                                                    A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Michael Chen</h6>
-                                                    <span className="desig">CTO of SwiftPay Financial</span>
+                                                    <h6 className="title">Anonymous</h6>
+                                                    <span className="desig">Technology Professional</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -83,16 +90,23 @@ function Testimonials() {
                                                 &quot;Effective project management hinges on clear communication, and that&apos;s where the AI resume auditor shines. Its personalized feedback was instrumental in helping me articulate my project leadership skills. Highly recommended for project management professionals.&quot;
                                             </p>
                                             <div className="author-wrapper">
-                                                <div className="avatar">
-                                                    <img
-
-                                                        src="assets/images/testimonials/01.webp"
-                                                        alt="testimonails-avatar"
-                                                    />
+                                                <div className="avatar" style={{
+                                                    width: "60px",
+                                                    height: "60px",
+                                                    backgroundColor: "#10365C",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    borderRadius: "50%",
+                                                    color: "#fff",
+                                                    fontSize: "24px",
+                                                    fontWeight: "bold"
+                                                }}>
+                                                    A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Michael Chen</h6>
-                                                    <span className="desig">CTO of SwiftPay Financial</span>
+                                                    <h6 className="title">Anonymous</h6>
+                                                    <span className="desig">Technology Professional</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,16 +117,23 @@ function Testimonials() {
                                                 &quot;In the fast-paced world of HR, creating the right impression is crucial. This tool has revolutionized our resume screening process with its personalized recommendations, highlighting each candidate&apos;s unique strengths. It&apos;s a game-changer for recruitment experts.&quot;
                                             </p>
                                             <div className="author-wrapper">
-                                                <div className="avatar">
-                                                    <img
-
-                                                        src="assets/images/testimonials/01.webp"
-                                                        alt="testimonails-avatar"
-                                                    />
+                                            <div className="avatar" style={{
+                                                    width: "60px",
+                                                    height: "60px",
+                                                    backgroundColor: "#10365C",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    borderRadius: "50%",
+                                                    color: "#fff",
+                                                    fontSize: "24px",
+                                                    fontWeight: "bold"
+                                                }}>
+                                                    A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Leard Joe</h6>
-                                                    <span className="desig">CTO of SwiftPay Financial</span>
+                                                    <h6 className="title">Anonymous</h6>
+                                                    <span className="desig">Technology Professional</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,16 +144,23 @@ function Testimonials() {
                                                 &quot;As a dedicated software engineer, I value precision highly. This AI resume auditor impressed me with its grasp of the technical subtleties of my profession. It helped me refine the way I present my skills, making it an invaluable asset for anyone in the tech industry.&quot;
                                             </p>
                                             <div className="author-wrapper">
-                                                <div className="avatar">
-                                                    <img
-
-                                                        src="assets/images/testimonials/01.webp"
-                                                        alt="testimonails-avatar"
-                                                    />
+                                                <div className="avatar" style={{
+                                                    width: "60px",
+                                                    height: "60px",
+                                                    backgroundColor: "#10365C",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    borderRadius: "50%",
+                                                    color: "#fff",
+                                                    fontSize: "24px",
+                                                    fontWeight: "bold"
+                                                }}>
+                                                    A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Michael Chen</h6>
-                                                    <span className="desig">CTO of SwiftPay Financial</span>
+                                                    <h6 className="title">Anonymous</h6>
+                                                    <span className="desig">Technology Professional</span>
                                                 </div>
                                             </div>
                                         </div>
