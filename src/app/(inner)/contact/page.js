@@ -6,6 +6,7 @@ import React, { useRef, useState } from "react";
 import { ReactSVG } from 'react-svg';
 import HeaderOne from "@/components/header/HeaderOne";
 import ReCaptcha from "@/components/security/ReCaptcha";
+import DynamicMetaTags from "@/components/common/DynamicMetaTags";
 import toast from 'react-hot-toast';
 
 export default function Home() {
@@ -121,7 +122,8 @@ export default function Home() {
     };
 
     return (
-        <div className='#'>
+        <DynamicMetaTags pageName="Contact">
+            <div className='#'>
             <HeaderOne />
 
             <>
@@ -277,5 +279,6 @@ export default function Home() {
             <FooterOne />
             <BackToTop />
         </div>
+        </DynamicMetaTags>
     );
 }

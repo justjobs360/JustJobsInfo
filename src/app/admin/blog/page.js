@@ -27,7 +27,8 @@ export default function BlogManagementPage() {
     author: '',
     authorImg: '',
     image: '',
-    bannerImg: ''
+    bannerImg: '',
+    publishedDate: ''
   });
 
   // Image upload states
@@ -232,6 +233,15 @@ export default function BlogManagementPage() {
   // Edit blog
   const handleEdit = (blog) => {
     setEditingBlog(blog);
+    
+    // Format publishedDate for datetime-local input
+    let formattedDate = '';
+    if (blog.publishedDate) {
+      const date = new Date(blog.publishedDate);
+      // Format as YYYY-MM-DDTHH:mm for datetime-local input
+      formattedDate = date.toISOString().slice(0, 16);
+    }
+    
     setFormData({
       title: blog.title,
       slug: blog.slug,
@@ -243,7 +253,8 @@ export default function BlogManagementPage() {
       author: blog.author,
       authorImg: blog.authorImg,
       image: blog.image,
-      bannerImg: blog.bannerImg
+      bannerImg: blog.bannerImg,
+      publishedDate: formattedDate
     });
     setShowAddForm(true);
   };
@@ -270,7 +281,8 @@ export default function BlogManagementPage() {
       author: '',
       authorImg: '',
       image: '',
-      bannerImg: ''
+      bannerImg: '',
+      publishedDate: ''
     });
     setImageUploadType('url');
     setBannerUploadType('url');
@@ -301,16 +313,37 @@ export default function BlogManagementPage() {
       <div className="admin-content">
         <div className="admin-header">
           <h1>Blog Management</h1>
-          <button 
-            className="btn btn-primary add-blog-btn"
-            onClick={() => {
-              setShowAddForm(true);
-              setEditingBlog(null);
-              resetForm();
-            }}
-          >
-            <i className="fas fa-plus"></i> Add New Blog
-          </button>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <button 
+              className="btn btn-primary add-blog-btn"
+              onClick={() => {
+                setShowAddForm(true);
+                setEditingBlog(null);
+                resetForm();
+              }}
+            >
+              <i className="fas fa-plus"></i> Add New Blog
+            </button>
+            
+            {/* Quick Links */}
+            <a 
+              href="/admin/seo/meta-tags"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: 'var(--color-primary)',
+                color: '#fff',
+                textDecoration: 'none',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: '500',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              🏷️ Manage Meta Tags
+            </a>
+          </div>
         </div>
 
         {/* Add/Edit Form */}
@@ -395,7 +428,7 @@ export default function BlogManagementPage() {
               </div>
 
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <div className="form-group">
                     <label>Author</label>
                     <input
@@ -407,7 +440,19 @@ export default function BlogManagementPage() {
                     />
                   </div>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label>Published Date</label>
+                    <input
+                      type="datetime-local"
+                      name="publishedDate"
+                      value={formData.publishedDate}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-4">
                   <div className="form-group">
                     <label>Author Image</label>
                     <div className="image-input-group">
@@ -651,7 +696,7 @@ export default function BlogManagementPage() {
                     <th>Author</th>
                     <th>Views</th>
                     <th>Comments</th>
-                    <th>Created</th>
+                    <th>Published</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -682,7 +727,7 @@ export default function BlogManagementPage() {
                           {blog.comments?.length || 0} Comments
                         </button>
                       </td>
-                      <td>{new Date(blog.createdAt).toLocaleDateString()}</td>
+                      <td>{blog.publishedDate ? new Date(blog.publishedDate).toLocaleDateString() : 'No date set'}</td>
                       <td>
                         <div className="action-buttons">
                           <button 

@@ -1,3 +1,4 @@
+"use client";
 import BannerOne from "@/components/banner/BannerOne";
 import BlogOne from "@/components/blog/BlogOne";
 import CaseStudies from "@/components/casestudies/CaseStudies";
@@ -11,24 +12,26 @@ import LargeVideo from "@/components/large-video/LargeVideo";
 import Pricing from "@/components/pricing/Pricing";
 import ServiceOne from "@/components/services/ServiceOne";
 import Testimonials from "@/components/testimonials/Testimonials";
-
+import DynamicMetaTags from "@/components/common/DynamicMetaTags";
 
 export default function Home() {
   return (
-    <div className='#'>
-      <HeaderOne />
-      <BannerOne />
-      <LargeVideo />
-      <ServiceOne />
-      <CounterUp />
-      {/* <CaseStudies />*/}
-      <Pricing />
-      <FaqOne />
-      <Testimonials />
-      {/*<BlogOne /> */}
-      <CtaOne />
-      <FooterOne />
-      <BackToTop />
-    </div>
+    <DynamicMetaTags pageName="Home">
+      <div className='#'>
+        <HeaderOne />
+        <BannerOne />
+        <LargeVideo />
+        <ServiceOne />
+        <CounterUp />
+        {/* <CaseStudies />*/}
+        <Pricing />
+        <FaqOne />
+        <Testimonials />
+        {/*<BlogOne /> */}
+        <CtaOne />
+        <FooterOne />
+        <BackToTop />
+      </div>
+    </DynamicMetaTags>
   );
 }

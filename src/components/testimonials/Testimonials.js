@@ -19,7 +19,7 @@ function Testimonials() {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="title-between-wrapper">
-                                <h2 className="title">Client Testimonials</h2>
+                                <h2 className="title">Testimonials</h2>
                                 <p className="disc">
                                 At Justjobs Info, we’re proud to help professionals advance their careers and stand out in the job market. Here are some testimonials from users who have benefited from our tools and resources.
                                 </p>

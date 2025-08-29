@@ -189,7 +189,7 @@ export default function ResumeEditorPage({ params }) {
 
   // Resume preview content (WYSIWYG) - Modern Professional Design with Harvard Font Sizing
   const previewHtml = `
-    <div style="font-family: 'Arial', sans-serif; color: #000; min-height: 1040px; background: #fff; font-size: 11px; line-height: 1.0;">
+    <div style="font-family: 'Arial', sans-serif; color: #000; min-height: 1040px; background: #fff; font-size: 11pt; line-height: 1.0;">
       
       <!-- Modern Header with Accent Strip -->
       <div style="background: #2c3e50; padding: 0; margin: 0; height: 3px;"></div>
@@ -199,7 +199,7 @@ export default function ResumeEditorPage({ params }) {
       ${form.firstName ? `
           <div style="display: flex; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #e1e8ed; padding-bottom: 12px;">
             <!-- Profile Photo - Modern Style -->
-            <div style="width: 60px; height: 60px; border-radius: 12px; ${form.profileImage ? `background-image: url('${form.profileImage}'); background-size: cover; background-position: center;` : 'background: #2c3e50;'} flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: bold; margin-right: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 3px solid #fff;">
+            <div style="width: 60px; height: 60px; border-radius: 12px; ${form.profileImage ? `background-image: url('${form.profileImage}'); background-size: cover; background-position: center;` : 'background: #2c3e50;'} flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 16pt; font-weight: bold; margin-right: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 3px solid #fff;">
               ${!form.profileImage ? (form.firstName ? form.firstName.charAt(0) : '') + (form.lastName ? form.lastName.charAt(0) : '') : ''}
             </div>
             
@@ -207,12 +207,12 @@ export default function ResumeEditorPage({ params }) {
             <div style="flex: 1;">
               <!-- Name and Title -->
               <div style="margin-bottom: 8px;">
-                <h1 style="font-size: 17px; font-weight: bold; color: #000; margin: 0 0 4px 0; line-height: 1.2;">${form.firstName} ${form.lastName || ''}</h1>
-                ${form.tagline ? `<div style="font-size: 11px; color: #333; font-weight: normal; margin-bottom: 0;">${form.tagline}</div>` : ''}
+                <h1 style="font-size: 17pt; font-weight: bold; color: #000; margin: 0 0 4px 0; line-height: 1.2;">${form.firstName} ${form.lastName || ''}</h1>
+                ${form.tagline ? `<div style="font-size: 11pt; color: #333; font-weight: normal; margin-bottom: 0;">${form.tagline}</div>` : ''}
               </div>
               
               <!-- Contact Information - Clean List -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px; font-size: 10px; color: #333;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px; font-size: 10pt; color: #333;">
                 ${form.email ? `<div>${form.email}</div>` : ''}
                 ${form.phone ? `<div>${form.phone}</div>` : ''}
                 ${(form.city || form.country) ? `<div>${form.city ? form.city : ''}${form.city && form.country ? ', ' : ''}${form.country ? form.country : ''}</div>` : ''}
@@ -225,10 +225,10 @@ export default function ResumeEditorPage({ params }) {
         <!-- Professional Summary Section -->
         ${form.summary ? `
           <div style="margin-bottom: 10px;">
-            <h2 style="font-size: 12px; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
+            <h2 style="font-size: 12pt; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
               SUMMARY
             </h2>
-            <p style="font-size: 11px; line-height: 1.0; color: #000; margin: 4px 0 0 0; text-align: left; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">${form.summary}</p>
+            <p style="font-size: 11pt; line-height: 1.0; color: #000; margin: 4px 0 0 0; text-align: left; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">${form.summary}</p>
           </div>
         ` : ''}
       
@@ -248,26 +248,26 @@ export default function ResumeEditorPage({ params }) {
             
           return `
                 <div style="margin-bottom: 10px;">
-                  <h2 style="font-size: 12px; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
+                  <h2 style="font-size: 12pt; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
                     SKILLS
                   </h2>
                   <div style="display: flex; margin-top: 4px;">
                     <div style="flex: 1; margin-right: 16px;">
                       ${column1.map(skill => {
                         const skillName = typeof skill === 'string' ? skill : skill.name;
-                        return `<div style="font-size: 11px; margin-bottom: 1px;">• ${skillName}</div>`;
+                        return `<div style="font-size: 11pt; margin-bottom: 1px;">• ${skillName}</div>`;
                       }).join('')}
                     </div>
                     <div style="flex: 1; margin-right: 16px;">
                       ${column2.map(skill => {
                         const skillName = typeof skill === 'string' ? skill : skill.name;
-                        return `<div style="font-size: 11px; margin-bottom: 1px;">• ${skillName}</div>`;
+                        return `<div style="font-size: 11pt; margin-bottom: 1px;">• ${skillName}</div>`;
                       }).join('')}
                     </div>
                     <div style="flex: 1;">
                       ${column3.map(skill => {
                         const skillName = typeof skill === 'string' ? skill : skill.name;
-                        return `<div style="font-size: 11px; margin-bottom: 1px;">• ${skillName}</div>`;
+                        return `<div style="font-size: 11pt; margin-bottom: 1px;">• ${skillName}</div>`;
                       }).join('')}
                     </div>
                   </div>
@@ -280,21 +280,21 @@ export default function ResumeEditorPage({ params }) {
         <!-- Employment History Section -->
         ${form.employment && form.employment[0] && form.employment[0].jobTitle ? `
           <div style="margin-bottom: 10px;">
-            <h2 style="font-size: 12px; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
+            <h2 style="font-size: 12pt; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
               EXPERIENCE
             </h2>
               ${form.employment.map((job, idx) => `
               <div style="margin-top: 4px;">
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1px;">
-                    <div style="font-size: 11px; font-weight: bold;">${job.jobTitle}</div>
-                    <div style="font-size: 11px;">${job.start}${job.start && job.end ? ' - ' : ''}${job.end || 'Present'}</div>
+                    <div style="font-size: 11pt; font-weight: bold;">${job.jobTitle}</div>
+                    <div style="font-size: 11pt;">${job.start}${job.start && job.end ? ' - ' : ''}${job.end || 'Present'}</div>
                   </div>
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                    <div style="font-size: 11px; font-style: italic;">${job.company}</div>
-                    <div style="font-size: 11px;">${job.location || ''}</div>
+                    <div style="font-size: 11pt; font-style: italic;">${job.company}</div>
+                    <div style="font-size: 11pt;">${job.location || ''}</div>
                   </div>
                 ${job.desc ? `
-                  <div style="font-size: 10px; margin-left: 16px;">
+                  <div style="font-size: 10pt; margin-left: 16px;">
                     ${job.desc.split('\n').filter(line => line.trim()).map(line => `
                       <div style="margin-bottom: 1px;">• ${line.trim()}</div>
                     `).join('')}
@@ -308,21 +308,21 @@ export default function ResumeEditorPage({ params }) {
         <!-- Education Section -->
         ${form.education && form.education[0] && form.education[0].degree ? `
           <div style="margin-bottom: 10px;">
-            <h2 style="font-size: 12px; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
+            <h2 style="font-size: 12pt; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
               EDUCATION
             </h2>
             ${form.education.map((edu, idx) => `
               <div style="margin-top: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1px;">
-                  <div style="font-size: 11px; font-weight: bold;">${edu.school}</div>
-                  <div style="font-size: 11px;">${edu.start}${edu.start && edu.end ? ' - ' : ''}${edu.end || ''}</div>
+                  <div style="font-size: 11pt; font-weight: bold;">${edu.school}</div>
+                  <div style="font-size: 11pt;">${edu.start}${edu.start && edu.end ? ' - ' : ''}${edu.end || ''}</div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                  <div style="font-size: 11px; font-style: italic;">${edu.degree}</div>
-                  <div style="font-size: 10px;">${edu.location || ''}</div>
+                  <div style="font-size: 11pt; font-style: italic;">${edu.degree}</div>
+                  <div style="font-size: 10pt;">${edu.location || ''}</div>
                 </div>
                 ${edu.desc ? `
-                  <div style="font-size: 10px; margin-left: 16px;">
+                  <div style="font-size: 10pt; margin-left: 16px;">
                     ${edu.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('')}
                   </div>
                 ` : ''}
@@ -334,17 +334,17 @@ export default function ResumeEditorPage({ params }) {
         <!-- Projects Section -->
         ${form.projects && form.projects[0] && form.projects[0].name ? `
           <div style="margin-bottom: 10px;">
-            <h2 style="font-size: 12px; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
+            <h2 style="font-size: 12pt; font-weight: bold; color: #000; margin: 0 0 4px 0; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">
               PROJECTS
             </h2>
             ${form.projects.map((proj, idx) => `
               <div style="margin-top: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                  <div style="font-size: 11px; font-weight: bold;">${proj.name}</div>
-                  <div style="font-size: 11px;">${proj.date || ''}</div>
+                  <div style="font-size: 11pt; font-weight: bold;">${proj.name}</div>
+                  <div style="font-size: 11pt;">${proj.date || ''}</div>
                 </div>
                 ${proj.desc ? `
-                  <div style="font-size: 10px; margin-left: 16px;">
+                  <div style="font-size: 10pt; margin-left: 16px;">
                     ${proj.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('')}
                   </div>
                 ` : ''}
@@ -368,7 +368,7 @@ export default function ResumeEditorPage({ params }) {
       top: -9999px;
       width: ${A4_WIDTH}px;
       font-family: 'Arial', sans-serif;
-      font-size: 11px;
+      font-size: 11pt;
       line-height: 1.0;
       padding: 40px 40px;
       box-sizing: border-box;
@@ -412,7 +412,7 @@ export default function ResumeEditorPage({ params }) {
         currentPage.style.cssText = `
           width: ${A4_WIDTH}px;
           font-family: 'Arial', sans-serif;
-          font-size: 11px;
+          font-size: 11pt;
           line-height: 1.0;
           padding: 40px 40px;
           box-sizing: border-box;
@@ -1487,7 +1487,7 @@ export default function ResumeEditorPage({ params }) {
                       fontFamily: "'Arial', sans-serif",
                       color: "#000",
                       background: '#fff',
-                      fontSize: 11,
+                      fontSize: '11pt',
                       lineHeight: 1.0,
                       boxSizing: 'border-box',
                       overflow: 'hidden',

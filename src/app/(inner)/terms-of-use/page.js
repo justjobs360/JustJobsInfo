@@ -3,6 +3,7 @@ import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import { ReactSVG } from 'react-svg';
+import "../legal-pages.css";
 export default function Home() {
     return (
         <div className='#'>
@@ -17,77 +18,84 @@ export default function Home() {
                     ></div>
                     {/* service area end */}
                 </div>
-                <div className="service-area-details-wrapper">
+                <div className="service-area-details-wrapper legal-page">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12">
                                 <div className="inner-content">
                                     <div className="top">
-                                        <h1 className="title">Terms Of Condition</h1>
+                                        <h1 className="title">Terms and Conditions</h1>
                                         <p className="disc">
-                                            Offers a unified platform that fosters innovation while
-                                            providing end-to-end data management.
+                                            Welcome to justjobs!
                                         </p>
                                     </div>
                                     <div className="mid-content">
                                         <p className="disc">
-                                            We your strategic partners in digital transformation. With
-                                            over a decade of experience and a team of certified experts, we
-                                            deliver tailored solutions that drive growth, enhance
-                                            efficiency, and secure your digital assets.
+                                            These terms and conditions outline the rules and regulations for the use of justjobs's Website, located at https://justjobs.info.
                                         </p>
                                         <p className="disc">
-                                            Luminous works with businesses of all sizes, from small startups
-                                            to large enterprises. We tailor our solutions to meet the
-                                            specific needs and budget of each client offers a wide range of
-                                            IT services. As we invest heavily in ongoing training and
-                                            professional development for our team. We also participate in
-                                            industry conferences, maintain partnerships with leading
-                                            technology providers, and conduct internal research and
-                                            development projects.
+                                            By accessing this website we assume you accept these terms and conditions. Do not continue to use justjobs.info if you do not agree to take all of the terms and conditions stated on this page.
                                         </p>
                                         <p className="disc">
-                                            Luminous works with businesses of all sizes, from small startups
-                                            to large enterprises. We tailor our solutions to meet the
-                                            specific needs and budget of each client offers a wide range of
-                                            IT services. As we invest heavily in ongoing training and
-                                            professional development for our team. We also participate in
-                                            industry conferences, maintain partnerships with leading
-                                            technology providers, and conduct internal research and
-                                            development projects.
+                                            The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and all Agreements: "Client", "You" and "Your" refers to you, the person log on this website and compliant to the Company's terms and conditions. "The Company", "Ourselves", "We", "Our" and "Us", refers to our Company. "Party", "Parties", or "Us", refers to both the Client and ourselves.
                                         </p>
+                                        
+                                        <h3 className="title mt--40 mb--20">Cookies</h3>
+                                        <p className="disc">
+                                            We employ the use of cookies. By accessing justjobs.info, you agreed to use cookies in agreement with the justjobs.info's Privacy Policy. Most interactive websites use cookies to let us retrieve the user's details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website.
+                                        </p>
+                                        
+                                        <h3 className="title mt--40 mb--20">License</h3>
+                                        <p className="disc">
+                                            Unless otherwise stated, justjobs.info and/or its licensors own the intellectual property rights for all material on justjobs.info. All intellectual property rights are reserved. You may access this from justjobs.info for your own personal use subjected to restrictions set in these terms and conditions.
+                                        </p>
+                                        <p className="disc">You must not:</p>
+                                        <ul className="disc-list">
+                                            <li>Republish material from justjobs.info</li>
+                                            <li>Sell, rent or sub-license material from justjobs.info</li>
+                                            <li>Reproduce, duplicate or copy material from justjobs.info</li>
+                                            <li>Redistribute content from justjobs.info</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="service-area-details-wrapper border-bottom">
+                <div className="service-area-details-wrapper border-bottom legal-page">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12">
                                 <div className="inner-content">
-                                    <div className="mid-content  pt--0">
+                                    <div className="mid-content pt--0">
+                                        <h3 className="title mt--40 mb--20">User Comments and Content</h3>
                                         <p className="disc">
-                                            We your strategic partners in digital transformation. With
-                                            over a decade of experience and a team of certified experts, we
-                                            deliver tailored solutions that drive growth, enhance
-                                            efficiency, and secure your digital assets.
+                                            Parts of this website offer an opportunity for users to post and exchange opinions and information in certain areas of the website. justjobs.info does not filter, edit, publish or review Comments prior to their presence on the website. Comments do not reflect the views and opinions of justjobs.info, its agents and/or affiliates.
+                                        </p>
+                                        <p className="disc">You warrant and represent that:</p>
+                                        <ul className="disc-list">
+                                            <li>You are entitled to post the Comments on our website and have all necessary licenses and consents to do so</li>
+                                            <li>The Comments do not invade any intellectual property right, including without limitation copyright, patent or trademark of any third party</li>
+                                            <li>The Comments do not contain any defamatory, libelous, offensive, indecent or otherwise unlawful material</li>
+                                            <li>The Comments will not be used to solicit or promote business or present commercial activities or unlawful activity</li>
+                                        </ul>
+                                        
+                                        <h3 className="title mt--40 mb--20">Hyperlinking to our Content</h3>
+                                        <p className="disc">
+                                            The following organizations may link to our Website without prior written approval: Government agencies, Search engines, News organizations, Online directory distributors, and System wide Accredited Businesses.
+                                        </p>
+                                        
+                                        <h3 className="title mt--40 mb--20">Content Liability</h3>
+                                        <p className="disc">
+                                            We shall not be held responsible for any content that appears on your Website. You agree to protect and defend us against all claims that arise on your Website. No link(s) should appear on any Website that may be interpreted as libelous, obscene or criminal.
+                                        </p>
+                                        
+                                        <h3 className="title mt--40 mb--20">Disclaimer</h3>
+                                        <p className="disc">
+                                            To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website. The limitations and prohibitions of liability govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty.
                                         </p>
                                         <p className="disc">
-                                            Luminous works with businesses of all sizes, from small startups
-                                            to large enterprises. We tailor our solutions to meet the
-                                            specific needs and budget of each client offers a wide range of
-                                            IT services. As we invest heavily in ongoing training and
-                                            professional development for our team. We also participate in
-                                            industry conferences, maintain partnerships with leading
-                                            technology providers, and conduct internal research and
-                                            development projects.
-                                        </p>
-                                        <p className="disc">
-                                            Offers a unified platform that fosters innovation while
-                                            providing end-to-end data management. See how we help your team
-                                            solve today’s biggest challenges.
+                                            As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.
                                         </p>
                                     </div>
                                 </div>
@@ -129,3 +137,4 @@ export default function Home() {
         </div>
     );
 }
+

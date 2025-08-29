@@ -29,56 +29,29 @@ export default function MetaTagsPage() {
     const loadMetaTags = async () => {
         try {
             setLoading(true);
-            // Load from localStorage
-            const savedTags = localStorage.getItem('meta_tags');
-            if (savedTags) {
-                setMetaTags(JSON.parse(savedTags));
+            console.log('📋 Loading meta tags from API...');
+            
+            const response = await fetch('/api/admin/meta-tags', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                setMetaTags(result.data);
+                console.log('✅ Meta tags loaded successfully:', result.data.length, 'tags');
             } else {
-                // Set default meta tags
-                const defaultTags = [
-                    { 
-                        id: 1, 
-                        page: 'Home', 
-                        title: 'JustJobsInfo - Professional Resume and Career Services',
-                        description: 'Professional resume writing services, career guidance, and job search resources',
-                        keywords: 'resume writing, career services, job search, professional development',
-                        ogImage: '/images/og-home.jpg',
-                        status: 'active'
-                    },
-                    { 
-                        id: 2, 
-                        page: 'About Us', 
-                        title: 'About JustJobsInfo - Our Story and Mission',
-                        description: 'Learn about JustJobsInfo and our mission to help professionals succeed in their careers',
-                        keywords: 'about us, company, mission, career services',
-                        ogImage: '/images/og-about.jpg',
-                        status: 'active'
-                    },
-                    { 
-                        id: 3, 
-                        page: 'Resume Audit', 
-                        title: 'Free Resume Audit - Professional Resume Review',
-                        description: 'Get a free professional resume audit and improve your chances of landing your dream job',
-                        keywords: 'resume audit, resume review, free resume check',
-                        ogImage: '/images/og-resume-audit.jpg',
-                        status: 'active'
-                    },
-                    { 
-                        id: 4, 
-                        page: 'Contact', 
-                        title: 'Contact JustJobsInfo - Get in Touch',
-                        description: 'Contact JustJobsInfo for professional resume services and career guidance',
-                        keywords: 'contact, get in touch, resume services',
-                        ogImage: '/images/og-contact.jpg',
-                        status: 'active'
-                    }
-                ];
-                setMetaTags(defaultTags);
-                localStorage.setItem('meta_tags', JSON.stringify(defaultTags));
+                throw new Error(result.error || 'Failed to load meta tags');
             }
         } catch (error) {
-            console.error('Error loading meta tags:', error);
-            toast.error('Failed to load meta tags');
+            console.error('❌ Error loading meta tags:', error);
+            toast.error('Failed to load meta tags: ' + error.message);
+            
+            // Set empty array as fallback
+            setMetaTags([]);
         } finally {
             setLoading(false);
         }
@@ -94,40 +67,44 @@ export default function MetaTagsPage() {
                 return;
             }
 
-            let updatedTags;
-            if (editingTag) {
-                // Update existing tag
-                updatedTags = metaTags.map(tag => 
-                    tag.id === editingTag.id ? { ...formData, id: editingTag.id } : tag
-                );
-                toast.success('Meta tag updated successfully');
-            } else {
-                // Add new tag
-                const newTag = {
-                    ...formData,
-                    id: Date.now() // Simple ID generation
-                };
-                updatedTags = [...metaTags, newTag];
-                toast.success('Meta tag created successfully');
-            }
-
-            setMetaTags(updatedTags);
-            localStorage.setItem('meta_tags', JSON.stringify(updatedTags));
+            console.log('💾 Saving meta tag...', editingTag ? 'UPDATE' : 'CREATE');
             
-            // Reset form
-            setFormData({
-                page: '',
-                title: '',
-                description: '',
-                keywords: '',
-                ogImage: '',
-                status: 'active'
+            const method = editingTag ? 'PUT' : 'POST';
+            const payload = editingTag ? { id: editingTag.id, ...formData } : formData;
+            
+            const response = await fetch('/api/admin/meta-tags', {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
             });
-            setShowForm(false);
-            setEditingTag(null);
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success(result.message || (editingTag ? 'Meta tag updated successfully!' : 'Meta tag created successfully!'));
+                
+                // Reload meta tags to get the latest data
+                await loadMetaTags();
+                
+                // Reset form
+                setFormData({
+                    page: '',
+                    title: '',
+                    description: '',
+                    keywords: '',
+                    ogImage: '',
+                    status: 'active'
+                });
+                setShowForm(false);
+                setEditingTag(null);
+            } else {
+                throw new Error(result.error || 'Failed to save meta tag');
+            }
         } catch (error) {
-            console.error('Error saving meta tag:', error);
-            toast.error('Failed to save meta tag');
+            console.error('❌ Error saving meta tag:', error);
+            toast.error('Failed to save meta tag: ' + error.message);
         } finally {
             setSaving(false);
         }
@@ -149,13 +126,27 @@ export default function MetaTagsPage() {
     const handleDelete = async (tagId) => {
         if (confirm('Are you sure you want to delete this meta tag?')) {
             try {
-                const updatedTags = metaTags.filter(tag => tag.id !== tagId);
-                setMetaTags(updatedTags);
-                localStorage.setItem('meta_tags', JSON.stringify(updatedTags));
-                toast.success('Meta tag deleted successfully');
+                console.log('🗑️ Deleting meta tag:', tagId);
+                
+                const response = await fetch(`/api/admin/meta-tags?id=${tagId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    toast.success('Meta tag deleted successfully');
+                    // Reload meta tags to get the latest data
+                    await loadMetaTags();
+                } else {
+                    throw new Error(result.error || 'Failed to delete meta tag');
+                }
             } catch (error) {
-                console.error('Error deleting meta tag:', error);
-                toast.error('Failed to delete meta tag');
+                console.error('❌ Error deleting meta tag:', error);
+                toast.error('Failed to delete meta tag: ' + error.message);
             }
         }
     };
@@ -190,6 +181,61 @@ export default function MetaTagsPage() {
                 <div className="dashboard-header">
                     <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Meta Tags Management</h1>
                     <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Manage meta tags and SEO elements for all pages</p>
+                    
+                    {/* Quick Links */}
+                    <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <a 
+                            href="/admin/seo/settings"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-secondary)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            ⚙️ SEO Settings
+                        </a>
+                        <a 
+                            href="/admin/seo/sitemap"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-warning)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            🗺️ Manage Sitemap
+                        </a>
+                        <a 
+                            href="/admin/seo/robots"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-info)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            🤖 Manage Robots.txt
+                        </a>
+                    </div>
                 </div>
 
                 {/* Add New Meta Tag Button */}
@@ -225,6 +271,7 @@ export default function MetaTagsPage() {
                                     <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Page Name:</label>
                                     <input
                                         type="text"
+                                        list="page-suggestions"
                                         value={formData.page}
                                         onChange={(e) => setFormData({...formData, page: e.target.value})}
                                         style={{
@@ -236,6 +283,22 @@ export default function MetaTagsPage() {
                                         }}
                                         placeholder="e.g., Home, About Us, Contact"
                                     />
+                                    <datalist id="page-suggestions">
+                                        <option value="Home" />
+                                        <option value="About Us" />
+                                        <option value="Services" />
+                                        <option value="Resume Audit" />
+                                        <option value="Contact" />
+                                        <option value="Blogs" />
+                                        <option value="Privacy Policy" />
+                                        <option value="Terms of Service" />
+                                        <option value="Career Resources" />
+                                        <option value="Job Search Tips" />
+                                        <option value="Resume Templates" />
+                                    </datalist>
+                                    <small style={{ color: '#666', fontSize: '12px' }}>
+                                        💡 Choose from suggestions or enter a custom page name
+                                    </small>
                                 </div>
                                 
                                 <div>

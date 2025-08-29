@@ -124,6 +124,61 @@ export default function SEOSettingsPage() {
                 <div className="dashboard-header">
                     <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>SEO Settings</h1>
                     <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Configure basic SEO settings for your website</p>
+                    
+                    {/* Quick Links */}
+                    <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <a 
+                            href="/admin/seo/meta-tags"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-primary)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            🏷️ Manage Meta Tags
+                        </a>
+                        <a 
+                            href="/admin/seo/sitemap"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-secondary)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            🗺️ Manage Sitemap
+                        </a>
+                        <a 
+                            href="/admin/seo/robots"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-warning)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            🤖 Manage Robots.txt
+                        </a>
+                    </div>
                 </div>
 
                 {loading ? (

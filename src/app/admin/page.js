@@ -10,10 +10,14 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState({
         totalAdmins: 0,
         totalCVs: 0,
+        recentCVs: 0,
         totalBlogs: 0,
+        publishedBlogs: 0,
         totalImportantLinks: 0,
         totalDownloadableResources: 0,
-        seoScore: 0
+        seoScore: 0,
+        recentActivity: [],
+        metrics: {}
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -64,7 +68,7 @@ export default function AdminDashboard() {
         fetchDashboardData();
     }, [isSuperAdmin]);
 
-    const StatCard = ({ title, value, icon, color, loading = false }) => (
+    const StatCard = ({ title, value, icon, color, loading = false, subtitle = null }) => (
         <div className="stat-card" style={{ borderLeftColor: color }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ flexShrink: 0 }}>
@@ -75,7 +79,12 @@ export default function AdminDashboard() {
                     {loading ? (
                         <div style={{ height: '24px', width: '60px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}></div>
                     ) : (
-                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{value}</p>
+                        <>
+                            <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{value}</p>
+                            {subtitle && (
+                                <p style={{ fontSize: '12px', color: 'var(--color-body)', margin: '2px 0 0 0' }}>{subtitle}</p>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -188,13 +197,15 @@ export default function AdminDashboard() {
                             />
                             <StatCard
                                 title="CV Audits"
-                                value={stats.totalCVs}
+                                value={stats.totalCVs.toLocaleString()}
+                                subtitle={stats.recentCVs > 0 ? `${stats.recentCVs} today` : 'No recent audits'}
                                 icon="📄"
                                 color="var(--color-success)"
                             />
                             <StatCard
                                 title="Blog Posts"
-                                value={stats.totalBlogs}
+                                value={stats.publishedBlogs}
+                                subtitle={`${stats.totalBlogs} total posts`}
                                 icon="📰"
                                 color="var(--color-primary)"
                             />
@@ -354,6 +365,71 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
+                {/* Recent Activity Section */}
+                {stats.recentActivity && stats.recentActivity.length > 0 && (
+                    <div className="dashboard-section">
+                        <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--color-heading-1)', marginBottom: '20px' }}>
+                            📊 Recent Activity
+                        </h2>
+                        <div className="activity-card">
+                            <div style={{ padding: '20px' }}>
+                                {stats.recentActivity.map((activity, index) => (
+                                    <div key={activity.id} className="activity-item" style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        padding: '12px 0',
+                                        borderBottom: index < stats.recentActivity.length - 1 ? '1px solid #f0f0f0' : 'none'
+                                    }}>
+                                        <div style={{ 
+                                            width: '40px', 
+                                            height: '40px', 
+                                            borderRadius: '50%', 
+                                            background: activity.type === 'cv-audit' ? 'var(--color-success)' : 
+                                                       activity.type === 'blog' ? 'var(--color-primary)' : 'var(--color-warning)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginRight: '16px'
+                                        }}>
+                                            <span style={{ fontSize: '16px', color: 'white' }}>
+                                                {activity.type === 'cv-audit' ? '📄' : 
+                                                 activity.type === 'blog' ? '📰' : '🔗'}
+                                            </span>
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-heading-1)', margin: '0 0 4px 0' }}>
+                                                {activity.action}
+                                            </p>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <p style={{ fontSize: '12px', color: 'var(--color-body)', margin: 0 }}>
+                                                    {activity.user}
+                                                </p>
+                                                <span style={{ fontSize: '10px', color: '#ccc' }}>•</span>
+                                                <p style={{ fontSize: '12px', color: 'var(--color-body)', margin: 0 }}>
+                                                    {activity.time}
+                                                </p>
+                                                {activity.score && (
+                                                    <>
+                                                        <span style={{ fontSize: '10px', color: '#ccc' }}>•</span>
+                                                        <span style={{ 
+                                                            fontSize: '10px', 
+                                                            padding: '2px 6px',
+                                                            borderRadius: '10px',
+                                                            background: activity.score >= 80 ? '#d4edda' : activity.score >= 60 ? '#fff3cd' : '#f8d7da',
+                                                            color: activity.score >= 80 ? '#155724' : activity.score >= 60 ? '#856404' : '#721c24'
+                                                        }}>
+                                                            Score: {activity.score}/100
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             </div>
         </AdminLayout>

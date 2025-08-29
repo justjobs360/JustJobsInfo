@@ -9,6 +9,7 @@ import HowItWorks from "@/components/resume-audit/HowItWorks";
 import CtaOne from "@/components/cta/CtaOne";
 import { CVAuditService } from '@/utils/cvAuditService';
 import { useAuth } from '@/contexts/AuthContext';
+import DynamicMetaTags from "@/components/common/DynamicMetaTags";
 import './resume-audit.css';
 
 export default function ResumeAuditPage() {
@@ -61,7 +62,7 @@ export default function ResumeAuditPage() {
     };
 
     return (
-        <>
+        <DynamicMetaTags pageName="Resume Audit">
             <HeaderOne />
             <div className="resume-audit-page">
                 <div className="container">
@@ -105,6 +106,6 @@ export default function ResumeAuditPage() {
             <CtaOne />
             <BackToTop />
             <FooterOne />
-        </>
+        </DynamicMetaTags>
     );
 }

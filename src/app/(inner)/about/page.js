@@ -1,4 +1,5 @@
 
+"use client";
 import AboutBanner from "@/components/banner/AboutBanner";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
@@ -11,10 +12,12 @@ import PricingFour from "@/components/pricing/PricingFour";
 import TestimonialsThree from "@/components/testimonials/TestimonialsThree";
 import BrandTwo from "@/components/brand/BrandTwo";
 import CtaFour from "@/components/cta/CtaFour";
+import DynamicMetaTags from "@/components/common/DynamicMetaTags";
 
-export default function Home() {
+export default function About() {
     return (
-        <div className='#'>
+        <DynamicMetaTags pageName="About Us">
+            <div className='#'>
             <HeaderOne />
             <AboutBanner />
             <Wedo />
@@ -28,5 +31,6 @@ export default function Home() {
             <FooterOne />
             <BackToTop />
         </div>
+        </DynamicMetaTags>
     );
 }

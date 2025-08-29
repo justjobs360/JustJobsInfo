@@ -68,8 +68,8 @@ const BlogMain = (props) => {
                             }}
                         />
                         <div className="author-area-info">
-                            <h6 className="title">{blogAuthor || "Marcus Freeman"}</h6>
-                            <span>{blogPublishedDate || "24 Sept 2024"}</span>
+                            <h6 className="title">{blogAuthor || "Unknown Author"}</h6>
+                            <span>{blogPublishedDate ? new Date(blogPublishedDate).toLocaleDateString() : "No date"}</span>
                         </div>
                     </div>
                 </div>

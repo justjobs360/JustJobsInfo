@@ -1,103 +1,139 @@
 import { NextResponse } from 'next/server';
-import { getDatabase } from '@/utils/mongodb';
+import { getCollection } from '@/utils/mongodb';
 
 export async function GET() {
     try {
-        const db = await getDatabase();
+        console.log('📊 Fetching dashboard statistics...');
         
-        // Get collections
-        const userResumesCollection = db.collection('userResumes');
-        const blogsCollection = db.collection('Blogs');
-        const importantLinksCollection = db.collection('importantLinks');
-        const downloadableResourcesCollection = db.collection('downloadableResources');
+        // Get collections using the correct utility function
+        const cvAuditsCollection = await getCollection('cv_audits');
+        const blogsCollection = await getCollection('Blogs');
+        const importantLinksCollection = await getCollection('importantLinks');
+        const downloadableResourcesCollection = await getCollection('downloadableResources');
         
-        // Fetch statistics
+        // Calculate time ranges for recent activity
+        const now = new Date();
+        const last24Hours = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+        const lastWeek = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+        
+        // Fetch comprehensive statistics
         const [
             totalCVs,
+            recentCVs,
             totalBlogs,
+            publishedBlogs,
             totalImportantLinks,
             totalDownloadableResources,
-            recentBlogs
+            recentBlogs,
+            recentCVAudits
         ] = await Promise.all([
-            userResumesCollection.countDocuments(),
+            cvAuditsCollection.countDocuments(),
+            cvAuditsCollection.countDocuments({ createdAt: { $gte: last24Hours } }),
             blogsCollection.countDocuments(),
+            blogsCollection.countDocuments({ status: 'published' }),
             importantLinksCollection.countDocuments(),
             downloadableResourcesCollection.countDocuments(),
             blogsCollection.find({}, { 
                 sort: { createdAt: -1 }, 
                 limit: 5,
-                projection: { title: 1, createdAt: 1, author: 1 }
+                projection: { title: 1, createdAt: 1, author: 1, status: 1 }
+            }).toArray(),
+            cvAuditsCollection.find({}, {
+                sort: { createdAt: -1 },
+                limit: 5,
+                projection: { fileName: 1, userEmail: 1, score: 1, createdAt: 1, isAuthenticated: 1 }
             }).toArray()
         ]);
+        
+        console.log('📈 Statistics fetched:', {
+            totalCVs,
+            recentCVs,
+            totalBlogs,
+            publishedBlogs
+        });
 
-        // Calculate SEO score based on various factors
-        const seoScore = Math.min(100, Math.max(0, 
-            (totalBlogs > 0 ? 20 : 0) + 
-            (totalImportantLinks > 0 ? 15 : 0) + 
-            (totalDownloadableResources > 0 ? 15 : 0) + 
-            (totalCVs > 100 ? 20 : totalCVs / 5) + 
-            30 // Base score
-        ));
+        // Calculate improved SEO score based on real metrics
+        const contentScore = Math.min(25, publishedBlogs * 2); // Up to 25 points for published blogs
+        const linkScore = Math.min(15, totalImportantLinks * 3); // Up to 15 points for links
+        const resourceScore = Math.min(15, totalDownloadableResources * 5); // Up to 15 points for resources
+        const auditScore = Math.min(25, totalCVs / 10); // Up to 25 points for CV audits
+        const activityScore = Math.min(20, recentCVs * 4); // Up to 20 points for recent activity
+        
+        const seoScore = Math.round(contentScore + linkScore + resourceScore + auditScore + activityScore);
 
-        // Generate recent activity based on actual data
+        // Generate real-time recent activity based on actual data
         const recentActivity = [];
         
-        // Add recent blog posts as activity
-        recentBlogs.forEach((blog, index) => {
+        // Helper function to calculate time ago
+        const getTimeAgo = (date) => {
+            const seconds = Math.floor((now - new Date(date)) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            const days = Math.floor(hours / 24);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        };
+        
+        // Add recent CV audits
+        recentCVAudits.forEach((audit) => {
+            const userType = audit.isAuthenticated ? 'User' : 'Guest';
+            recentActivity.push({
+                id: `cv-${audit._id}`,
+                action: `CV audit completed for ${audit.fileName}`,
+                user: audit.userEmail || `${userType} User`,
+                time: getTimeAgo(audit.createdAt),
+                type: 'cv-audit',
+                score: audit.score,
+                timestamp: new Date(audit.createdAt)
+            });
+        });
+        
+        // Add recent blog posts
+        recentBlogs.forEach((blog) => {
             recentActivity.push({
                 id: `blog-${blog._id}`,
-                action: `Blog post published: ${blog.title}`,
+                action: `Blog post ${blog.status}: ${blog.title}`,
                 user: blog.author || 'Admin',
-                time: `${index + 1} hour${index > 0 ? 's' : ''} ago`,
-                type: 'blog'
+                time: getTimeAgo(blog.createdAt),
+                type: 'blog',
+                status: blog.status,
+                timestamp: new Date(blog.createdAt)
             });
         });
 
-        // Add system activities
-        if (totalCVs > 0) {
-            recentActivity.push({
-                id: 'cv-audit',
-                action: `CV audit completed`,
-                user: 'System',
-                time: '30 minutes ago',
-                type: 'system'
-            });
-        }
-
-        if (totalImportantLinks > 0) {
-            recentActivity.push({
-                id: 'links-updated',
-                action: `Important links updated`,
-                user: 'Admin',
-                time: '2 hours ago',
-                type: 'content'
-            });
-        }
-
-        if (totalDownloadableResources > 0) {
-            recentActivity.push({
-                id: 'resources-added',
-                action: `Downloadable resources added`,
-                user: 'Admin',
-                time: '4 hours ago',
-                type: 'content'
-            });
-        }
-
-        // Sort activities by time (most recent first)
-        recentActivity.sort((a, b) => {
-            const timeOrder = { '30 minutes ago': 1, '1 hour ago': 2, '2 hours ago': 3, '4 hours ago': 4 };
-            return timeOrder[a.time] - timeOrder[b.time];
-        });
+        // Sort activities by actual timestamp (most recent first)
+        recentActivity.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // Remove timestamp from final output and limit to 8 most recent
+        const finalRecentActivity = recentActivity.slice(0, 8).map(({ timestamp, ...activity }) => activity);
 
         const stats = {
             totalCVs,
+            recentCVs,
             totalBlogs,
+            publishedBlogs,
             totalImportantLinks,
             totalDownloadableResources,
-            seoScore: Math.round(seoScore),
-            recentActivity: recentActivity.slice(0, 5) // Limit to 5 most recent
+            seoScore,
+            recentActivity: finalRecentActivity,
+            // Additional metrics for enhanced dashboard
+            metrics: {
+                contentScore,
+                linkScore,
+                resourceScore,
+                auditScore,
+                activityScore
+            }
         };
+
+        console.log('✅ Dashboard stats compiled successfully:', {
+            totalCVs: stats.totalCVs,
+            recentCVs: stats.recentCVs,
+            seoScore: stats.seoScore,
+            activityCount: stats.recentActivity.length
+        });
 
         return NextResponse.json({
             success: true,
@@ -105,10 +141,11 @@ export async function GET() {
         });
 
     } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
+        console.error('❌ Error fetching dashboard stats:', error);
         return NextResponse.json({
             success: false,
-            message: 'Failed to fetch dashboard statistics'
+            message: 'Failed to fetch dashboard statistics',
+            error: error.message
         }, { status: 500 });
     }
 } 

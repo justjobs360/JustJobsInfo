@@ -186,6 +186,44 @@ export default function ImportantLinksPage() {
                 <div className="dashboard-header">
                     <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Important Links Management</h1>
                     <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Add, edit, and manage important links for job seekers</p>
+                    
+                    {/* Quick Links */}
+                    <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <a 
+                            href="/admin/seo/meta-tags"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-primary)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            🏷️ Manage Meta Tags
+                        </a>
+                        <a 
+                            href="/admin/blog"
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: 'var(--color-secondary)',
+                                color: '#fff',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            📰 Blog Management
+                        </a>
+                    </div>
                 </div>
 
                 {/* Add New Link Button */}
