@@ -251,17 +251,42 @@ export default function BlogDetails() {
     }
   };
 
+  // Fetch existing comments for the blog
+  const fetchComments = async () => {
+    try {
+      if (blogPost && blogPost._id) {
+        const response = await fetch(`/api/blogs/${slug}/comments`);
+        const result = await response.json();
+        
+        if (result.success) {
+          setComments(result.data || []);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
   // Handle sidebar search
   const handleSidebarSearch = (e) => {
     e.preventDefault();
     if (searchKeyword.trim()) {
       window.location.href = `/blogs?search=${encodeURIComponent(searchKeyword.trim())}`;
     } else {
-      toast.error('Please enter a search term');
+      toast.error('Please enter a search keyword');
     }
   };
 
-  // Handle search input key press
+  // Handle search key press
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSidebarSearch(e);
@@ -273,24 +298,22 @@ export default function BlogDetails() {
     window.location.href = `/blogs?category=${encodeURIComponent(category)}`;
   };
 
-  // Load data on component mount
+  // useEffect to fetch data when component mounts
   useEffect(() => {
-    if (slug) {
-      fetchBlogPost();
-      fetchRecentPosts();
-      fetchGalleryPosts();
-      fetchCategories();
-    }
+    fetchBlogPost();
+    fetchRecentPosts();
+    fetchGalleryPosts();
+    fetchCategories();
   }, [slug]);
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+  // Fetch comments when blog post is loaded
+  useEffect(() => {
+    if (blogPost && blogPost._id) {
+      fetchComments();
+    }
+  }, [blogPost]);
+
+
 
   const validateForm = () => {
     if (!formData.name.trim()) {
@@ -340,27 +363,52 @@ export default function BlogDetails() {
         throw new Error('reCAPTCHA verification failed');
       }
 
-      // Add comment to the list
-      const newComment = {
-        ...formData,
-        date: new Date().toLocaleDateString(),
-        id: Date.now()
-      };
-      
-      setComments([newComment, ...comments]);
-      toast.success("Comment posted successfully!");
-      
-      // Clear form
-      setFormData({ 
-        name: "", 
-        email: "", 
-        topic: "", 
-        comment: "",
-        agree: false 
+      // Send comment to API to save to database
+      const commentResponse = await fetch(`/api/blogs/${slug}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          topic: formData.topic,
+          comment: formData.comment
+        }),
       });
-      setRecaptchaToken(null);
-      if (recaptchaRef.current?.reset) {
-        recaptchaRef.current.reset();
+
+      if (!commentResponse.ok) {
+        throw new Error('Failed to save comment');
+      }
+
+      const commentResult = await commentResponse.json();
+      
+      if (commentResult.success) {
+        // Add comment to the local state
+        const newComment = {
+          ...formData,
+          date: new Date().toLocaleDateString(),
+          id: Date.now(),
+          createdAt: new Date()
+        };
+        
+        setComments([newComment, ...comments]);
+        toast.success("Comment posted successfully!");
+        
+        // Clear form
+        setFormData({ 
+          name: "", 
+          email: "", 
+          topic: "", 
+          comment: "",
+          agree: false 
+        });
+        setRecaptchaToken(null);
+        if (recaptchaRef.current?.reset) {
+          recaptchaRef.current.reset();
+        }
+      } else {
+        throw new Error(commentResult.error || 'Failed to save comment');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -553,41 +601,101 @@ export default function BlogDetails() {
                         </p>
                       </div>
                     </div>
-                    <div className="comments-area">
+                    <div className="comments-area" style={{ marginTop: '40px' }}>
                       <div id="comments-container">
                         {/* Display existing comments */}
                         {comments.length > 0 && (
                           <div className="comments-list">
-                            <h4>Comments ({comments.length})</h4>
+                            <h4 style={{ 
+                              marginBottom: '20px', 
+                              color: '#333',
+                              fontSize: '24px',
+                              fontWeight: '600'
+                            }}>
+                              Comments ({comments.length})
+                            </h4>
                             {comments.map((comment) => (
                               <div key={comment.id} className="single-comment" style={{
                                 border: '1px solid #eee',
                                 padding: '20px',
                                 marginBottom: '20px',
-                                borderRadius: '5px'
+                                borderRadius: '8px',
+                                backgroundColor: '#fafafa',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                               }}>
                                 <div className="comment-header" style={{
                                   display: 'flex',
                                   justifyContent: 'space-between',
-                                  marginBottom: '10px'
+                                  alignItems: 'center',
+                                  marginBottom: '15px',
+                                  paddingBottom: '10px',
+                                  borderBottom: '1px solid #eee'
                                 }}>
-                                  <strong>{comment.name}</strong>
-                                  <span style={{ color: '#666', fontSize: '14px' }}>{comment.date}</span>
+                                  <strong style={{ 
+                                    color: '#333', 
+                                    fontSize: '16px',
+                                    fontWeight: '600'
+                                  }}>
+                                    {comment.name}
+                                  </strong>
+                                  <span style={{ 
+                                    color: '#666', 
+                                    fontSize: '14px',
+                                    backgroundColor: '#fff',
+                                    padding: '4px 8px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #eee'
+                                  }}>
+                                    {comment.date}
+                                  </span>
                                 </div>
                                 {comment.topic && (
-                                  <div style={{ marginBottom: '10px', fontStyle: 'italic', color: '#666' }}>
-                                    Topic: {comment.topic}
+                                  <div style={{ 
+                                    marginBottom: '15px', 
+                                    fontStyle: 'italic', 
+                                    color: '#666',
+                                    backgroundColor: '#fff',
+                                    padding: '8px 12px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #eee',
+                                    fontSize: '14px'
+                                  }}>
+                                    <strong>Topic:</strong> {comment.topic}
                                   </div>
                                 )}
-                                <p>{comment.comment}</p>
+                                <p style={{ 
+                                  margin: '0',
+                                  lineHeight: '1.6',
+                                  color: '#333',
+                                  fontSize: '15px'
+                                }}>
+                                  {comment.comment}
+                                </p>
                               </div>
                             ))}
                           </div>
                         )}
+                        {comments.length === 0 && (
+                          <div style={{ 
+                            textAlign: 'center', 
+                            padding: '40px 20px',
+                            color: '#666',
+                            fontStyle: 'italic'
+                          }}>
+                            No comments yet. Be the first to leave a comment!
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="replay-area-details">
-                      <h4 className="title">Leave a Reply</h4>
+                    <div className="replay-area-details" style={{ marginTop: '40px' }}>
+                      <h4 className="title" style={{ 
+                        marginBottom: '25px', 
+                        color: '#333',
+                        fontSize: '24px',
+                        fontWeight: '600'
+                      }}>
+                        Leave a Reply
+                      </h4>
                       <form id="comment-form" onSubmit={handleSubmit}>
                         <div className="row g-4">
                           <div className="col-lg-6">
@@ -599,6 +707,14 @@ export default function BlogDetails() {
                               value={formData.name}
                               onChange={handleChange}
                               required
+                              className="form-control"
+                              style={{
+                                width: '100%',
+                                padding: '12px 15px',
+                                border: '1px solid #ddd',
+                                borderRadius: '5px',
+                                fontSize: '14px'
+                              }}
                             />
                           </div>
                           <div className="col-lg-6">
@@ -610,6 +726,14 @@ export default function BlogDetails() {
                               value={formData.email}
                               onChange={handleChange}
                               required
+                              className="form-control"
+                              style={{
+                                width: '100%',
+                                padding: '12px 15px',
+                                border: '1px solid #ddd',
+                                borderRadius: '5px',
+                                fontSize: '14px'
+                              }}
                             />
                           </div>
                           <div className="col-12">
@@ -620,6 +744,14 @@ export default function BlogDetails() {
                               placeholder="Select Topic (Optional)"
                               value={formData.topic}
                               onChange={handleChange}
+                              className="form-control"
+                              style={{
+                                width: '100%',
+                                padding: '12px 15px',
+                                border: '1px solid #ddd',
+                                borderRadius: '5px',
+                                fontSize: '14px'
+                              }}
                             />
                             <textarea
                               id="comment"
@@ -628,11 +760,28 @@ export default function BlogDetails() {
                               value={formData.comment}
                               onChange={handleChange}
                               required
+                              className="form-control"
+                              style={{
+                                width: '100%',
+                                minHeight: '120px',
+                                padding: '12px 15px',
+                                border: '1px solid #ddd',
+                                borderRadius: '5px',
+                                fontSize: '14px',
+                                resize: 'vertical'
+                              }}
                             />
                           </div>
                           
                           {/* reCAPTCHA */}
-                          <div className="col-12">
+                          <div className="col-12" style={{ marginTop: '10px' }}>
+                            <div style={{ 
+                              marginBottom: '10px',
+                              fontSize: '14px',
+                              color: '#666'
+                            }}>
+                              Please complete the reCAPTCHA verification:
+                            </div>
                             <ReCaptcha
                               ref={recaptchaRef}
                               onVerify={handleRecaptchaVerify}
@@ -643,19 +792,32 @@ export default function BlogDetails() {
 
                           {/* Terms agreement */}
                           <div className="col-12">
-                            <div className="form-check">
-                              <label className="form-check-label" htmlFor="agree" style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="agree"
-                                name="agree"
-                                checked={formData.agree}
-                                onChange={handleChange}
-                                required
-                                  style={{marginRight: '8px'}}
-                              />
-                                <span>I agree to the <a href="/terms-of-use" target="_blank">Terms of Service</a> and <a href="/privacy-policy" target="_blank">Privacy Policy</a> *</span>
+                            <div className="form-check" style={{ marginTop: '10px' }}>
+                              <label className="form-check-label" htmlFor="agree" style={{
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                color: '#333'
+                              }}>
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  id="agree"
+                                  name="agree"
+                                  checked={formData.agree}
+                                  onChange={handleChange}
+                                  required
+                                  style={{
+                                    marginRight: '12px',
+                                    width: '18px',
+                                    height: '18px',
+                                    cursor: 'pointer'
+                                  }}
+                                />
+                                <span>
+                                  I agree to the <a href="/terms-of-use" target="_blank" style={{ color: '#007bff', textDecoration: 'none' }}>Terms of Service</a> and <a href="/privacy-policy" target="_blank" style={{ color: '#007bff', textDecoration: 'none' }}>Privacy Policy</a> *
+                                </span>
                               </label>
                             </div>
                           </div>
@@ -665,6 +827,16 @@ export default function BlogDetails() {
                               className="rts-btn btn-primary" 
                               type="submit"
                               disabled={isSubmitting}
+                              style={{
+                                padding: '12px 30px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                borderRadius: '5px',
+                                border: 'none',
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                opacity: isSubmitting ? 0.7 : 1,
+                                transition: 'all 0.3s ease'
+                              }}
                             >
                               {isSubmitting ? 'Posting...' : 'Submit Comment'}
                             </button>

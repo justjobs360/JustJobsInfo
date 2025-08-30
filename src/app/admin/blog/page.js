@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
@@ -37,6 +37,111 @@ export default function BlogManagementPage() {
   const [bannerUploadType, setBannerUploadType] = useState('url');
   const [authorUploadType, setAuthorUploadType] = useState('url');
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Editor states
+  const [editorMode, setEditorMode] = useState('visual'); // 'visual' or 'html'
+  const [editorContent, setEditorContent] = useState('');
+  const editorRef = useRef(null);
+
+     // Handle rich text editor content changes
+   const handleEditorChange = () => {
+     if (editorRef.current) {
+       const content = editorRef.current.innerHTML;
+       setEditorContent(content);
+       setFormData(prev => ({ ...prev, content }));
+     }
+   };
+   
+   // Handle keydown to prevent RTL input
+   const handleKeyDown = (e) => {
+     if (editorRef.current) {
+       // Force LTR direction on every key press
+       editorRef.current.style.direction = 'ltr';
+       editorRef.current.style.textAlign = 'left';
+       editorRef.current.style.unicodeBidi = 'normal';
+       editorRef.current.style.writingMode = 'horizontal-tb';
+     }
+   };
+   
+   // Handle paste to clean up content
+   const handlePaste = (e) => {
+     e.preventDefault();
+     const text = e.clipboardData.getData('text/plain');
+     document.execCommand('insertText', false, text);
+   };
+
+  // Handle HTML editor content changes
+  const handleHtmlChange = (e) => {
+    const htmlContent = e.target.value;
+    setFormData(prev => ({ ...prev, content: htmlContent }));
+    setEditorContent(htmlContent);
+  };
+
+     // Toggle editor mode
+   const toggleEditorMode = () => {
+     setEditorMode(prev => prev === 'visual' ? 'html' : 'visual');
+   };
+   
+   // Reset editor to fix RTL issues
+   const resetEditor = () => {
+     if (editorRef.current) {
+       // Create a new contentEditable div
+       const newEditor = document.createElement('div');
+       newEditor.contentEditable = 'true';
+       newEditor.className = 'editor-content';
+       newEditor.style.direction = 'ltr';
+       newEditor.style.textAlign = 'left';
+       newEditor.style.unicodeBidi = 'normal';
+       newEditor.style.writingMode = 'horizontal-tb';
+       newEditor.setAttribute('dir', 'ltr');
+       newEditor.setAttribute('lang', 'en');
+       newEditor.setAttribute('spellcheck', 'false');
+       
+       // Copy the content
+       newEditor.innerHTML = editorRef.current.innerHTML;
+       
+       // Replace the old editor
+       editorRef.current.parentNode.replaceChild(newEditor, editorRef.current);
+       editorRef.current = newEditor;
+       
+       // Add event listeners
+       newEditor.addEventListener('input', handleEditorChange);
+       newEditor.addEventListener('blur', handleEditorChange);
+       newEditor.addEventListener('keydown', handleKeyDown);
+       newEditor.addEventListener('paste', handlePaste);
+       newEditor.addEventListener('focus', () => {
+         newEditor.style.direction = 'ltr';
+         newEditor.style.textAlign = 'left';
+         newEditor.style.unicodeBidi = 'normal';
+         newEditor.style.writingMode = 'horizontal-tb';
+       });
+       
+       newEditor.focus();
+     }
+   };
+
+  // Rich text editor commands
+  const execCommand = (command, value = null) => {
+    document.execCommand(command, false, value);
+    editorRef.current?.focus();
+    handleEditorChange();
+  };
+
+     // Insert HTML at cursor position
+   const insertHTML = (html) => {
+     document.execCommand('insertHTML', false, html);
+     editorRef.current?.focus();
+     handleEditorChange();
+   };
+   
+   // Insert image at cursor position
+   const insertImage = () => {
+     const imageUrl = prompt('Enter image URL:');
+     if (imageUrl) {
+       const imageHTML = `<img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; margin: 15px 0;" />`;
+       insertHTML(imageHTML);
+     }
+   };
 
   // Fetch all blogs
   const fetchBlogs = async () => {
@@ -258,6 +363,8 @@ export default function BlogManagementPage() {
       bannerImg: blog.bannerImg,
       publishedDate: formattedDate
     });
+    setEditorContent(blog.content); // Set Quill content for editing
+    setEditorMode('visual'); // Set editor to visual mode for editing
     setShowAddForm(true);
   };
 
@@ -286,6 +393,8 @@ export default function BlogManagementPage() {
       bannerImg: '',
       publishedDate: ''
     });
+    setEditorContent(''); // Reset Quill content
+    setEditorMode('visual'); // Reset editor mode
     setImageUploadType('url');
     setBannerUploadType('url');
     setAuthorUploadType('url');
@@ -310,12 +419,27 @@ export default function BlogManagementPage() {
     return counts;
   };
 
-  // Initialize data
-  useEffect(() => {
-    fetchBlogs();
-    fetchCategories();
-    fetchTags();
-  }, []);
+     // Initialize data
+   useEffect(() => {
+     fetchBlogs();
+     fetchCategories();
+     fetchTags();
+   }, []);
+   
+   // Ensure editor has proper text direction
+   useEffect(() => {
+     if (editorRef.current && editorMode === 'visual') {
+       // Force left-to-right text direction on editor
+       editorRef.current.style.direction = 'ltr';
+       editorRef.current.style.textAlign = 'left';
+       editorRef.current.style.unicodeBidi = 'normal';
+       editorRef.current.style.writingMode = 'horizontal-tb';
+       
+       // Also set these attributes on the DOM element
+       editorRef.current.setAttribute('dir', 'ltr');
+       editorRef.current.setAttribute('lang', 'en');
+     }
+   }, [editorMode, showAddForm]);
 
   if (!hasPermission('manage_blog_posts')) {
     return (
@@ -657,16 +781,292 @@ export default function BlogManagementPage() {
                 />
               </div>
 
-              <div className="form-group">
+                            <div className="form-group">
                 <label>Content (HTML)</label>
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  className="form-control"
-                  rows="10"
-                  placeholder="<p>Your HTML content here...</p>"
-                />
+                <div className="editor-toggle-container">
+                  <button 
+                    className="rts-btn btn-primary"
+                    onClick={toggleEditorMode}
+                    style={{ marginBottom: '15px' }}
+                  >
+                    {editorMode === 'visual' ? '🖊️ Visual Editor' : '📝 HTML Editor'}
+                  </button>
+                  
+                  {editorMode === 'visual' ? (
+                    <div className="rich-text-editor">
+                      {/* Toolbar */}
+                      <div className="editor-toolbar">
+                        <div className="toolbar-group">
+                          <button
+                            type="button"
+                            onClick={() => execCommand('formatBlock', '<h1>')}
+                            className="rts-btn btn-border"
+                            title="Heading 1"
+                          >
+                            H1
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('formatBlock', '<h2>')}
+                            className="rts-btn btn-border"
+                            title="Heading 2"
+                          >
+                            H2
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('formatBlock', '<h3>')}
+                            className="rts-btn btn-border"
+                            title="Heading 3"
+                          >
+                            H3
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('formatBlock', '<p>')}
+                            className="rts-btn btn-border"
+                            title="Paragraph"
+                          >
+                            P
+                          </button>
+                        </div>
+                        
+                        <div className="toolbar-group">
+                          <button
+                            type="button"
+                            onClick={() => execCommand('bold')}
+                            className="rts-btn btn-border"
+                            title="Bold"
+                          >
+                            <strong>B</strong>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('italic')}
+                            className="rts-btn btn-border"
+                            title="Italic"
+                          >
+                            <em>I</em>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('underline')}
+                            className="rts-btn btn-border"
+                            title="Underline"
+                          >
+                            <u>U</u>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('strikeThrough')}
+                            className="rts-btn btn-border"
+                            title="Strikethrough"
+                          >
+                            <s>S</s>
+                          </button>
+                        </div>
+                        
+                        <div className="toolbar-group">
+                          <button
+                            type="button"
+                            onClick={() => execCommand('insertUnorderedList')}
+                            className="rts-btn btn-border"
+                            title="Bullet List"
+                          >
+                            • List
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('insertOrderedList')}
+                            className="rts-btn btn-border"
+                            title="Numbered List"
+                          >
+                            1. List
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => insertHTML('<blockquote>Quote text here</blockquote>')}
+                            className="rts-btn btn-border"
+                            title="Blockquote"
+                          >
+                            Quote
+                          </button>
+                        </div>
+                        
+                                                 <div className="toolbar-group">
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<hr>')}
+                             className="rts-btn btn-border"
+                             title="Horizontal Line"
+                           >
+                             ──
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<br>')}
+                             className="rts-btn btn-border"
+                             title="Line Break"
+                           >
+                             ↵
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('removeFormat')}
+                             className="rts-btn btn-border"
+                             title="Clear Formatting"
+                           >
+                             Clear
+                           </button>
+                         </div>
+                         
+                         <div className="toolbar-group">
+                           <button
+                             type="button"
+                             onClick={() => insertImage()}
+                             className="rts-btn btn-border"
+                             title="Insert Image"
+                           >
+                             🖼️ Image
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<div class="two-column-layout"><div class="column">Column 1 content here</div><div class="column">Column 2 content here</div></div>')}
+                             className="rts-btn btn-border"
+                             title="2 Column Layout"
+                           >
+                             2️⃣ Col
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<div class="three-column-layout"><div class="column">Column 1 content here</div><div class="column">Column 2 content here</div><div class="column">Column 3 content here</div></div>')}
+                             className="rts-btn btn-border"
+                             title="3 Column Layout"
+                           >
+                             3️⃣ Col
+                           </button>
+                         </div>
+                         
+                         <div className="toolbar-group">
+                           <button
+                             type="button"
+                             onClick={() => execCommand('justifyLeft')}
+                             className="rts-btn btn-border"
+                             title="Align Left"
+                           >
+                             ⬅️ Left
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('justifyCenter')}
+                             className="rts-btn btn-border"
+                             title="Align Center"
+                           >
+                             ↔️ Center
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('justifyRight')}
+                             className="rts-btn btn-border"
+                             title="Align Right"
+                           >
+                             ➡️ Right
+                           </button>
+                         </div>
+                         
+                         <div className="toolbar-group">
+                           <button
+                             type="button"
+                             onClick={() => execCommand('indent')}
+                             className="rts-btn btn-border"
+                             title="Indent"
+                           >
+                             ➡️ Indent
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('outdent')}
+                             className="rts-btn btn-border"
+                             title="Outdent"
+                           >
+                             ⬅️ Outdent
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<div style="background: #f0f0f0; padding: 15px; border-radius: 8px; border-left: 4px solid var(--color-primary);">Highlighted content here</div>')}
+                             className="rts-btn btn-border"
+                             title="Highlight Box"
+                           >
+                             💡 Highlight
+                           </button>
+                         </div>
+                         
+                         <div className="toolbar-group">
+                           <input
+                             type="color"
+                             onChange={(e) => execCommand('foreColor', e.target.value)}
+                             className="color-picker"
+                             title="Text Color"
+                           />
+                           <button
+                             type="button"
+                             onClick={() => execCommand('foreColor', '#000000')}
+                             className="rts-btn btn-border"
+                             title="Default Color"
+                           >
+                             🎨 Default
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('backColor', '#ffff00')}
+                             className="rts-btn btn-border"
+                             title="Highlight Text"
+                           >
+                             🟡 Highlight
+                           </button>
+                         </div>
+                      </div>
+                      
+                                             {/* Editor */}
+                       <div
+                         ref={editorRef}
+                         contentEditable="true"
+                         onInput={handleEditorChange}
+                         onBlur={handleEditorChange}
+                         onKeyDown={handleKeyDown}
+                         onPaste={handlePaste}
+                         onFocus={() => {
+                           if (editorRef.current) {
+                             editorRef.current.style.direction = 'ltr';
+                             editorRef.current.style.textAlign = 'left';
+                             editorRef.current.style.unicodeBidi = 'normal';
+                             editorRef.current.style.writingMode = 'horizontal-tb';
+                           }
+                         }}
+                         className="editor-content"
+                         style={{
+                           direction: 'ltr',
+                           textAlign: 'left',
+                           unicodeBidi: 'normal',
+                           writingMode: 'horizontal-tb'
+                         }}
+                         dir="ltr"
+                         lang="en"
+                         spellCheck="false"
+                         dangerouslySetInnerHTML={{ __html: editorContent }}
+                       />
+                    </div>
+                  ) : (
+                    <textarea
+                      name="content"
+                      value={editorContent}
+                      onChange={handleHtmlChange}
+                      className="form-control"
+                      rows="10"
+                      placeholder="<p>Your HTML content here...</p>"
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="form-actions">
@@ -1158,7 +1558,372 @@ export default function BlogManagementPage() {
           flex: 1;
         }
         
-        @media (max-width: 768px) {
+        .editor-toggle-container {
+          position: relative;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius);
+          margin-top: 10px;
+          padding: 20px;
+          background: var(--color-white);
+        }
+
+        /* Rich Text Editor Styles */
+        .rich-text-editor {
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius);
+          overflow: hidden;
+        }
+
+        .editor-toolbar {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 20px;
+          background: var(--color-white);
+          border-bottom: 1px solid var(--color-border);
+        }
+
+        .toolbar-group {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+
+        /* Use your existing button styles */
+        .editor-toolbar .rts-btn {
+          height: 40px;
+          padding: 8px 16px;
+          font-size: 14px;
+          font-weight: var(--p-medium);
+          min-width: 50px;
+          text-align: center;
+        }
+
+                 .editor-content {
+           min-height: 300px;
+           padding: 20px;
+           font-size: var(--font-size-b1);
+           line-height: var(--line-height-b1);
+           color: var(--color-body);
+           background: var(--color-white);
+           cursor: text;
+           overflow-y: auto;
+           outline: none;
+           font-family: var(--font-primary);
+           direction: ltr;
+           text-align: left;
+           unicode-bidi: normal;
+         }
+
+                 .editor-content:focus {
+           background: #fafafa;
+         }
+         
+         /* Ensure proper text direction and prevent mirroring */
+         .editor-content * {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         .editor-content p {
+           direction: ltr !important;
+           text-align: left !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         .editor-content div {
+           direction: ltr !important;
+           text-align: left !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         /* Force left-to-right for all text content */
+         .editor-content span,
+         .editor-content strong,
+         .editor-content em,
+         .editor-content u,
+         .editor-content s,
+         .editor-content h1,
+         .editor-content h2,
+         .editor-content h3,
+         .editor-content h4,
+         .editor-content h5,
+         .editor-content h6,
+         .editor-content li,
+         .editor-content blockquote {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         /* Override any inherited RTL styles */
+         .editor-content {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+           text-orientation: mixed !important;
+         }
+         
+         /* Force all content within the editor to be left-to-right */
+         .editor-content[contenteditable="true"] {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+           text-orientation: mixed !important;
+         }
+         
+         /* Ensure the editor container itself has proper direction */
+         .rich-text-editor {
+           direction: ltr !important;
+           text-align: left !important;
+         }
+         
+         /* Force all child elements to inherit left-to-right direction */
+         .rich-text-editor * {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         /* Target the actual editable content more specifically */
+         .editor-content[contenteditable="true"] * {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+           text-orientation: mixed !important;
+         }
+         
+         /* Override any browser default contentEditable styles */
+         [contenteditable="true"] {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         /* Force text input direction */
+         .editor-content[contenteditable="true"]:focus {
+           direction: ltr !important;
+           text-align: left !important;
+           unicode-bidi: normal !important;
+           writing-mode: horizontal-tb !important;
+         }
+         
+         /* Additional aggressive RTL prevention */
+         .editor-content[contenteditable="true"]::before,
+         .editor-content[contenteditable="true"]::after {
+           direction: ltr !important;
+           unicode-bidi: normal !important;
+         }
+         
+         /* Force input direction for all text nodes */
+         .editor-content[contenteditable="true"] {
+           text-align: left !important;
+           text-align-last: left !important;
+           text-justify: auto !important;
+         }
+
+        /* Use your existing typography classes */
+        .editor-content h1 {
+          font-size: var(--h1);
+          font-weight: var(--p-bold);
+          margin: 30px 0 15px 0;
+          color: var(--color-heading-1);
+          line-height: 1.3;
+        }
+
+        .editor-content h2 {
+          font-size: var(--h2);
+          font-weight: var(--p-bold);
+          margin: 25px 0 12px 0;
+          color: var(--color-heading-1);
+          line-height: 1.1;
+        }
+
+        .editor-content h3 {
+          font-size: var(--h3);
+          font-weight: var(--p-bold);
+          margin: 20px 0 10px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-content p {
+          font-size: var(--font-size-b1);
+          line-height: var(--line-height-b1);
+          margin: 15px 0;
+          color: var(--color-body);
+          font-weight: var(--p-regular);
+        }
+
+        .editor-content ul, .editor-content ol {
+          margin: 15px 0;
+          padding-left: 30px;
+        }
+
+        .editor-content li {
+          font-size: var(--font-size-b1);
+          line-height: var(--line-height-b1);
+          margin: 8px 0;
+          color: var(--color-body);
+        }
+
+        .editor-content blockquote {
+          margin: 20px 0;
+          padding: 15px 25px;
+          border-left: 4px solid var(--color-primary);
+          background: #f8f9fa;
+          font-style: italic;
+          color: var(--color-body);
+          font-size: var(--font-size-b1);
+          line-height: var(--line-height-b1);
+        }
+
+                 .editor-content hr {
+           margin: 25px 0;
+           border: none;
+           border-top: 2px solid var(--color-border);
+         }
+         
+         /* Layout Options */
+         .editor-content .two-column-layout {
+           display: grid;
+           grid-template-columns: 1fr 1fr;
+           gap: 20px;
+           margin: 20px 0;
+         }
+         
+         .editor-content .three-column-layout {
+           display: grid;
+           grid-template-columns: 1fr 1fr 1fr;
+           gap: 20px;
+           margin: 20px 0;
+         }
+         
+         .editor-content .column {
+           padding: 15px;
+           border: 1px solid var(--color-border);
+           border-radius: var(--radius);
+           background: #f8f9fa;
+         }
+         
+         /* Image Styles */
+         .editor-content img {
+           max-width: 100%;
+           height: auto;
+           border-radius: var(--radius);
+           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+         }
+         
+         /* Color Picker */
+         .color-picker {
+           width: 40px;
+           height: 40px;
+           border: 2px solid var(--color-border);
+           border-radius: var(--radius);
+           cursor: pointer;
+           background: none;
+           padding: 0;
+         }
+         
+         .color-picker::-webkit-color-swatch-wrapper {
+           padding: 0;
+         }
+         
+         .color-picker::-webkit-color-swatch {
+           border: none;
+           border-radius: var(--radius);
+         }
+         
+         /* New Design Options */
+         .editor-content .highlight-box {
+           background: #f0f0f0;
+           padding: 15px;
+           border-radius: 8px;
+           border-left: 4px solid var(--color-primary);
+           margin: 15px 0;
+         }
+         
+         .editor-content .text-highlight {
+           background: #ffff00;
+           padding: 2px 4px;
+           border-radius: 3px;
+         }
+         
+         .editor-content .indented {
+           margin-left: 20px;
+           padding-left: 15px;
+           border-left: 2px solid var(--color-border);
+         }
+         
+         .editor-content .centered {
+           text-align: center;
+         }
+         
+         .editor-content .right-aligned {
+           text-align: right;
+         }
+        
+         @media (max-width: 768px) {
+           .editor-toolbar {
+             flex-direction: column;
+             gap: 8px;
+             padding: 15px;
+           }
+           
+           .toolbar-group {
+             justify-content: center;
+           }
+           
+           .editor-toolbar .rts-btn {
+             padding: 10px 18px;
+             font-size: 14px;
+             min-width: 60px;
+           }
+           
+           .editor-content {
+             min-height: 250px;
+             padding: 15px;
+             font-size: var(--font-size-b1);
+           }
+           
+           .editor-content h1 {
+             font-size: 34px;
+           }
+           
+           .editor-content h2 {
+             font-size: 28px;
+           }
+           
+                       .editor-content h3 {
+              font-size: 24px;
+            }
+            
+            /* Mobile Layout Adjustments */
+            .editor-content .two-column-layout,
+            .editor-content .three-column-layout {
+              grid-template-columns: 1fr;
+              gap: 15px;
+            }
+            
+            .editor-content .column {
+              padding: 12px;
+            }
+            
+            .color-picker {
+              width: 35px;
+              height: 35px;
+            }
+          }
+        
+         @media (max-width: 768px) {
           .admin-header {
             flex-direction: column;
             gap: 15px;
