@@ -46,8 +46,8 @@ export default function Home() {
                                         <p className="disc">For the purposes of this Privacy Policy:</p>
                                         <ul className="disc-list">
                                             <li><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</li>
-                                            <li><strong>Affiliate</strong> means an entity that controls, is controlled by or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</li>
-                                            <li><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to justjobs.info, Lagos, Nigeria.</li>
+                                            <li><strong>Affiliate</strong> means an entity that controls, is controlled by or is under common control with a party, where &quot;control&quot; means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</li>
+                                            <li><strong>Company</strong> (referred to as either &quot;the Company&quot;, &quot;We&quot;, &quot;Us&quot; or &quot;Our&quot; in this Agreement) refers to justjobs.info, Lagos, Nigeria.</li>
                                             <li><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</li>
                                             <li><strong>Country</strong> refers to: Nigeria</li>
                                             <li><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</li>
@@ -110,7 +110,7 @@ export default function Home() {
                                         
                                         <h5 className="title mt--25 mb--10">Usage Data</h5>
                                         <p className="disc">
-                                            Usage Data is collected automatically when using the Service. Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.
+                                            Usage Data is collected automatically when using the Service. Usage Data may include information such as Your Device&apos;s Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.
                                         </p>
                                         
                                         <h4 className="title mt--30 mb--15">Tracking Technologies and Cookies</h4>
@@ -152,7 +152,7 @@ export default function Home() {
                                             The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet is 100% secure. While We strive to use commercially acceptable means to protect Your Personal Data, We cannot guarantee its absolute security.
                                         </p>
                                         
-                                        <h4 className="title mt--30 mb--15">Children's Privacy</h4>
+                                        <h4 className="title mt--30 mb--15">Children&apos;s Privacy</h4>
                                         <p className="disc">
                                             Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13.
                                         </p>

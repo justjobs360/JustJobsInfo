@@ -31,18 +31,18 @@ export default function Home() {
                                     </div>
                                     <div className="mid-content">
                                         <p className="disc">
-                                            These terms and conditions outline the rules and regulations for the use of justjobs's Website, located at https://justjobs.info.
+                                            These terms and conditions outline the rules and regulations for the use of justjobs&apos;s Website, located at https://justjobs.info.
                                         </p>
                                         <p className="disc">
                                             By accessing this website we assume you accept these terms and conditions. Do not continue to use justjobs.info if you do not agree to take all of the terms and conditions stated on this page.
                                         </p>
                                         <p className="disc">
-                                            The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and all Agreements: "Client", "You" and "Your" refers to you, the person log on this website and compliant to the Company's terms and conditions. "The Company", "Ourselves", "We", "Our" and "Us", refers to our Company. "Party", "Parties", or "Us", refers to both the Client and ourselves.
+                                            The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and all Agreements: &quot;Client&quot;, &quot;You&quot; and &quot;Your&quot; refers to you, the person log on this website and compliant to the Company&apos;s terms and conditions. &quot;The Company&quot;, &quot;Ourselves&quot;, &quot;We&quot;, &quot;Our&quot; and &quot;Us&quot;, refers to our Company. &quot;Party&quot;, &quot;Parties&quot;, or &quot;Us&quot;, refers to both the Client and ourselves.
                                         </p>
                                         
                                         <h3 className="title mt--40 mb--20">Cookies</h3>
                                         <p className="disc">
-                                            We employ the use of cookies. By accessing justjobs.info, you agreed to use cookies in agreement with the justjobs.info's Privacy Policy. Most interactive websites use cookies to let us retrieve the user's details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website.
+                                            We employ the use of cookies. By accessing justjobs.info, you agreed to use cookies in agreement with the justjobs.info&apos;s Privacy Policy. Most interactive websites use cookies to let us retrieve the user&apos;s details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website.
                                         </p>
                                         
                                         <h3 className="title mt--40 mb--20">License</h3>
