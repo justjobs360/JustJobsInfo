@@ -55,7 +55,7 @@ async function getBlogs(page = 1, limit = 6, search = '', category = '', status 
     if (category) {
       filter.category = category;
     }
-    if (status) {
+    if (status && status !== '' && status !== 'all') {
       filter.status = status;
     }
     

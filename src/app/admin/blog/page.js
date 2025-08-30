@@ -14,6 +14,7 @@ export default function BlogManagementPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const [showComments, setShowComments] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all'); // Add status filter state
   
   // Form states
   const [formData, setFormData] = useState({
@@ -41,7 +42,8 @@ export default function BlogManagementPage() {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/blogs?limit=100&status=');
+      // Fetch all blogs regardless of status by passing 'all' status parameter
+      const response = await fetch('/api/blogs?limit=1000&status=all');
       const result = await response.json();
       
       if (result.success) {
@@ -287,6 +289,25 @@ export default function BlogManagementPage() {
     setImageUploadType('url');
     setBannerUploadType('url');
     setAuthorUploadType('url');
+  };
+
+  // Filter blogs based on status
+  const getFilteredBlogs = () => {
+    if (statusFilter === 'all') {
+      return blogs;
+    }
+    return blogs.filter(blog => blog.status === statusFilter);
+  };
+
+  // Get status counts
+  const getStatusCounts = () => {
+    const counts = {
+      all: blogs.length,
+      published: blogs.filter(blog => blog.status === 'published').length,
+      draft: blogs.filter(blog => blog.status === 'draft').length,
+      archived: blogs.filter(blog => blog.status === 'archived').length
+    };
+    return counts;
   };
 
   // Initialize data
@@ -671,7 +692,80 @@ export default function BlogManagementPage() {
         {/* Blogs Table */}
         <div className="admin-table-section">
           <div className="table-header">
-            <h3>All Blogs ({blogs.length})</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3>All Blogs ({getFilteredBlogs().length} of {blogs.length} total)</h3>
+              
+              {/* Status Filter */}
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter by Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="all">All ({getStatusCounts().all})</option>
+                  <option value="published">Published ({getStatusCounts().published})</option>
+                  <option value="draft">Draft ({getStatusCounts().draft})</option>
+                  <option value="archived">Archived ({getStatusCounts().archived})</option>
+                </select>
+              </div>
+            </div>
+            
+                         {/* Status Summary */}
+             <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', alignItems: 'center' }}>
+               <span style={{ 
+                 fontSize: '12px', 
+                 padding: '4px 8px', 
+                 borderRadius: '12px',
+                 backgroundColor: '#d4edda',
+                 color: '#155724'
+               }}>
+                 📰 Published: {getStatusCounts().published}
+               </span>
+               <span style={{ 
+                 fontSize: '12px', 
+                 padding: '4px 8px', 
+                 borderRadius: '12px',
+                 backgroundColor: '#fff3cd',
+                 color: '#856404'
+               }}>
+                 📝 Draft: {getStatusCounts().draft}
+               </span>
+               <span style={{ 
+                 fontSize: '12px', 
+                 padding: '4px 8px', 
+                 borderRadius: '12px',
+                 backgroundColor: '#f8d7da',
+                 color: '#721c24'
+               }}>
+                 📁 Archived: {getStatusCounts().archived}
+               </span>
+               
+               {/* Show All Button when filter is active */}
+               {statusFilter !== 'all' && (
+                 <button
+                   onClick={() => setStatusFilter('all')}
+                   style={{
+                     padding: '4px 8px',
+                     backgroundColor: 'var(--color-primary)',
+                     color: '#fff',
+                     border: 'none',
+                     borderRadius: '12px',
+                     fontSize: '12px',
+                     cursor: 'pointer',
+                     marginLeft: '8px'
+                   }}
+                 >
+                   👁️ Show All
+                 </button>
+               )}
+             </div>
           </div>
           
           {loading ? (
@@ -700,55 +794,74 @@ export default function BlogManagementPage() {
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {blogs.map((blog) => (
-                    <tr key={blog._id}>
-                      <td>
-                        <div className="blog-title">
-                          <strong>{blog.title}</strong>
-                          <small>{blog.slug}</small>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="badge badge-secondary">{blog.category}</span>
-                      </td>
-                      <td>
-                        <span className={`badge badge-${blog.status === 'published' ? 'success' : blog.status === 'draft' ? 'warning' : 'danger'}`}>
-                          {blog.status}
-                        </span>
-                      </td>
-                      <td>{blog.author}</td>
-                      <td>{blog.views || 0}</td>
-                      <td>
-                        <button 
-                          className="btn btn-sm btn-info"
-                          onClick={() => handleViewComments(blog)}
-                        >
-                          {blog.comments?.length || 0} Comments
-                        </button>
-                      </td>
-                      <td>{blog.publishedDate ? new Date(blog.publishedDate).toLocaleDateString() : 'No date set'}</td>
-                      <td>
-                        <div className="action-buttons">
-                          <button 
-                            className="btn btn-sm btn-primary"
-                            onClick={() => handleEdit(blog)}
-                            title="Edit"
-                          >
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button 
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDelete(blog.slug)}
-                            title="Delete"
-                          >
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+                                                  <tbody>
+                   {getFilteredBlogs().length > 0 ? (
+                     getFilteredBlogs().map((blog) => (
+                       <tr key={blog._id}>
+                         <td>
+                           <div className="blog-title">
+                             <strong>{blog.title}</strong>
+                             <small>{blog.slug}</small>
+                           </div>
+                         </td>
+                         <td>
+                           <span className="badge badge-secondary">{blog.category}</span>
+                         </td>
+                         <td>
+                           <span className={`badge badge-${blog.status === 'published' ? 'success' : blog.status === 'draft' ? 'warning' : 'danger'}`}>
+                             {blog.status}
+                           </span>
+                         </td>
+                         <td>{blog.author}</td>
+                         <td>{blog.views || 0}</td>
+                         <td>
+                           <button 
+                             className="btn btn-sm btn-info"
+                             onClick={() => handleViewComments(blog)}
+                           >
+                             {blog.comments?.length || 0} Comments
+                           </button>
+                         </td>
+                         <td>{blog.publishedDate ? new Date(blog.publishedDate).toLocaleDateString() : 'No date set'}</td>
+                         <td>
+                           <div className="action-buttons">
+                             <button 
+                               className="btn btn-sm btn-primary"
+                               onClick={() => handleEdit(blog)}
+                               title="Edit"
+                             >
+                               <i className="fas fa-edit"></i>
+                             </button>
+                             <button 
+                               className="btn btn-sm btn-danger"
+                               onClick={() => handleDelete(blog.slug)}
+                               title="Delete"
+                             >
+                               <i className="fas fa-trash"></i>
+                             </button>
+                           </div>
+                         </td>
+                       </tr>
+                     ))
+                   ) : (
+                     <tr>
+                       <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                         <div style={{ fontSize: '16px', marginBottom: '8px' }}>
+                           {statusFilter === 'all' ? '📝' : statusFilter === 'published' ? '📰' : statusFilter === 'draft' ? '📝' : '📁'}
+                         </div>
+                         <div style={{ fontSize: '14px', fontWeight: '500' }}>
+                           {statusFilter === 'all' 
+                             ? 'No blogs found' 
+                             : `No ${statusFilter} blogs found`
+                           }
+                         </div>
+                         <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                           {statusFilter !== 'all' && 'Try changing the status filter or create a new blog.'}
+                         </div>
+                       </td>
+                     </tr>
+                   )}
+                 </tbody>
               </table>
             </div>
           )}
