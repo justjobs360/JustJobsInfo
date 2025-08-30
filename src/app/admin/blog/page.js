@@ -41,34 +41,19 @@ export default function BlogManagementPage() {
   // Editor states
   const [editorMode, setEditorMode] = useState('visual'); // 'visual' or 'html'
   const [editorContent, setEditorContent] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
   const editorRef = useRef(null);
 
      // Handle rich text editor content changes
-   const handleEditorChange = () => {
+   const handleEditorChange = (e) => {
      if (editorRef.current) {
-       const content = editorRef.current.innerHTML;
+       const content = e ? e.target.value : editorRef.current.value;
        setEditorContent(content);
        setFormData(prev => ({ ...prev, content }));
      }
    };
    
-   // Handle keydown to prevent RTL input
-   const handleKeyDown = (e) => {
-     if (editorRef.current) {
-       // Force LTR direction on every key press
-       editorRef.current.style.direction = 'ltr';
-       editorRef.current.style.textAlign = 'left';
-       editorRef.current.style.unicodeBidi = 'normal';
-       editorRef.current.style.writingMode = 'horizontal-tb';
-     }
-   };
-   
-   // Handle paste to clean up content
-   const handlePaste = (e) => {
-     e.preventDefault();
-     const text = e.clipboardData.getData('text/plain');
-     document.execCommand('insertText', false, text);
-   };
+
 
   // Handle HTML editor content changes
   const handleHtmlChange = (e) => {
@@ -82,56 +67,118 @@ export default function BlogManagementPage() {
      setEditorMode(prev => prev === 'visual' ? 'html' : 'visual');
    };
    
-   // Reset editor to fix RTL issues
-   const resetEditor = () => {
-     if (editorRef.current) {
-       // Create a new contentEditable div
-       const newEditor = document.createElement('div');
-       newEditor.contentEditable = 'true';
-       newEditor.className = 'editor-content';
-       newEditor.style.direction = 'ltr';
-       newEditor.style.textAlign = 'left';
-       newEditor.style.unicodeBidi = 'normal';
-       newEditor.style.writingMode = 'horizontal-tb';
-       newEditor.setAttribute('dir', 'ltr');
-       newEditor.setAttribute('lang', 'en');
-       newEditor.setAttribute('spellcheck', 'false');
-       
-       // Copy the content
-       newEditor.innerHTML = editorRef.current.innerHTML;
-       
-       // Replace the old editor
-       editorRef.current.parentNode.replaceChild(newEditor, editorRef.current);
-       editorRef.current = newEditor;
-       
-       // Add event listeners
-       newEditor.addEventListener('input', handleEditorChange);
-       newEditor.addEventListener('blur', handleEditorChange);
-       newEditor.addEventListener('keydown', handleKeyDown);
-       newEditor.addEventListener('paste', handlePaste);
-       newEditor.addEventListener('focus', () => {
-         newEditor.style.direction = 'ltr';
-         newEditor.style.textAlign = 'left';
-         newEditor.style.unicodeBidi = 'normal';
-         newEditor.style.writingMode = 'horizontal-tb';
-       });
-       
-       newEditor.focus();
-     }
-   };
+   
 
-  // Rich text editor commands
+  // Rich text editor commands for textarea
   const execCommand = (command, value = null) => {
-    document.execCommand(command, false, value);
-    editorRef.current?.focus();
-    handleEditorChange();
+    if (!editorRef.current) return;
+    
+    const textarea = editorRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    
+    let replacement = '';
+    
+    switch (command) {
+      case 'formatBlock':
+        if (value === '<h1>') {
+          replacement = `\n# ${selectedText}`;
+        } else if (value === '<h2>') {
+          replacement = `\n## ${selectedText}`;
+        } else if (value === '<h3>') {
+          replacement = `\n### ${selectedText}`;
+        } else if (value === '<p>') {
+          replacement = `\n${selectedText}`;
+        }
+        break;
+      case 'bold':
+        replacement = `**${selectedText}**`;
+        break;
+      case 'italic':
+        replacement = `*${selectedText}*`;
+        break;
+      case 'underline':
+        replacement = `__${selectedText}__`;
+        break;
+      case 'strikeThrough':
+        replacement = `~~${selectedText}~~`;
+        break;
+      case 'insertUnorderedList':
+        replacement = `\n• ${selectedText}`;
+        break;
+      case 'insertOrderedList':
+        replacement = `\n1. ${selectedText}`;
+        break;
+      case 'createLink':
+        const url = prompt('Enter URL:');
+        if (url) {
+          replacement = `[${selectedText}](${url})`;
+        } else {
+          return;
+        }
+        break;
+      case 'justifyLeft':
+        replacement = `\n${selectedText}`;
+        break;
+      case 'justifyCenter':
+        replacement = `\n<div style="text-align: center;">${selectedText}</div>`;
+        break;
+      case 'justifyRight':
+        replacement = `\n<div style="text-align: right;">${selectedText}`;
+        break;
+      case 'indent':
+        replacement = `\n  ${selectedText}`;
+        break;
+      case 'outdent':
+        replacement = selectedText.replace(/^\n  /, '\n');
+        break;
+      case 'backColor':
+        replacement = `<span style="background-color: ${value};">${selectedText}</span>`;
+        break;
+      case 'foreColor':
+        replacement = `<span style="color: ${value};">${selectedText}</span>`;
+        break;
+      default:
+        return;
+    }
+    
+    // Replace the selected text
+    const newValue = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+    textarea.value = newValue;
+    
+    // Update state
+    setEditorContent(newValue);
+    setFormData(prev => ({ ...prev, content: newValue }));
+    
+    // Set cursor position after the inserted content
+    const newCursorPos = start + replacement.length;
+    textarea.setSelectionRange(newCursorPos, newCursorPos);
+    
+    textarea.focus();
   };
 
      // Insert HTML at cursor position
    const insertHTML = (html) => {
-     document.execCommand('insertHTML', false, html);
-     editorRef.current?.focus();
-     handleEditorChange();
+     if (!editorRef.current) return;
+     
+     const textarea = editorRef.current;
+     const start = textarea.selectionStart;
+     const end = textarea.selectionEnd;
+     
+     // Insert HTML at cursor position
+     const newValue = textarea.value.substring(0, start) + html + textarea.value.substring(end);
+     textarea.value = newValue;
+     
+     // Update state
+     setEditorContent(newValue);
+     setFormData(prev => ({ ...prev, content: newValue }));
+     
+     // Set cursor position after the inserted HTML
+     const newCursorPos = start + html.length;
+     textarea.setSelectionRange(newCursorPos, newCursorPos);
+     
+     textarea.focus();
    };
    
    // Insert image at cursor position
@@ -363,8 +410,9 @@ export default function BlogManagementPage() {
       bannerImg: blog.bannerImg,
       publishedDate: formattedDate
     });
-    setEditorContent(blog.content); // Set Quill content for editing
+    setEditorContent(blog.content); // Set editor content for editing
     setEditorMode('visual'); // Set editor to visual mode for editing
+    setShowPreview(false); // Reset preview mode when editing
     setShowAddForm(true);
   };
 
@@ -393,8 +441,9 @@ export default function BlogManagementPage() {
       bannerImg: '',
       publishedDate: ''
     });
-    setEditorContent(''); // Reset Quill content
+    setEditorContent(''); // Reset editor content
     setEditorMode('visual'); // Reset editor mode
+    setShowPreview(false); // Reset preview mode
     setImageUploadType('url');
     setBannerUploadType('url');
     setAuthorUploadType('url');
@@ -426,20 +475,7 @@ export default function BlogManagementPage() {
      fetchTags();
    }, []);
    
-   // Ensure editor has proper text direction
-   useEffect(() => {
-     if (editorRef.current && editorMode === 'visual') {
-       // Force left-to-right text direction on editor
-       editorRef.current.style.direction = 'ltr';
-       editorRef.current.style.textAlign = 'left';
-       editorRef.current.style.unicodeBidi = 'normal';
-       editorRef.current.style.writingMode = 'horizontal-tb';
-       
-       // Also set these attributes on the DOM element
-       editorRef.current.setAttribute('dir', 'ltr');
-       editorRef.current.setAttribute('lang', 'en');
-     }
-   }, [editorMode, showAddForm]);
+
 
   if (!hasPermission('manage_blog_posts')) {
     return (
@@ -866,32 +902,101 @@ export default function BlogManagementPage() {
                           </button>
                         </div>
                         
-                        <div className="toolbar-group">
-                          <button
-                            type="button"
-                            onClick={() => execCommand('insertUnorderedList')}
-                            className="rts-btn btn-border"
-                            title="Bullet List"
-                          >
-                            • List
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => execCommand('insertOrderedList')}
-                            className="rts-btn btn-border"
-                            title="Numbered List"
-                          >
-                            1. List
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => insertHTML('<blockquote>Quote text here</blockquote>')}
-                            className="rts-btn btn-border"
-                            title="Blockquote"
-                          >
-                            Quote
-                          </button>
-                        </div>
+                                                 <div className="toolbar-group">
+                           <button
+                             type="button"
+                             onClick={() => execCommand('insertUnorderedList')}
+                             className="rts-btn btn-border"
+                             title="Bullet List"
+                           >
+                             • List
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('insertOrderedList')}
+                             className="rts-btn btn-border"
+                             title="Numbered List"
+                           >
+                             1. List
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => execCommand('createLink')}
+                             className="rts-btn btn-border"
+                             title="Create Link"
+                           >
+                             🔗 Link
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<blockquote>Quote text here</blockquote>')}
+                             className="rts-btn btn-border"
+                             title="Blockquote"
+                           >
+                             Quote
+                           </button>
+                           <button
+                             type="button"
+                             onClick={insertImage}
+                             className="rts-btn btn-border"
+                             title="Insert Image"
+                           >
+                             🖼️ Image
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => insertHTML('<hr>')}
+                             className="rts-btn btn-border"
+                             title="Horizontal Rule"
+                           >
+                             ➖ HR
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => {
+                               const textarea = editorRef.current;
+                               if (textarea) {
+                                 const start = textarea.selectionStart;
+                                 const end = textarea.selectionEnd;
+                                 const selectedText = textarea.value.substring(start, end);
+                                 // Remove common markdown formatting
+                                 const cleanText = selectedText
+                                   .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
+                                   .replace(/\*(.*?)\*/g, '$1') // Italic
+                                   .replace(/__(.*?)__/g, '$1') // Underline
+                                   .replace(/~~(.*?)~~/g, '$1') // Strikethrough
+                                   .replace(/^#+\s*/gm, '') // Headings
+                                   .replace(/^[•\-\d\.]\s*/gm, '') // Lists
+                                   .replace(/^>\s*/gm, ''); // Blockquotes
+                                 
+                                 const newValue = textarea.value.substring(0, start) + cleanText + textarea.value.substring(end);
+                                 textarea.value = newValue;
+                                 setEditorContent(newValue);
+                                 setFormData(prev => ({ ...prev, content: newValue }));
+                                 
+                                 // Set cursor position
+                                 const newCursorPos = start + cleanText.length;
+                                 textarea.setSelectionRange(newCursorPos, newCursorPos);
+                                 textarea.focus();
+                               }
+                             }}
+                             className="rts-btn btn-border"
+                             title="Clear Formatting"
+                           >
+                             🧹 Clear
+                           </button>
+                           <button
+                             type="button"
+                             onClick={() => {
+                               // Toggle preview mode
+                               setShowPreview(prev => !prev);
+                             }}
+                             className="rts-btn btn-primary"
+                             title="Toggle Preview"
+                           >
+                             👁️ {showPreview ? 'Hide' : 'Show'} Preview
+                           </button>
+                         </div>
                         
                                                  <div className="toolbar-group">
                            <button
@@ -1027,34 +1132,66 @@ export default function BlogManagementPage() {
                          </div>
                       </div>
                       
-                                             {/* Editor */}
-                       <div
-                         ref={editorRef}
-                         contentEditable="true"
-                         onInput={handleEditorChange}
-                         onBlur={handleEditorChange}
-                         onKeyDown={handleKeyDown}
-                         onPaste={handlePaste}
-                         onFocus={() => {
-                           if (editorRef.current) {
-                             editorRef.current.style.direction = 'ltr';
-                             editorRef.current.style.textAlign = 'left';
-                             editorRef.current.style.unicodeBidi = 'normal';
-                             editorRef.current.style.writingMode = 'horizontal-tb';
-                           }
-                         }}
-                         className="editor-content"
-                         style={{
-                           direction: 'ltr',
-                           textAlign: 'left',
-                           unicodeBidi: 'normal',
-                           writingMode: 'horizontal-tb'
-                         }}
-                         dir="ltr"
-                         lang="en"
-                         spellCheck="false"
-                         dangerouslySetInnerHTML={{ __html: editorContent }}
-                       />
+                                             {/* Visual Editor - Using textarea to avoid mirroring issues */}
+                      <textarea
+                        ref={editorRef}
+                        value={editorContent}
+                        onChange={handleEditorChange}
+                        className="form-control editor-content"
+                        rows="15"
+                        placeholder="Type your content here... Use the toolbar buttons above to format your text."
+                        style={{
+                          direction: 'ltr',
+                          textAlign: 'left',
+                          unicodeBidi: 'normal',
+                          writingMode: 'horizontal-tb',
+                          fontFamily: 'var(--font-primary)',
+                          fontSize: 'var(--font-size-b1)',
+                          lineHeight: 'var(--line-height-b1)',
+                          color: 'var(--color-body)',
+                          backgroundColor: 'var(--color-white)',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 'var(--radius)',
+                          padding: '20px',
+                          resize: 'vertical',
+                          minHeight: '400px'
+                        }}
+                      />
+                      
+                      {/* Preview Mode */}
+                      {showPreview && (
+                        <div style={{ 
+                          marginTop: '20px', 
+                          padding: '20px', 
+                          border: '1px solid var(--color-border)', 
+                          borderRadius: 'var(--radius)',
+                          backgroundColor: '#f8f9fa'
+                        }}>
+                          <h5 style={{ marginBottom: '15px', color: '#333' }}>Preview:</h5>
+                          <div 
+                            dangerouslySetInnerHTML={{ 
+                              __html: editorContent
+                                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+                                .replace(/__(.*?)__/g, '<u>$1</u>') // Underline
+                                .replace(/~~(.*?)~~/g, '<s>$1</s>') // Strikethrough
+                                .replace(/^# (.*$)/gm, '<h1>$1</h1>') // H1
+                                .replace(/^## (.*$)/gm, '<h2>$1</h2>') // H2
+                                .replace(/^### (.*$)/gm, '<h3>$1</h3>') // H3
+                                .replace(/^• (.*$)/gm, '<li>$1</li>') // Bullet list
+                                .replace(/^1\. (.*$)/gm, '<li>$1</li>') // Numbered list
+                                .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>') // Blockquote
+                                .replace(/\n/g, '<br>') // Line breaks
+                            }}
+                            style={{
+                              fontFamily: 'var(--font-primary)',
+                              fontSize: 'var(--font-size-b1)',
+                              lineHeight: 'var(--line-height-b1)',
+                              color: 'var(--color-body)'
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <textarea
