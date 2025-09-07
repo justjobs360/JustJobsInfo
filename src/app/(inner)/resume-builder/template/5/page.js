@@ -419,6 +419,9 @@ export default function ResumeEditorPage({ params }) {
         return;
       }
 
+      // Track template download
+      try { fetch('/api/admin/resume-templates/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ templateId: 5 }) }); } catch (_) {}
+
       // Download the DOCX file
       const url = URL.createObjectURL(docxBlob);
       const link = document.createElement('a');
@@ -442,6 +445,9 @@ export default function ResumeEditorPage({ params }) {
         alert('Error generating DOCX file. Please try again.');
       return;
     }
+
+      // Track template download
+      try { fetch('/api/admin/resume-templates/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ templateId: 5 }) }); } catch (_) {}
 
       // Show loading state
       const pdfButton = document.querySelector('button[onclick*="handleDownloadPDF"]');

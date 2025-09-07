@@ -75,7 +75,13 @@ const AdminLayout = ({ children }) => {
             icon: '📈',
             permission: ADMIN_PERMISSIONS.VIEW_ANALYTICS
         },
-        
+        {
+            name: 'Resume Templates',
+            href: '/admin/resume/templates',
+            icon: '📄',
+            permission: ADMIN_PERMISSIONS.MANAGE_CONTENT
+        },
+
         // Important Links Management (for both super admin and admin)
         {
             name: 'Important Links',

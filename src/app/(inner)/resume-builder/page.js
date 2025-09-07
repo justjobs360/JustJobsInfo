@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import BackToTop from "@/components/common/BackToTop";
@@ -23,8 +23,7 @@ export default function ResumeBuilderPage() {
         'Premium'
     ];
 
-    // Mock templates data - in production, this would come from your database
-    const templates = [
+    const [templates, setTemplates] = useState([
         {
             id: 1,
             title: "Harvard Professional",
@@ -533,7 +532,37 @@ export default function ResumeBuilderPage() {
                 </div>
             `
         }
-    ];
+    ]);
+
+    // Load templates from admin API and filter by active
+    useEffect(() => {
+        let isMounted = true;
+        async function loadTemplates() {
+            try {
+                const res = await fetch('/api/admin/resume-templates');
+                const json = await res.json();
+                if (json?.success && Array.isArray(json.data)) {
+                    const activeTemplates = json.data
+                        .filter(t => t.status === 'active')
+                        .map(t => ({
+                            id: t.id,
+                            title: t.name,
+                            category: (t.category || '').toLowerCase(),
+                            filterCategories: (t.tags || []).map(x => String(x).toLowerCase()),
+                            tags: t.tags || [],
+                            thumbnail: t.imageUrl,
+                        }));
+                    if (isMounted && activeTemplates.length > 0) {
+                        setTemplates(activeTemplates);
+                    }
+                }
+            } catch (_) {
+                // silently fall back to built-in list
+            }
+        }
+        loadTemplates();
+        return () => { isMounted = false; };
+    }, []);
 
     // Filter logic - show templates based on selected category
     const filteredTemplates = activeFilter === 'All templates'

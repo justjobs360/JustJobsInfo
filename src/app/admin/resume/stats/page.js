@@ -232,8 +232,8 @@ export default function ResumeStatsPage() {
                 </div>
 
                 {/* Tab Navigation */}
-                <div style={{ marginBottom: '24px', borderBottom: '1px solid #e9ecef' }}>
-                    <div style={{ display: 'flex', gap: '0' }}>
+                <div className="admin-tabs">
+                    <div className="tab-list-scroll">
                         <button
                             onClick={() => setActiveTab('stats')}
                             style={{
@@ -479,7 +479,7 @@ export default function ResumeStatsPage() {
                             <>
                                 {/* CV Table */}
                                 <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e9ecef', overflow: 'hidden' }}>
-                                    <div style={{ overflowX: 'auto' }}>
+                                    <div className="table-responsive">
                                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                             <thead style={{ background: '#f8f9fa' }}>
                                                 <tr>
