@@ -1,14 +1,19 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
-import HeaderOne from "@/components/header/HeaderOne";
-import CtaFour from "@/components/cta/CtaFour";
+import HeaderTwo from "@/components/header/HeaderTwo";
 import "../legal-pages.css";
 
 export default function Home() {
     return (
-        <div className='#'>
-            <HeaderOne />
+        <div>
+            <HeaderTwo />
+
+            <div className="container-large">
+                {/* banner area for consistent spacing with site styles */}
+                <div className="service-single-area-banner bg_image jarallax" data-jarallax="1.5"></div>
+            </div>
+
             <div>
                 <div className="service-area-details-wrapper legal-page">
                     <div className="container">
@@ -106,7 +111,6 @@ export default function Home() {
                 </div>
             </div>
 
-            <CtaFour />
             <FooterOne />
             <BackToTop />
         </div>

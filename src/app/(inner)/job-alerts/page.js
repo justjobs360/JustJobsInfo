@@ -24,7 +24,7 @@ export default function JobAlertsPage() {
     remoteOnly: false,
     employmentTypes: ['Full-time', 'Part-time', 'Contract'],
     seniority: ['Entry', 'Mid', 'Senior', 'Executive'],
-    frequency: 'immediate'
+    frequency: 'daily'
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -357,26 +357,12 @@ export default function JobAlertsPage() {
                                 </label>
                               </div>
                             </div>
-                            <div className="col-md-6 mb-3">
-                              <label htmlFor="frequency" className="form-label">Alert Frequency</label>
-                              <select
-                                className="form-select"
-                                id="frequency"
-                                name="frequency"
-                                value={subscriptionForm.frequency}
-                                onChange={handleInputChange}
-                              >
-                                <option value="immediate">Immediate (as soon as jobs are posted)</option>
-                                <option value="daily">Daily digest</option>
-                                <option value="weekly">Weekly digest</option>
-                              </select>
-                            </div>
                           </div>
 
                           <div className="d-grid">
                             <button
                               type="submit"
-                              className="btn btn-primary btn-lg"
+                              className="rts-btn btn-primary btn-lg"
                               disabled={isLoading}
                             >
                               {isLoading ? 'Subscribing...' : 'Subscribe to Job Alerts'}
@@ -392,7 +378,7 @@ export default function JobAlertsPage() {
                             <ul className="mb-0 mt-2">
                               <li><strong>Keywords:</strong> {subscriptionForm.keywords || 'None specified'}</li>
                               <li><strong>Locations:</strong> {subscriptionForm.locations || 'Any location'}</li>
-                              <li><strong>Frequency:</strong> {subscriptionForm.frequency}</li>
+                              {/* Frequency omitted from UI */}
                               <li><strong>Remote only:</strong> {subscriptionForm.remoteOnly ? 'Yes' : 'No'}</li>
                             </ul>
                           </div>
@@ -477,7 +463,7 @@ export default function JobAlertsPage() {
                                       </div>
                                     </div>
                                     <a 
-                                      href={job.url || '#'} 
+                                      href={job.url || `/job-listing?job=${encodeURIComponent(job.id)}`} 
                                       target="_blank" 
                                       rel="noopener noreferrer" 
                                       className="rts-btn btn-primary btn-sm job-alerts-view-btn"

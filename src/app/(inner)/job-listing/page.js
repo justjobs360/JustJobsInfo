@@ -198,10 +198,11 @@ export default function JobListingPage() {
     };
 
     const formatSalary = (min, max) => {
+        const fmt = (v) => (Number(v) / 1000).toFixed(1);
         if (!min && !max) return "Salary not specified";
-        if (min && max) return `$${(min/1000)}k - $${(max/1000)}k`;
-        if (min) return `$${(min/1000)}k+`;
-        return `Up to $${(max/1000)}k`;
+        if (min && max) return `$${fmt(min)}k - $${fmt(max)}k`;
+        if (min) return `$${fmt(min)}k+`;
+        return `Up to $${fmt(max)}k`;
     };
 
     const getSalaryEstimate = async (jobTitle, location) => {
@@ -872,7 +873,7 @@ export default function JobListingPage() {
                                                     {/* Shareable Link */}
                                                     <div className="share-link-right">
                                                         <a
-                                                            href={`${typeof window !== 'undefined' ? window.location.origin : ''}/job-listing?job=${job.id}`}
+                                                            href={`${typeof window !== 'undefined' ? window.location.origin : ''}/job-listing?job=${job.id}&title=${encodeURIComponent((job.job_title||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]+/g,''))}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="rts-btn btn-border btn-sm"

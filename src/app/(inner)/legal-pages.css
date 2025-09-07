@@ -1,4 +1,15 @@
 /* Legal pages styling - enhances existing typography without overriding */
+.legal-page {
+    padding-top: 110px; /* prevent content from sliding under fixed header */
+}
+
+@media (max-width: 992px) {
+    .legal-page { padding-top: 90px; }
+}
+
+@media (max-width: 576px) {
+    .legal-page { padding-top: 70px; }
+}
 .legal-page h3.title {
     margin-top: 2.5rem;
     margin-bottom: 1rem;

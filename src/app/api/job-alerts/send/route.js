@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import JobAlertService from '@/utils/jobAlertService';
 import JobMatchingService from '@/utils/jobMatchingService';
+import { fetchCombinedJobsForSubscriber } from '@/utils/jobAlertsFetcher';
 import BrevoService from '@/utils/brevoService';
 
 export async function POST(request) {
@@ -86,18 +87,8 @@ export async function POST(request) {
             }
           }
 
-          // Find matching jobs for this subscriber
-          const matchingResult = await jobMatchingService.getRecentJobsForUser(subscriber, 20);
-          
-          if (!matchingResult.success) {
-            results.errors.push({
-              email: subscriber.email,
-              error: `Failed to find matching jobs: ${matchingResult.error}`
-            });
-            continue;
-          }
-
-          const matchingJobs = matchingResult.jobs;
+          // Fetch combined jobs (admin + external via cached search)
+          const matchingJobs = await fetchCombinedJobsForSubscriber(request.nextUrl.origin, subscriber, 20);
 
           // Skip if no matching jobs found
           if (matchingJobs.length === 0) {

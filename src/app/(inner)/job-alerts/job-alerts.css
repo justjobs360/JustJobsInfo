@@ -266,132 +266,66 @@
   }
 }
 
-/* Form Switch Customization */
-.form-check-input:checked {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+/* Form elements sizing (subscription form) */
+.alerts-subscription-section .form-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-heading-1);
+  padding: 0;
 }
 
-.form-check-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 0.2rem rgba(26, 54, 93, 0.25);
-} 
+.alerts-subscription-section .form-control,
+.alerts-subscription-section .form-select {
+  height: 56px;
+  padding: 14px 18px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #e4e7ec;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+}
 
-/* Custom Switch Styles */
-.custom-switch {
+.alerts-subscription-section textarea.form-control {
+  height: auto;
+  min-height: 120px;
+}
+
+.alerts-subscription-section .form-text {
+  font-size: 16px;
+  color: var(--color-body);
+}
+
+/* Primary action button */
+.alerts-subscription-section .btn-primary.btn-lg {
+  font-size: 16px;
+  line-height: 1.25;
+  padding: 18px 26px;
+  border-radius: 10px;
+  min-width: 260px;
+  margin: 8px auto 0;
   display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  user-select: none;
-}
-.custom-switch-input {
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  margin: 0;
-  z-index: 1;
-}
-.custom-switch-slider {
-  width: 44px;
-  height: 24px;
-  background: #e9ecef;
-  border-radius: 24px;
-  position: relative;
-  transition: background 0.3s;
-  display: inline-block;
-}
-.custom-switch-slider:before {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: 4px;
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  transition: transform 0.3s;
-}
-.custom-switch-input:checked + .custom-switch-slider {
-  background: var(--color-primary, #2563eb);
-}
-.custom-switch-input:checked + .custom-switch-slider:before {
-  transform: translateX(20px);
-}
-.custom-switch-label {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #444;
-  margin-left: 8px;
+  justify-content: center;
 }
 
-@media (max-width: 576px) {
-  .custom-switch-slider {
-    width: 36px;
-    height: 20px;
-  }
-  .custom-switch-slider:before {
-    width: 12px;
-    height: 12px;
-    left: 4px;
-    top: 4px;
-  }
-  .custom-switch-input:checked + .custom-switch-slider:before {
-    transform: translateX(12px);
-  }
-  .custom-switch-label {
-    font-size: 0.95rem;
-  }
-} 
+/* Checkbox alignment */
+.alerts-subscription-section .form-check-input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+}
 
-/* Hide any stray checkboxes in the alerts toggle section except our custom one */
-.alerts-toggle-section input[type="checkbox"]:not(.custom-switch-input) {
+.alerts-subscription-section .form-check-label {
+  font-size: 16px;
+}
+
+/* Remove theme's duplicate pseudo checkboxes inside labels */
+.alerts-subscription-section .form-check-label::before,
+.alerts-subscription-section .form-check-label::after {
   display: none !important;
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  position: absolute !important;
-  left: -9999px !important;
-} 
-
-/* Force override all global checkbox styles in job alerts toggle section */
-.alerts-toggle-section input[type="checkbox"] {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  position: absolute !important;
-  left: -9999px !important;
-  pointer-events: none !important;
-  z-index: 1;
+  content: none !important;
 }
-
-/* Restore our custom switch input */
-.alerts-toggle-section .custom-switch-input {
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  opacity: 0 !important;
-  pointer-events: auto !important;
-  margin: 0 !important;
-  z-index: 2;
-} 
 
 .job-alerts-view-btn:hover {
   color: #111 !important;
