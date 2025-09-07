@@ -374,7 +374,7 @@ export default function JobAlertsPage() {
                         <div className="subscription-management">
                           <div className="alert alert-success mb-4">
                             <h5 className="alert-heading">✓ Subscribed to Job Alerts</h5>
-                            <p className="mb-0">You're receiving job alerts for:</p>
+                            <p className="mb-0">You&apos;re receiving job alerts for:</p>
                             <ul className="mb-0 mt-2">
                               <li><strong>Keywords:</strong> {subscriptionForm.keywords || 'None specified'}</li>
                               <li><strong>Locations:</strong> {subscriptionForm.locations || 'Any location'}</li>
