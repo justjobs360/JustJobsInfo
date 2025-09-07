@@ -135,8 +135,8 @@ function FooterOne() {
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/success-stories"
-                                                    style={isActive('/success-stories') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/#testimonials"
+                                                    style={isActive('/') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Success Stories
                                                 </Link>
@@ -245,8 +245,8 @@ function FooterOne() {
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/support"
-                                                    style={isActive('/support') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/contact"
+                                                    style={isActive('/contact') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Help & Support
                                                 </Link>
@@ -278,12 +278,12 @@ function FooterOne() {
                                 <div className="social-copyright-area">
                                     <ul>
                                         <li aria-label="Visit our Facebook page">
-                                            <Link href="/#">
+                                            <Link href="https://www.facebook.com/justjobsinfos/" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-facebook-f" />
                                             </Link>
                                         </li>
                                         <li aria-label="Follow us on X">
-                                            <Link href="/#">
+                                            <Link href="https://x.com/justjobs_info" target="_blank" rel="noopener noreferrer">
                                                 <Image src="/xlogo.png" alt="Follow us on X" width={40} height={40} />
                                             </Link>
                                         </li>
@@ -293,7 +293,7 @@ function FooterOne() {
                                             </Link>
                                         </li>
                                         <li aria-label="Connect with us on LinkedIn">
-                                            <Link href="/#">
+                                            <Link href="https://www.linkedin.com/company/justjobsng-com/" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-linkedin" />
                                             </Link>
                                         </li>

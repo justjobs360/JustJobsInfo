@@ -10,10 +10,7 @@ function Wedo() {
                         <div className="col-lg-12">
                             <div className="what-we-do-wrapper-about">
                                 <p className="disc">
-                                    Luminous is a leading IT solutions company that provides
-                                    innovative technology services to businesses of all sizes. We
-                                    specialize in cloud computing, cybersecurity, data analytics, and
-                                    custom software development.
+                                JustJobs.Info provides essential tools and resources to help job seekers succeed in their career journey. We offer professionally curated job postings tailored to match you with the best opportunities.
                                 </p>
                             </div>
                         </div>
@@ -27,10 +24,9 @@ function Wedo() {
                             <div className="what-we-do-main-wrapper">
                                 <h5 className="title">What we do?</h5>
                                 <p className="disc">
-                                    We bring together all the necessary technology and services to
-                                    help our clients solve their business problems.
+                                We bring together the necessary tools to help you along your career path
                                 </p>
-                                <a href="#" className="rts-btn btn-border btn-bold">
+                                <a href="/login" className="rts-btn btn-border btn-bold">
                                     Login
                                     <img src="assets/images/service/icons/13.svg" alt="arrow" />
                                 </a>
@@ -44,10 +40,9 @@ function Wedo() {
                             <div className="what-we-do-main-wrapper">
                                 <h5 className="title">Our Career</h5>
                                 <p className="disc">
-                                    We bring together all the necessary technology and services to
-                                    help our clients solve their business problems.
+                                We foster a culture where creative thinking and fresh perspectives are encouraged.
                                 </p>
-                                <a href="#" className="rts-btn btn-border btn-bold">
+                                <a href="/career" className="rts-btn btn-border btn-bold">
                                     Career
                                     <img src="assets/images/service/icons/13.svg" alt="arrow" />
                                 </a>

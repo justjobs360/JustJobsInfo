@@ -230,18 +230,21 @@ export default function BlogDetails() {
                       <div className="col-lg-6 col-md-12">
                         <div className="details-share">
                           <h6>Share:</h6>
-                          <button>
-                            <i className="fab fa-facebook-f" />
-                          </button>
-                          <button>
-                            <i className="fab fa-twitter" />
-                          </button>
-                          <button>
-                            <i className="fab fa-instagram" />
-                          </button>
-                          <button>
-                            <i className="fab fa-linkedin-in" />
-                          </button>
+                          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <button>
+                              <i className="fab fa-facebook-f" />
+                            </button>
+                          </a>
+                          <a href={`https://x.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(blogPost?.title || '')}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <button>
+                              <i className="fab fa-twitter" />
+                            </button>
+                          </a>
+                          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <button>
+                              <i className="fab fa-linkedin-in" />
+                            </button>
+                          </a>
                         </div>
                       </div>
                     </div>

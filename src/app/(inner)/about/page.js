@@ -11,7 +11,7 @@ import ServiceSix from "@/components/services/ServiceSix";
 import PricingFour from "@/components/pricing/PricingFour";
 import TestimonialsThree from "@/components/testimonials/TestimonialsThree";
 import BrandTwo from "@/components/brand/BrandTwo";
-import CtaFour from "@/components/cta/CtaFour";
+import Ctaabout from "@/components/cta/Ctaabout";
 import DynamicMetaTags from "@/components/common/DynamicMetaTags";
 
 export default function About() {
@@ -27,7 +27,7 @@ export default function About() {
             <PricingFour />
             <BrandTwo />
             <TestimonialsThree />
-            <CtaFour />
+            <Ctaabout />
             <FooterOne />
             <BackToTop />
         </div>

@@ -213,17 +213,17 @@ function SideBar({ isSidebarOpen, toggleSidebar }) {
           <div className="rts-social-border-area right-sidebar mt--80">
             <ul>
               <li>
-                <Link href="#" aria-label="social link" data-description="social">
+                <Link href="https://www.facebook.com/justjobsinfos/" target="_blank" rel="noopener noreferrer" aria-label="social link" data-description="social">
                   <i className="fa-brands fa-facebook-f" />
                 </Link>
               </li>
               <li>
-                <Link href="#" aria-label="Follow us on X" data-description="social">
+                <Link href="https://x.com/justjobs_info" target="_blank" rel="noopener noreferrer" aria-label="Follow us on X" data-description="social">
                   <i className="fa-brands fa-x-twitter" />
                 </Link>
               </li>
               <li>
-                <Link href="#" aria-label="social link" data-description="social">
+                <Link href="https://www.linkedin.com/company/justjobsng-com/" target="_blank" rel="noopener noreferrer" aria-label="social link" data-description="social">
                   <i className="fa-brands fa-linkedin-in" />
                 </Link>
               </li>

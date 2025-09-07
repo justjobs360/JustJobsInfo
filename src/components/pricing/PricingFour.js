@@ -11,9 +11,7 @@ function PricingFour() {
                             <div className="text-center-title-bg-white">
                                 <h2 className="title">Flexibility, Affordable Pricing</h2>
                                 <p>
-                                    Offers a unified platform that fosters innovation while providing
-                                    end-to-end data management. See how we help your team solve
-                                    today’s biggest challenges.
+                                Bringing innovation within reach so you can solve some of today’s career challenges.
                                 </p>
                             </div>
                         </div>
@@ -26,8 +24,8 @@ function PricingFour() {
                                         <img src="assets/images/pricing/01.svg" alt="pricing" />
                                     </div>
                                     <p>Starter</p>
-                                    <h2 className="title">$9 mo</h2>
-                                    <span>Billed annually.</span>
+                                    <h2 className="title">Free</h2>
+                                    <span>Free Forever, Free Audit.</span>
                                 </div>
                                 <div className="body-areas">
                                     <div className="single-check">
@@ -36,15 +34,15 @@ function PricingFour() {
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>Basic reporting and analytics</p>
+                                        <p>Basic Grammar Audit</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>Up to 10 individual users</p>
+                                        <p>1 Basic Template</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>20GB individual data each user</p>
+                                        <p>Unlimited Job Browsing</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
@@ -52,7 +50,7 @@ function PricingFour() {
                                     </div>
                                 </div>
                                 <div className="footer-pricing">
-                                    <a href="#" className="btn-bold rts-btn btn-border">
+                                    <a href="/" className="btn-bold rts-btn btn-border">
                                         Get started
                                         <img src="assets/images/service/icons/13.svg" alt="arrow" />
                                     </a>
@@ -66,9 +64,9 @@ function PricingFour() {
                                     <div className="icon">
                                         <img src="assets/images/pricing/02.svg" alt="pricing" />
                                     </div>
-                                    <p>Professional</p>
-                                    <h2 className="title">$49 mo</h2>
-                                    <span>Billed annually.</span>
+                                    <p>Member</p>
+                                    <h2 className="title">$0</h2>
+                                    <span>Registered users.</span>
                                 </div>
                                 <div className="body-areas">
                                     <div className="single-check">
@@ -77,15 +75,15 @@ function PricingFour() {
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/05.png" alt="pricing" />
-                                        <p>Advance reporting and analytics</p>
+                                        <p>Advanced audit</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/05.png" alt="pricing" />
-                                        <p>Up to 10 individual users</p>
+                                        <p>Premium Templates</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/05.png" alt="pricing" />
-                                        <p>200GB individual data each user</p>
+                                        <p>Unlimited Job Browsing</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/05.png" alt="pricing" />
@@ -93,7 +91,7 @@ function PricingFour() {
                                     </div>
                                 </div>
                                 <div className="footer-pricing">
-                                    <a href="#" className="btn-bold rts-btn btn-border">
+                                    <a href="/login" className="btn-bold rts-btn btn-border">
                                         Get started
                                         <img src="assets/images/service/icons/13.svg" alt="arrow" />
                                     </a>
@@ -107,33 +105,33 @@ function PricingFour() {
                                         <img src="assets/images/pricing/03.svg" alt="pricing" />
                                     </div>
                                     <p>Agency</p>
-                                    <h2 className="title">$209 mo</h2>
-                                    <span>Billed annually.</span>
+                                    <h2 className="title">Call</h2>
+                                    <span>Let’s collaborate.</span>
                                 </div>
                                 <div className="body-areas">
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>Access to all basic features</p>
+                                        <p>Partnerships</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>Basic reporting and analytics</p>
+                                        <p>Collaboration</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>Up to 18 individual users</p>
+                                        <p>Idea sharing</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>2000GB individual data each user</p>
+                                        <p>Sponsorships</p>
                                     </div>
                                     <div className="single-check">
                                         <img src="assets/images/pricing/icon/04.png" alt="pricing" />
-                                        <p>Advance chat and email support</p>
+                                        <p>Corporate Social Responsibility</p>
                                     </div>
                                 </div>
                                 <div className="footer-pricing">
-                                    <a href="#" className="btn-bold rts-btn btn-border">
+                                    <a href="/contact" className="btn-bold rts-btn btn-border">
                                         Get started
                                         <img src="assets/images/service/icons/13.svg" alt="arrow" />
                                     </a>

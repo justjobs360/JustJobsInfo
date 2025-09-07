@@ -179,12 +179,12 @@ function FooterTwo() {
                                 <div className="social-copyright-area">
                                     <ul>
                                         <li aria-label="Visit our Facebook page">
-                                            <Link href="/#">
+                                            <Link href="https://www.facebook.com/justjobsinfos/" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-facebook-f" />
                                             </Link>
                                         </li>
                                         <li aria-label="Visit our X page">
-                                            <Link href="/#">
+                                            <Link href="https://x.com/justjobs_info" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-x-twitter" />
                                             </Link>
                                         </li>
@@ -194,7 +194,7 @@ function FooterTwo() {
                                             </Link>
                                         </li>
                                         <li aria-label="Visit our Linkedin page">
-                                            <Link href="/#">
+                                            <Link href="https://www.linkedin.com/company/justjobsng-com/" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-linkedin" />
                                             </Link>
                                         </li>

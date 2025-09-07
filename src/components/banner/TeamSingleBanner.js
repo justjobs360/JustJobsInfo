@@ -61,12 +61,12 @@ function TeamSingleBanner() {
                                     <div className="social-one-area">
                                         <ul>
                                             <li>
-                                                <a href="#">
+                                                <a href="https://www.facebook.com/justjobsinfos/" target="_blank" rel="noopener noreferrer">
                                                     <i className="fa-brands fa-facebook-f" />
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#">
+                                                <a href="https://x.com/justjobs_info" target="_blank" rel="noopener noreferrer">
                                                     <i className="fa-brands fa-twitter" />
                                                 </a>
                                             </li>
@@ -76,7 +76,7 @@ function TeamSingleBanner() {
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#">
+                                                <a href="https://www.linkedin.com/company/justjobsng-com/" target="_blank" rel="noopener noreferrer">
                                                     <i className="fa-brands fa-linkedin" />
                                                 </a>
                                             </li>

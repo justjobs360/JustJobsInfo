@@ -6,7 +6,7 @@ function Testimonials() {
     return (
         <div>
             {/* testimonials area start */}
-            <div className="testimonials-area-start rts-section-gapTop bg-primary position-relative">
+            <div id="testimonials" className="testimonials-area-start rts-section-gapTop bg-primary position-relative">
                 <div className="shape-top-right wow slideInLeft" data-wow-offset={160}>
                     <img
                         loading="lazy"

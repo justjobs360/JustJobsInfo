@@ -3,7 +3,7 @@ import { getCollection } from '@/utils/mongodb';
 
 export async function GET(request, { params }) {
     try {
-        const { page } = params;
+        const { page } = await params;
         console.log('🔍 Fetching meta tags for page:', page);
         
         if (!page) {
@@ -89,10 +89,11 @@ export async function GET(request, { params }) {
         console.error('❌ Error fetching meta tag for page:', error);
         
         // Return default meta tags on error
+        const { page: errorPage } = await params;
         return NextResponse.json({
             success: true,
             data: {
-                page: params.page || 'unknown',
+                page: errorPage || 'unknown',
                 title: 'JustJobsInfo - Professional Resume and Career Services',
                 description: 'Professional resume writing services, career guidance, and job search resources.',
                 keywords: 'resume writing, career services, job search',

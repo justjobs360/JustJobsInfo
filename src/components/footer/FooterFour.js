@@ -14,12 +14,12 @@ function FooterFour() {
                                     <div className="nav-social-area">
                                         <ul>
                                             <li>
-                                                <a href="#">
+                                                <a href="https://x.com/justjobs_info" target="_blank" rel="noopener noreferrer">
                                                     <i className="fa-brands fa-twitter" />
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#">
+                                                <a href="https://www.facebook.com/justjobsinfos/" target="_blank" rel="noopener noreferrer">
                                                     <i className="fa-brands fa-facebook-f" />
                                                 </a>
                                             </li>

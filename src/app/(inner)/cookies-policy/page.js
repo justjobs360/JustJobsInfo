@@ -1,7 +1,7 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
-import HeaderTwo from "@/components/header/HeaderTwo";
+import HeaderTwo from "@/components/header/HeaderOne";
 import "../legal-pages.css";
 
 export default function Home() {
