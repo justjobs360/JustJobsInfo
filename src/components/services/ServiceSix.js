@@ -1,5 +1,7 @@
 "use client"
 import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import AOS from "aos";
 import "aos/dist/aos.css";
 function ServiceSix() {
@@ -31,17 +33,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/39.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/39.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="/resume-audit">
+                                    <Link href="/resume-audit">
                                         <h3 className="title animated fadeIn">Resume Audit</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -50,17 +54,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/40.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/40.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="/resume-builder">
+                                    <Link href="/resume-builder">
                                         <h3 className="title animated fadeIn">Resume Builder</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -69,17 +75,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/35.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/35.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="/job-listing">
+                                    <Link href="/job-listing">
                                         <h3 className="title animated fadeIn">Curated Listings</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -88,17 +96,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/36.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/36.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="/downloadable-resources">
+                                    <Link href="/downloadable-resources">
                                         <h3 className="title animated fadeIn">Resources</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -107,17 +117,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/37.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/37.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="/askgenie">
+                                    <Link href="/askgenie">
                                         <h3 className="title animated fadeIn">Ask Genie</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -126,17 +138,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/38.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/38.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="#">
+                                    <Link href="#">
                                         <h3 className="title animated fadeIn">Learning (Coming Soon)</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -145,17 +159,19 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/39.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/39.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="/blogs">
+                                    <Link href="/blogs">
                                         <h3 className="title animated fadeIn">Blog</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -164,27 +180,29 @@ function ServiceSix() {
                         >
                             <div className="single-service-area-4 in-about-page">
                                 <div className="icon">
-                                    <img src="assets/images/service/icons/40.svg" alt="service" />
+                                    <Image src="/assets/images/service/icons/40.svg" alt="service" width={50} height={50} />
                                 </div>
                                 <div className="title-area">
-                                    <a href="#">
+                                    <Link href="#">
                                         <h3 className="title animated fadeIn">Job Fit (Coming Soon)</h3>
-                                        <img
+                                        <Image
                                             className="injectable"
-                                            src="assets/images/service/icons/21.svg"
+                                            src="/assets/images/service/icons/21.svg"
                                             alt="icosn"
+                                            width={20}
+                                            height={20}
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-12 d-flex justify-content-center">
-                            <a href="/" className="rts-btn btn-border btn-bold mt--80">
+                            <Link href="/" className="rts-btn btn-border btn-bold mt--80">
                                 View all solutions
-                                <img src="assets/images/service/icons/13.svg" alt="arrow" />
-                            </a>
+                                <Image src="/assets/images/service/icons/13.svg" alt="arrow" width={20} height={20} />
+                            </Link>
                         </div>
                     </div>
                 </div>

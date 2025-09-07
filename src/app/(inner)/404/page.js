@@ -65,7 +65,7 @@ function page() {
                     margin: '0 0 8px 0',
                     letterSpacing: '-0.3px'
                 }}>
-                    404 | Oops! there's nothing here
+                    404 | Oops! there&apos;s nothing here
                 </h1>
             </div>
 

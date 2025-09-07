@@ -1,4 +1,6 @@
 import React from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 function PricingFour() {
     return (
@@ -21,7 +23,7 @@ function PricingFour() {
                             <div className="single-pricing-area-start-2 border-left">
                                 <div className="head-area">
                                     <div className="icon">
-                                        <img src="assets/images/pricing/01.svg" alt="pricing" />
+                                        <Image src="/assets/images/pricing/01.svg" alt="pricing" width={50} height={50} />
                                     </div>
                                     <p>Starter</p>
                                     <h2 className="title">Free</h2>
@@ -29,31 +31,31 @@ function PricingFour() {
                                 </div>
                                 <div className="body-areas">
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Access to all basic features</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Basic Grammar Audit</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>1 Basic Template</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Unlimited Job Browsing</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Basic chat and email support</p>
                                     </div>
                                 </div>
                                 <div className="footer-pricing">
-                                    <a href="/" className="btn-bold rts-btn btn-border">
+                                    <Link href="/" className="btn-bold rts-btn btn-border">
                                         Get started
-                                        <img src="assets/images/service/icons/13.svg" alt="arrow" />
-                                    </a>
+                                        <Image src="/assets/images/service/icons/13.svg" alt="arrow" width={20} height={20} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -62,7 +64,7 @@ function PricingFour() {
                                 <span className="tag">Popular</span>
                                 <div className="head-area">
                                     <div className="icon">
-                                        <img src="assets/images/pricing/02.svg" alt="pricing" />
+                                        <Image src="/assets/images/pricing/02.svg" alt="pricing" width={50} height={50} />
                                     </div>
                                     <p>Member</p>
                                     <h2 className="title">$0</h2>
@@ -70,31 +72,31 @@ function PricingFour() {
                                 </div>
                                 <div className="body-areas">
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/05.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/05.png" alt="pricing" width={20} height={20} />
                                         <p>Access to all basic features</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/05.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/05.png" alt="pricing" width={20} height={20} />
                                         <p>Advanced audit</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/05.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/05.png" alt="pricing" width={20} height={20} />
                                         <p>Premium Templates</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/05.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/05.png" alt="pricing" width={20} height={20} />
                                         <p>Unlimited Job Browsing</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/05.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/05.png" alt="pricing" width={20} height={20} />
                                         <p>Premium chat and email support</p>
                                     </div>
                                 </div>
                                 <div className="footer-pricing">
-                                    <a href="/login" className="btn-bold rts-btn btn-border">
+                                    <Link href="/login" className="btn-bold rts-btn btn-border">
                                         Get started
-                                        <img src="assets/images/service/icons/13.svg" alt="arrow" />
-                                    </a>
+                                        <Image src="/assets/images/service/icons/13.svg" alt="arrow" width={20} height={20} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +104,7 @@ function PricingFour() {
                             <div className="single-pricing-area-start-2">
                                 <div className="head-area">
                                     <div className="icon">
-                                        <img src="assets/images/pricing/03.svg" alt="pricing" />
+                                        <Image src="/assets/images/pricing/03.svg" alt="pricing" width={50} height={50} />
                                     </div>
                                     <p>Agency</p>
                                     <h2 className="title">Call</h2>
@@ -110,31 +112,31 @@ function PricingFour() {
                                 </div>
                                 <div className="body-areas">
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Partnerships</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Collaboration</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Idea sharing</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Sponsorships</p>
                                     </div>
                                     <div className="single-check">
-                                        <img src="assets/images/pricing/icon/04.png" alt="pricing" />
+                                        <Image src="/assets/images/pricing/icon/04.png" alt="pricing" width={20} height={20} />
                                         <p>Corporate Social Responsibility</p>
                                     </div>
                                 </div>
                                 <div className="footer-pricing">
-                                    <a href="/contact" className="btn-bold rts-btn btn-border">
+                                    <Link href="/contact" className="btn-bold rts-btn btn-border">
                                         Get started
-                                        <img src="assets/images/service/icons/13.svg" alt="arrow" />
-                                    </a>
+                                        <Image src="/assets/images/service/icons/13.svg" alt="arrow" width={20} height={20} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>
