@@ -597,6 +597,111 @@
   font-family: var(--font-primary);
 }
 
+/* Share Modal Styles */
+.share-modal-overlay {
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.share-modal-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.share-modal-content button {
+  border: none;
+  outline: none;
+}
+
+.share-modal-content button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments for share modal */
+@media (max-width: 768px) {
+  .share-modal-content {
+    margin: 1rem;
+    padding: 1.5rem;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .share-modal-content h3 {
+    font-size: 1.875rem;
+  }
+  
+  .share-modal-content p {
+    font-size: 1.125rem;
+  }
+  
+  .share-modal-content .share-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .share-modal-content .share-option-button {
+    padding: 1rem;
+    min-height: 110px;
+  }
+  
+  .share-modal-content .share-option-button i {
+    font-size: 1.875rem;
+  }
+  
+  .share-modal-content .share-option-button span {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-modal-content {
+    margin: 0.5rem;
+    padding: 1rem;
+    max-width: calc(100vw - 1rem);
+  }
+  
+  .share-modal-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .share-modal-content p {
+    font-size: 1rem;
+  }
+  
+  .share-modal-content .share-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .share-modal-content .share-option-button {
+    padding: 0.75rem;
+    min-height: 100px;
+  }
+  
+  .share-modal-content .share-option-button i {
+    font-size: 1.5rem;
+  }
+  
+  .share-modal-content .share-option-button span {
+    font-size: 1rem;
+  }
+}
+
 /* No Results Section - Enhanced Styling */
 .no-results {
   text-align: center;

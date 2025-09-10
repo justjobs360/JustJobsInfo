@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, Fragment } from 'react';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOne from "@/components/footer/FooterOne";
+import ShareJobModal from "@/components/modals/ShareJobModal";
 import './job-listing.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -26,6 +27,8 @@ export default function JobListingPage() {
     const [bookmarkedJobs, setBookmarkedJobs] = useState(new Set());
     const [showLocationPrompt, setShowLocationPrompt] = useState(false);
     const [userLocationInput, setUserLocationInput] = useState('');
+    const [shareModalOpen, setShareModalOpen] = useState(false);
+    const [selectedJobForShare, setSelectedJobForShare] = useState(null);
     const triedGeo = useRef(false);
     const industryProcessed = useRef(false);
     const router = useRouter();
@@ -337,6 +340,17 @@ export default function JobListingPage() {
 
     const isJobBookmarked = (jobId) => {
         return bookmarkedJobs.has(jobId);
+    };
+
+    // Share functionality
+    const handleShareJob = (job) => {
+        setSelectedJobForShare(job);
+        setShareModalOpen(true);
+    };
+
+    const handleCloseShareModal = () => {
+        setShareModalOpen(false);
+        setSelectedJobForShare(null);
     };
 
     // Load bookmarked jobs from localStorage on mount and sync on storage events
@@ -929,16 +943,16 @@ export default function JobListingPage() {
                                                 <div className="job-detailed-info">
                                                     {/* Shareable Link */}
                                                     <div className="share-link-right">
-                                                        <a
-                                                            href={`${typeof window !== 'undefined' ? window.location.origin : ''}/job-listing?job=${job.id}&title=${encodeURIComponent((job.job_title||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]+/g,''))}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                        <button
                                                             className="rts-btn btn-border btn-sm"
                                                             style={{ fontSize: '13px', marginBottom: '8px' }}
-                                                            onClick={e => { e.stopPropagation(); }}
+                                                            onClick={e => { 
+                                                                e.stopPropagation(); 
+                                                                handleShareJob(job);
+                                                            }}
                                                         >
-                                                            <i className="fas fa-link me-1"></i> Share this job
-                                                        </a>
+                                                            <i className="fas fa-share-alt me-1"></i> Share this job
+                                                        </button>
                                                     </div>
                                                     {/* Job Description */}
                                                     <div className="job-section">
@@ -1133,6 +1147,13 @@ export default function JobListingPage() {
 
             <FooterOne />
             <BackToTop />
+            
+            {/* Share Job Modal */}
+            <ShareJobModal 
+                isOpen={shareModalOpen}
+                onClose={handleCloseShareModal}
+                job={selectedJobForShare}
+            />
         </>
     );
 }

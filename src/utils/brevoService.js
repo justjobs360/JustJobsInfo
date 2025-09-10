@@ -1,5 +1,3 @@
-const { TransactionalEmailsApi, SendSmtpEmail } = require('@getbrevo/brevo');
-
 class BrevoService {
   constructor() {
     this.apiKey = process.env.BREVO_API_KEY;
@@ -10,9 +8,6 @@ class BrevoService {
     if (!this.apiKey) {
       throw new Error('BREVO_API_KEY is required');
     }
-    
-    // Initialize API instance
-    this.apiInstance = new TransactionalEmailsApi();
   }
 
   /**
@@ -53,18 +48,44 @@ class BrevoService {
         managePrefsUrl
       });
 
-      const sendSmtpEmail = new SendSmtpEmail();
-      sendSmtpEmail.subject = `New Job Alerts - ${jobs.length} matching position${jobs.length > 1 ? 's' : ''} found`;
-      sendSmtpEmail.htmlContent = htmlContent;
-      sendSmtpEmail.textContent = textContent;
-      sendSmtpEmail.sender = { name: this.fromName, email: this.fromEmail };
-      sendSmtpEmail.to = [{ email: toEmail, name: toName }];
-      sendSmtpEmail.replyTo = { email: this.fromEmail, name: this.fromName };
+      const emailData = {
+        sender: {
+          name: this.fromName,
+          email: this.fromEmail
+        },
+        to: [
+          {
+            email: toEmail,
+            name: toName
+          }
+        ],
+        subject: `New Job Alerts - ${jobs.length} matching position${jobs.length > 1 ? 's' : ''} found`,
+        htmlContent: htmlContent,
+        textContent: textContent,
+        replyTo: {
+          email: this.fromEmail,
+          name: this.fromName
+        }
+      };
 
-      const result = await this.apiInstance.sendTransacEmail(sendSmtpEmail, { 'api-key': this.apiKey });
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': this.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      const result = await response.json();
       
-      console.log(`Job alert sent successfully to ${toEmail}:`, result.body);
-      return { success: true, messageId: result.body.messageId };
+      if (response.ok) {
+        console.log(`Job alert sent successfully to ${toEmail}:`, result);
+        return { success: true, messageId: result.messageId };
+      } else {
+        console.error('Failed to send job alert:', result);
+        return { success: false, error: result.message || 'Failed to send email' };
+      }
     } catch (error) {
       console.error('Error sending job alert:', error);
       return { success: false, error: error.message };
@@ -169,6 +190,149 @@ JustJobsInfo Team
   }
 
   /**
+   * Send contact form notification email to admin addresses
+   * @param {Object} params - Contact form data
+   * @param {string} params.first_name - First name
+   * @param {string} params.last_name - Last name
+   * @param {string} params.email - Email address
+   * @param {string} params.phone - Phone number
+   * @param {string} params.message - Message content
+   * @param {string} params.formType - Type of form (contact, consultation, etc.)
+   */
+  async sendContactFormNotification({ first_name, last_name, email, phone, message, formType = 'contact' }) {
+    try {
+      const adminEmails = ['annedithb@gmail.com', 'hello@justjobs.info'];
+      const fullName = `${first_name} ${last_name}`;
+      const formTypeLabel = formType === 'consultation' ? 'Free Consultation' : 'Contact Form';
+
+      const htmlContent = this.generateContactFormHTML({
+        fullName,
+        email,
+        phone,
+        message,
+        formType: formTypeLabel
+      });
+
+      const textContent = this.generateContactFormText({
+        fullName,
+        email,
+        phone,
+        message,
+        formType: formTypeLabel
+      });
+
+      const emailData = {
+        sender: {
+          name: this.fromName,
+          email: this.fromEmail
+        },
+        to: adminEmails.map(email => ({
+          email: email,
+          name: 'JustJobsInfo Admin'
+        })),
+        subject: `New ${formTypeLabel} Submission from ${fullName}`,
+        htmlContent: htmlContent,
+        textContent: textContent,
+        replyTo: {
+          email: email,
+          name: fullName
+        }
+      };
+
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': this.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log(`Contact form notification sent successfully:`, result);
+        return { success: true, messageId: result.messageId };
+      } else {
+        console.error('Failed to send contact form notification:', result);
+        return { success: false, error: result.message || 'Failed to send email' };
+      }
+    } catch (error) {
+      console.error('Error sending contact form notification:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Generate HTML content for contact form notification email
+   */
+  generateContactFormHTML({ fullName, email, phone, message, formType }) {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New ${formType} Submission</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb;">
+        <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: #2563eb; color: white; padding: 24px; text-align: center;">
+            <h1 style="margin: 0; font-size: 24px;">JustJobsInfo</h1>
+            <p style="margin: 8px 0 0 0; opacity: 0.9;">New ${formType} Submission</p>
+          </div>
+          
+          <!-- Content -->
+          <div style="padding: 24px;">
+            <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 20px;">New ${formType} Submission</h2>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px;">Contact Details</h3>
+              <p style="margin: 0 0 8px 0; color: #4b5563; font-size: 14px;"><strong>Name:</strong> ${fullName}</p>
+              <p style="margin: 0 0 8px 0; color: #4b5563; font-size: 14px;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a></p>
+              ${phone ? `<p style="margin: 0 0 8px 0; color: #4b5563; font-size: 14px;"><strong>Phone:</strong> <a href="tel:${phone}" style="color: #2563eb; text-decoration: none;">${phone}</a></p>` : ''}
+            </div>
+
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+              <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px;">Message</h3>
+              <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
+              <p style="margin: 0; color: #6b7280; font-size: 12px;">
+                This notification was sent automatically from the JustJobsInfo website.
+              </p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generate text content for contact form notification email
+   */
+  generateContactFormText({ fullName, email, phone, message, formType }) {
+    return `
+New ${formType} Submission
+
+Contact Details:
+Name: ${fullName}
+Email: ${email}
+${phone ? `Phone: ${phone}` : ''}
+
+Message:
+${message}
+
+---
+This notification was sent automatically from the JustJobsInfo website.
+    `.trim();
+  }
+
+  /**
    * Test email sending functionality
    */
   async sendTestEmail(toEmail, toName = 'Test User') {
@@ -204,4 +368,4 @@ JustJobsInfo Team
   }
 }
 
-module.exports = BrevoService;
+export default BrevoService;
