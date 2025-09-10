@@ -3,17 +3,29 @@ import * as admin from 'firebase-admin';
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    }),
-  });
+  const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
+  if (FIREBASE_PROJECT_ID && FIREBASE_CLIENT_EMAIL && FIREBASE_PRIVATE_KEY) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: FIREBASE_PROJECT_ID,
+        clientEmail: FIREBASE_CLIENT_EMAIL,
+        privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }),
+    });
+  } else {
+    // Avoid crashing the build when env vars are missing on the build server
+    console.warn('Firebase Admin not initialized: missing FIREBASE_* environment variables.');
+  }
 }
 
 export async function POST(request) {
   try {
+    if (!admin.apps.length) {
+      return NextResponse.json({
+        success: false,
+        error: 'Server configuration error: Firebase Admin credentials are not set.'
+      }, { status: 500 });
+    }
     const { idToken } = await request.json();
 
     if (!idToken) {
