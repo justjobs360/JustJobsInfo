@@ -12,7 +12,7 @@ function Testimonials() {
                         loading="lazy"
                         rel="preload"
                         src="assets/images/testimonials/03.png"
-                        alt="testimopnials"
+                        alt="testimonials"
                     />
                 </div>
                 <div className="container">
@@ -60,7 +60,7 @@ function Testimonials() {
                                     <SwiperSlide>
                                         <div className="single-testimonials-area-one">
                                             <p className="disc">
-                                                "Just Jobs helped me revamp my resume and find a job that perfectly fits my skills. Their career tips boosted my confidence and results"
+                                                &ldquo;Just Jobs helped me revamp my resume and find a job that perfectly fits my skills. Their career tips boosted my confidence and results&rdquo;
                                             </p>
                                             <div className="author-wrapper">
                                                 <div className="avatar" style={{
@@ -87,7 +87,7 @@ function Testimonials() {
                                     <SwiperSlide>
                                         <div className="single-testimonials-area-one">
                                             <p className="disc">
-                                                "The job listings on Just Jobs were up-to-date and relevant. The resume builder saved me hours and the AI assistant answered all my questions."
+                                                &ldquo;The job listings on Just Jobs were up-to-date and relevant. The resume builder saved me hours and the AI assistant answered all my questions.&rdquo;
                                             </p>
                                             <div className="author-wrapper">
                                                 <div className="avatar" style={{
@@ -114,7 +114,7 @@ function Testimonials() {
                                     <SwiperSlide>
                                         <div className="single-testimonials-area-one">
                                             <p className="disc">
-                                                "The resume audit feature helped me identify key areas for improvement. I landed my dream job within two weeks of using Just Jobs' comprehensive career tools."
+                                                &ldquo;The resume audit feature helped me identify key areas for improvement. I landed my dream job within two weeks of using Just Jobs&rsquo; comprehensive career tools.&rdquo;
                                             </p>
                                             <div className="author-wrapper">
                                                 <div className="avatar" style={{
@@ -141,7 +141,7 @@ function Testimonials() {
                                     <SwiperSlide>
                                         <div className="single-testimonials-area-one">
                                             <p className="disc">
-                                                "Just Jobs' AI-powered career guidance was exactly what I needed. The platform's job matching algorithm connected me with opportunities I never would have found on my own."
+                                                &ldquo;Just Jobs&rsquo; AI-powered career guidance was exactly what I needed. The platform&rsquo;s job matching algorithm connected me with opportunities I never would have found on my own.&rdquo;
                                             </p>
                                             <div className="author-wrapper">
                                                 <div className="avatar" style={{
