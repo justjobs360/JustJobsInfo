@@ -19,7 +19,7 @@ function FeatureTwo() {
                                 <div className="icon">
                                     <img src="assets/images/about/icons/01.svg" alt="benefits" />
                                 </div>
-                                <h5 className="title">Accelerate Growth</h5>
+                                <h5 className="title">Career Growth</h5>
                             </div>
                         </div>
                         <div className="col-lg-3 çol-md-4 col-sm-6 col-12">
@@ -43,7 +43,7 @@ function FeatureTwo() {
                                 <div className="icon">
                                     <img src="assets/images/about/icons/04.svg" alt="benefits" />
                                 </div>
-                                <h5 className="title">Flexibility</h5>
+                                <h5 className="title">Cost Savings</h5>
                             </div>
                         </div>
                         <div className="col-lg-3 çol-md-4 col-sm-6 col-12">
@@ -59,7 +59,7 @@ function FeatureTwo() {
                                 <div className="icon">
                                     <img src="assets/images/about/icons/06.svg" alt="benefits" />
                                 </div>
-                                <h5 className="title">Accessibility</h5>
+                                <h5 className="title">Blobal Access</h5>
                             </div>
                         </div>
                         <div className="col-lg-3 çol-md-4 col-sm-6 col-12">
@@ -67,7 +67,7 @@ function FeatureTwo() {
                                 <div className="icon">
                                     <img src="assets/images/about/icons/07.svg" alt="benefits" />
                                 </div>
-                                <h5 className="title">Support</h5>
+                                <h5 className="title">Enhance Security</h5>
                             </div>
                         </div>
                         <div className="col-lg-3 çol-md-4 col-sm-6 col-12">
@@ -75,7 +75,7 @@ function FeatureTwo() {
                                 <div className="icon">
                                     <img src="assets/images/about/icons/08.svg" alt="benefits" />
                                 </div>
-                                <h5 className="title">Satisfaction</h5>
+                                <h5 className="title">Support</h5>
                             </div>
                         </div>
                     </div>

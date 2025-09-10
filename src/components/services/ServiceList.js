@@ -17,10 +17,9 @@ function ServiceList() {
               <img src="assets/images/service/icons/42.svg" alt="service" />
             </div>
             <div className="main-information-area">
-              <h3 className="title">NodeJS Development</h3>
+              <h3 className="title">Resume Audit & Enhancement</h3>
               <p className="disc">
-                Offers a unified platform that fosters innovation while
-                providing end-to-end data management.
+              Get expert feedback and actionable tips to polish your resume and stand out in job applications.
               </p>
             </div>
             <a href="#" className="arrow-btn">
@@ -36,10 +35,9 @@ function ServiceList() {
               <img src="assets/images/service/icons/43.svg" alt="service" />
             </div>
             <div className="main-information-area">
-              <h3 className="title">Softwares, Apps Design</h3>
+              <h3 className="title">Custom Resume Builder</h3>
               <p className="disc">
-                Offers a unified platform that fosters innovation while
-                providing end-to-end data management.
+              Create professional, ATS-friendly resumes quickly using our intuitive online builder designed for all career stages.
               </p>
             </div>
             <a href="#" className="arrow-btn">
@@ -55,10 +53,9 @@ function ServiceList() {
               <img src="assets/images/service/icons/44.svg" alt="service" />
             </div>
             <div className="main-information-area">
-              <h3 className="title">Strategy Marketing</h3>
+              <h3 className="title">Extensive Job Listings</h3>
               <p className="disc">
-                Offers a unified platform that fosters innovation while
-                providing end-to-end data management.
+              Discover the latest job openings across multiple industries and locations tailored to your skills and goals.
               </p>
             </div>
             <a href="#" className="arrow-btn">
@@ -74,10 +71,9 @@ function ServiceList() {
               <img src="assets/images/service/icons/45.svg" alt="service" />
             </div>
             <div className="main-information-area">
-              <h3 className="title">A/B Testing</h3>
+              <h3 className="title">Career Resources & Guidance</h3>
               <p className="disc">
-                Offers a unified platform that fosters innovation while
-                providing end-to-end data management.
+              Access articles, tutorials, and expert advice to navigate job searches, interviews, and career growth.
               </p>
             </div>
             <a href="#" className="arrow-btn">

@@ -25,15 +25,14 @@ function ServiceBanner() {
                                     data-wow-offset={120}
                                     data-wow-delay=".4s"
                                 >
-                                    See how we help your team solve today’s biggest challenges
+                                    Empowering Your Career Journey with Tailored Job Resources and Tools
                                 </h1>
                                 <p
                                     className="disc wow fadeInUp"
                                     data-wow-offset={120}
                                     data-wow-delay=".6s"
                                 >
-                                    Offers a unified platform that fosters innovation while providing
-                                    end-to-end data management.
+                                    Explore a comprehensive platform designed to support job seekers and employers with innovative career services.
                                 </p>
                             </div>
                         </div>

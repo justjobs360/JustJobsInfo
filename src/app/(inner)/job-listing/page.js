@@ -27,10 +27,19 @@ export default function JobListingPage() {
     const [showLocationPrompt, setShowLocationPrompt] = useState(false);
     const [userLocationInput, setUserLocationInput] = useState('');
     const triedGeo = useRef(false);
+    const industryProcessed = useRef(false);
     const router = useRouter();
     const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
 
     useEffect(() => {
+        // Handle industry parameter from URL (only once)
+        if (searchParams && searchParams.get('industry') && !industryProcessed.current) {
+            const industry = searchParams.get('industry');
+            console.log('Industry parameter detected:', industry);
+            setSearchFilters(prev => ({ ...prev, query: industry }));
+            industryProcessed.current = true;
+        }
+        
         // On first load, try to auto-detect location using browser geolocation
         if (!triedGeo.current && !searchFilters.location) {
             console.log('Requesting browser geolocation permission...');
@@ -73,10 +82,8 @@ export default function JobListingPage() {
                 console.log('Geolocation not supported by browser. Showing location prompt.');
                 setShowLocationPrompt(true);
             }
-        } else if (searchFilters.location) {
-            console.log('Using location for job search:', searchFilters.location);
-        searchJobs(true);
         }
+        
         // Expand job from URL param
         if (searchParams && searchParams.get('job')) {
             const jobId = searchParams.get('job');
@@ -87,7 +94,15 @@ export default function JobListingPage() {
             }, 500);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchFilters.location]);
+    }, []); // Empty dependency array to run only once on mount
+
+    // Separate useEffect to trigger search when filters change
+    useEffect(() => {
+        if (searchFilters.query || searchFilters.location) {
+            console.log('Triggering search with filters:', searchFilters);
+            searchJobs(true);
+        }
+    }, [searchFilters.query, searchFilters.location]);
 
     const handleLocationSubmit = (e) => {
         e.preventDefault();
@@ -340,8 +355,50 @@ export default function JobListingPage() {
         <>
             <HeaderOne />
             {showLocationPrompt && (
-                <div className="location-prompt-modal" style={{position: 'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'rgba(0,0,0,0.5)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center'}}>
-                    <div style={{background:'#fff', padding: '2rem', borderRadius: '8px', maxWidth: '90vw', minWidth: '300px'}}>
+                <div 
+                    className="location-prompt-modal" 
+                    style={{position: 'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'rgba(0,0,0,0.5)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center'}}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowLocationPrompt(false);
+                        }
+                    }}
+                >
+                    <div style={{background:'#fff', padding: '2rem', borderRadius: '8px', maxWidth: '90vw', minWidth: '300px', position: 'relative'}}>
+                        <button 
+                            onClick={() => setShowLocationPrompt(false)}
+                            style={{
+                                position: 'absolute',
+                                top: '1px',
+                                right: '1px',
+                                background: '#f5f5f5',
+                                border: '1px solid #ddd',
+                                borderRadius: '50%',
+                                fontSize: '18px',
+                                cursor: 'pointer',
+                                color: '#333',
+                                padding: '0',
+                                lineHeight: '1',
+                                width: '28px',
+                                height: '28px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 1001,
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.background = '#e0e0e0';
+                                e.target.style.color = '#000';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.background = '#f5f5f5';
+                                e.target.style.color = '#333';
+                            }}
+                            aria-label="Close location prompt"
+                        >
+                            ×
+                        </button>
                         <h4>Please enter your country or location to see relevant jobs:</h4>
                         <form onSubmit={handleLocationSubmit} style={{marginTop:'1rem'}}>
                             <input

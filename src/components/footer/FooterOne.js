@@ -158,48 +158,48 @@ function FooterOne() {
                                         <ul>
                                             <li>
                                                 <Link 
-                                                    href="/jobs/fintech"
-                                                    style={isActive('/jobs/fintech') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/job-listing?industry=fintech"
+                                                    style={isActive('/job-listing') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Fintech
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/jobs/healthcare"
-                                                    style={isActive('/jobs/healthcare') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/job-listing?industry=healthcare"
+                                                    style={isActive('/job-listing') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Healthcare
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/jobs/finance"
-                                                    style={isActive('/jobs/finance') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/job-listing?industry=finance"
+                                                    style={isActive('/job-listing') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Finance
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/jobs/engineering"
-                                                    style={isActive('/jobs/engineering') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/job-listing?industry=engineering"
+                                                    style={isActive('/job-listing') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Engineering
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/jobs/education"
-                                                    style={isActive('/jobs/education') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/job-listing?industry=education"
+                                                    style={isActive('/job-listing') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Education
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/jobs/csontruction"
-                                                    style={isActive('/jobs/csontruction') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/job-listing?industry=construction"
+                                                    style={isActive('/job-listing') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     Construction
                                                 </Link>

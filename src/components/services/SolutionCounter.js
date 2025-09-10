@@ -10,10 +10,9 @@ function SolutionCounter() {
                         <div className="col-lg-12">
                             <div className="exparts-area-main-mt-dec">
                                 <div className="title-area-center-inner-with-sub">
-                                    <span>Solutions by Experts</span>
+                                    <span>Designed for You</span>
                                     <h2 className="title">
-                                        Experience the difference with a Free trial of our Managed IT
-                                        Services.
+                                    Innovative solutions designed to connect talent with opportunity.
                                     </h2>
                                     <a
                                         href="#"
@@ -49,9 +48,9 @@ function SolutionCounter() {
                                 <div className="icon-area">
                                     <img src="assets/images/about/icons/01.svg" alt="icon" />
                                 </div>
-                                <p>Accelerate Growth</p>
+                                <p>CV Enhancement</p>
                                 <h3 className="title animated fadeIn">
-                                    +<span className="counter animated fadeInDownBig">46</span>%
+                                    +<span className="counter animated fadeInDownBig">146</span>%
                                 </h3>
                             </div>
                         </div>
@@ -71,7 +70,7 @@ function SolutionCounter() {
                                 <div className="icon-area">
                                     <img src="assets/images/about/icons/03.svg" alt="icon" />
                                 </div>
-                                <p>Enhance Security</p>
+                                <p>Audit Improvements</p>
                                 <h3 className="title animated fadeIn">
                                     <span className="counter animated fadeInDownBig">89</span>%
                                 </h3>
@@ -82,9 +81,9 @@ function SolutionCounter() {
                                 <div className="icon-area">
                                     <img src="assets/images/about/icons/04.svg" alt="icon" />
                                 </div>
-                                <p>Reduce Costs</p>
+                                <p>Job Openings</p>
                                 <h3 className="title animated fadeIn">
-                                    <span className="counter animated fadeInDownBig">720</span>
+                                    <span className="counter animated fadeInDownBig">7200+</span>
                                 </h3>
                             </div>
                         </div>

@@ -19,8 +19,7 @@ function ServiceSeven() {
                                         <img src="assets/images/service/icons/31.svg" alt="service" />
                                     </div>
                                     <p className="disc">
-                                        Whether you have a team of 2 or 200, our shared team inboxes
-                                        keep everyone on the same page and in.
+                                    Get expert feedback and actionable tips to polish your resume and stand out in job applications.
                                     </p>
                                 </div>
                             </div>
@@ -34,8 +33,7 @@ function ServiceSeven() {
                                         <img src="assets/images/service/icons/32.svg" alt="service" />
                                     </div>
                                     <p className="disc">
-                                        Whether you have a team of 2 or 200, our shared team inboxes
-                                        keep everyone on the same page and in.
+                                    Create professional, ATS-friendly resumes quickly using our intuitive online builder designed for all career stages.
                                     </p>
                                 </div>
                             </div>
@@ -49,8 +47,7 @@ function ServiceSeven() {
                                         <img src="assets/images/service/icons/33.svg" alt="service" />
                                     </div>
                                     <p className="disc">
-                                        Whether you have a team of 2 or 200, our shared team inboxes
-                                        keep everyone on the same page and in.
+                                    Discover the latest job openings across multiple industries and locations tailored to your skills and goals.
                                     </p>
                                 </div>
                             </div>
@@ -64,8 +61,7 @@ function ServiceSeven() {
                                         <img src="assets/images/service/icons/34.svg" alt="service" />
                                     </div>
                                     <p className="disc">
-                                        Whether you have a team of 2 or 200, our shared team inboxes
-                                        keep everyone on the same page and in.
+                                    Get instant answers and personalized career support from our AI-powered assistant anytime.
                                     </p>
                                 </div>
                             </div>
