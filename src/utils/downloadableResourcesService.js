@@ -137,16 +137,16 @@ export async function initializeDownloadableResources() {
                         description: "Google Sheets template to track applications, interviews, and follow-ups",
                         format: "Sheet",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/brands/google-drive.svg",
-                        downloadUrl: "https://docs.google.com/spreadsheets/d/1oXAVQXgV3TIBfLZMcXAMb0glZXzvUdcUyNyRMfHSm-8/export?format=xlsx",
+                        downloadUrl: "https://docs.google.com/spreadsheets/d/1dhjMd52a52YyL3tMDrmRDczTaTqg2Nfb8AFLKYBWiUo/copy",
                         downloads: 2340,
                         fileSize: "2.5 MB"
                     },
                     {
-                        name: "Weekly Job Search Planner",
-                        description: "Plan your job search activities week by week",
+                        name: "Job Search Planning Sheet",
+                        description: "Comprehensive planning sheet for tracking job search activities and goals",
                         format: "PDF",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/solid/file-pdf.svg",
-                        downloadUrl: "https://www.skillsyouneed.com/downloads/Job-Search-Planner.pdf",
+                        downloadUrl: "https://www.wcu.edu/WebFiles/CCPD-Career-Planning-Sheet.pdf",
                         downloads: 1567,
                         fileSize: "1.8 MB"
                     },
@@ -155,7 +155,7 @@ export async function initializeDownloadableResources() {
                         description: "Daily and weekly checklists to maximize your job search efficiency",
                         format: "PDF",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/solid/file-pdf.svg",
-                        downloadUrl: "https://www.vertex42.com/ExcelTemplates/job-search-log.html",
+                        downloadUrl: "https://thinkproductivena.com/wp-content/uploads/2012/11/43-PDF-2-Ninja-Weekly-Daily-Checklists-Think-Productive.pdf",
                         downloads: 890,
                         fileSize: "3.2 MB"
                     }
@@ -171,10 +171,10 @@ export async function initializeDownloadableResources() {
                 resources: [
                     {
                         name: "Common Interview Questions Guide",
-                        description: "List of frequently asked questions with sample answers",
+                        description: "List of frequently asked questions with sample answers and preparation tips",
                         format: "PDF",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/solid/file-pdf.svg",
-                        downloadUrl: "https://www.sjsu.edu/careercenter/docs/InterviewQuestions.pdf",
+                        downloadUrl: "https://www.regiscollege.edu/sites/default/files/academics/career/interview-faq.pdf",
                         downloads: 1234,
                         fileSize: "1.5 MB"
                     },
@@ -183,7 +183,7 @@ export async function initializeDownloadableResources() {
                         description: "Template for crafting compelling STAR method responses",
                         format: "Word",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/brands/microsoft.svg",
-                        downloadUrl: "https://www.mindtools.com/pages/article/newHTE_90.htm",
+                        downloadUrl: "https://assets-eu-01.kc-usercontent.com/73ea709e-f9f8-0168-3842-ebd7ad1e23ac/a8099768-585c-4b6c-bb1b-ba00e00c037d/STAR%20Technique%20worksheet.docx",
                         downloads: 678,
                         fileSize: "2.1 MB"
                     },
@@ -192,7 +192,7 @@ export async function initializeDownloadableResources() {
                         description: "Comprehensive checklist for interview preparation",
                         format: "PDF",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/solid/file-pdf.svg",
-                        downloadUrl: "https://www.indeed.com/career-advice/interviewing/interview-preparation-checklist",
+                        downloadUrl: "https://www.albright.edu/wp-content/uploads/2020/08/Interview-Preparation-Checklist.pdf",
                         downloads: 890,
                         fileSize: "1.8 MB"
                     }
@@ -211,7 +211,7 @@ export async function initializeDownloadableResources() {
                         description: "Guided workbook for setting short and long-term career goals",
                         format: "PDF",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/solid/file-pdf.svg",
-                        downloadUrl: "https://www.careeronestop.org/TridionMultimedia/PlanningYourCareerWorkbook-508.pdf",
+                        downloadUrl: "https://www.cumbria.gov.uk/elibrary/Content/Internet/537/6942/6943/6948/42153103939.pdf",
                         downloads: 567,
                         fileSize: "2.5 MB"
                     },
@@ -220,7 +220,7 @@ export async function initializeDownloadableResources() {
                         description: "Identify your strongest skills and areas for improvement",
                         format: "PDF",
                         icon: "https://unpkg.com/@fortawesome/fontawesome-free/svgs/solid/file-pdf.svg",
-                        downloadUrl: "https://www.careeronestop.org/Toolkit/Skills/skills-matcher.aspx",
+                        downloadUrl: "https://volunteer.ca/wp-content/uploads/2024/06/SkillSelfAssessment-EN.pdf",
                         downloads: 432,
                         fileSize: "1.2 MB"
                     }
