@@ -32,18 +32,16 @@ export default function JobListingPage() {
     const triedGeo = useRef(false);
     const initialSearchTriggered = useRef(false);
     const router = useRouter();
-    const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         // Handle industry parameter from URL (on every navigation)
         if (searchParams && searchParams.get('industry')) {
             const industry = searchParams.get('industry');
-            // Only update if the industry has changed
-            if (searchFilters.query !== industry) {
-                setSearchFilters(prev => ({ ...prev, query: industry }));
-                // Reset the search trigger flag to allow new search
-                initialSearchTriggered.current = false;
-            }
+            // Always update the query when industry parameter changes
+            setSearchFilters(prev => ({ ...prev, query: industry }));
+            // Reset the search trigger flag to allow new search
+            initialSearchTriggered.current = false;
         }
         
         // On first load, try to auto-detect location using browser geolocation
@@ -93,26 +91,14 @@ export default function JobListingPage() {
             }, 500);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchFilters.query]); // Run when query changes (industry navigation)
+    }, [searchParams]); // Run when URL search params change (industry navigation)
 
-    // Separate useEffect to trigger search when filters change
+    // Trigger search when filters change
     useEffect(() => {
         if (searchFilters.query || searchFilters.location) {
             searchJobs(true);
         }
     }, [searchFilters.query, searchFilters.location, searchFilters.employmentType, searchFilters.remoteOnly, searchFilters.datePosted]);
-
-    // Handle initial search for industry parameter
-    useEffect(() => {
-        if (!initialSearchTriggered.current && searchFilters.query) {
-            // Small delay to ensure searchJobs is available
-            const timer = setTimeout(() => {
-                searchJobs(true);
-                initialSearchTriggered.current = true;
-            }, 100);
-            return () => clearTimeout(timer);
-        }
-    }, [searchFilters.query]);
 
 
     const handleLocationSubmit = (e) => {
