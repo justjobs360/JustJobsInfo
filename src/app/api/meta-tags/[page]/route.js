@@ -4,7 +4,7 @@ import { getCollection } from '@/utils/mongodb';
 export async function GET(request, { params }) {
     try {
         const { page } = await params;
-        console.log('🔍 Fetching meta tags for page:', page);
+        
         
         if (!page) {
             return NextResponse.json({
@@ -43,13 +43,13 @@ export async function GET(request, { params }) {
             });
             
             if (metaTag) {
-                console.log('✅ Found meta tag with strategy:', strategy);
+                
                 break;
             }
         }
         
         if (!metaTag) {
-            console.log('⚠️ No meta tag found for page:', decodedPage);
+            
             
             // Return default meta tags
             return NextResponse.json({
@@ -78,7 +78,7 @@ export async function GET(request, { params }) {
             lastUpdated: metaTag.updatedAt
         };
         
-        console.log('✅ Meta tag found for page:', decodedPage);
+        
         
         return NextResponse.json({
             success: true,

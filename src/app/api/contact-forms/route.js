@@ -21,15 +21,9 @@ export async function POST(request) {
         formType: body.formType || 'contact'
       });
       
-      if (emailResult.success) {
-        console.log('Contact form notification sent successfully');
-      } else {
-        console.error('Failed to send contact form notification:', emailResult.error);
-        // Don't fail the request if email fails, just log it
-      }
+      // Do not log to console in production; ignore non-critical failures
     } catch (emailError) {
-      console.error('Error sending contact form notification:', emailError);
-      // Don't fail the request if email fails, just log it
+      // Ignore email errors to avoid noisy logs
     }
     
     return NextResponse.json({ success: true, id });

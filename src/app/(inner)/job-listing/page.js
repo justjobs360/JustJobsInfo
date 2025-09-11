@@ -30,29 +30,30 @@ export default function JobListingPage() {
     const [shareModalOpen, setShareModalOpen] = useState(false);
     const [selectedJobForShare, setSelectedJobForShare] = useState(null);
     const triedGeo = useRef(false);
-    const industryProcessed = useRef(false);
+    const initialSearchTriggered = useRef(false);
     const router = useRouter();
     const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
 
     useEffect(() => {
-        // Handle industry parameter from URL (only once)
-        if (searchParams && searchParams.get('industry') && !industryProcessed.current) {
+        // Handle industry parameter from URL (on every navigation)
+        if (searchParams && searchParams.get('industry')) {
             const industry = searchParams.get('industry');
-            console.log('Industry parameter detected:', industry);
-            setSearchFilters(prev => ({ ...prev, query: industry }));
-            industryProcessed.current = true;
+            // Only update if the industry has changed
+            if (searchFilters.query !== industry) {
+                setSearchFilters(prev => ({ ...prev, query: industry }));
+                // Reset the search trigger flag to allow new search
+                initialSearchTriggered.current = false;
+            }
         }
         
         // On first load, try to auto-detect location using browser geolocation
         if (!triedGeo.current && !searchFilters.location) {
-            console.log('Requesting browser geolocation permission...');
             triedGeo.current = true;
             
             if ('geolocation' in navigator) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         const { latitude, longitude } = position.coords;
-                        console.log('User granted geolocation permission. Coordinates:', latitude, longitude);
                         
                         try {
                             // Call our backend API to convert coordinates to country
@@ -60,19 +61,15 @@ export default function JobListingPage() {
                             const data = await response.json();
                             
                             if (data.success && data.country) {
-                                console.log('Detected country from coordinates:', data.country);
                                 setSearchFilters(prev => ({ ...prev, location: data.country }));
                             } else {
-                                console.log('Failed to get country from coordinates. Showing location prompt.');
                                 setShowLocationPrompt(true);
                             }
                         } catch (error) {
-                            console.log('Error calling geolocate API:', error);
                             setShowLocationPrompt(true);
                         }
                     },
                     (error) => {
-                        console.log('User denied geolocation permission or error:', error.message);
                         setShowLocationPrompt(true);
                     },
                     {
@@ -82,7 +79,6 @@ export default function JobListingPage() {
                     }
                 );
             } else {
-                console.log('Geolocation not supported by browser. Showing location prompt.');
                 setShowLocationPrompt(true);
             }
         }
@@ -97,15 +93,27 @@ export default function JobListingPage() {
             }, 500);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Empty dependency array to run only once on mount
+    }, [searchFilters.query]); // Run when query changes (industry navigation)
 
     // Separate useEffect to trigger search when filters change
     useEffect(() => {
         if (searchFilters.query || searchFilters.location) {
-            console.log('Triggering search with filters:', searchFilters);
             searchJobs(true);
         }
-    }, [searchFilters.query, searchFilters.location]);
+    }, [searchFilters.query, searchFilters.location, searchFilters.employmentType, searchFilters.remoteOnly, searchFilters.datePosted]);
+
+    // Handle initial search for industry parameter
+    useEffect(() => {
+        if (!initialSearchTriggered.current && searchFilters.query) {
+            // Small delay to ensure searchJobs is available
+            const timer = setTimeout(() => {
+                searchJobs(true);
+                initialSearchTriggered.current = true;
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [searchFilters.query]);
+
 
     const handleLocationSubmit = (e) => {
         e.preventDefault();

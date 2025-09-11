@@ -13,7 +13,7 @@ export default function DynamicMetaTags({ pageName, children }) {
     // The actual meta tag updates are handled by the useMetaTags hook
     
     if (error) {
-        console.warn('DynamicMetaTags: Failed to load meta tags for', pageName, ':', error);
+        // Silently ignore to avoid console noise in production
     }
 
     return children || null;

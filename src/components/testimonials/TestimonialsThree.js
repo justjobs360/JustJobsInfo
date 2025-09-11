@@ -9,28 +9,24 @@ import "swiper/css/pagination";
 export default function TestimonialsThree() {
   const testimonials = [
     {
-      text: "Luminous transformed our agricultural business with their custom software solution. Their team developed an intuitive crop management system that has increased our yield by 30% and significantly reduced water waste.",
-      image: "/assets/images/testimonials/01.png",
-      name: "Michael Chen",
-      position: "CTO of SwiftPay Financial",
+      text: "As a dedicated software engineer, I value precision highly. This AI resume auditor impressed me with its grasp of the technical subtleties of my profession. It helped me refine the way I present my skills, making it an invaluable asset for anyone in the tech industry.",
+      name: "Anna Z.",
+      position: "Senior Software Engineer",
     },
     {
-      text: "Luminous transformed our agricultural business with their custom software solution. Their team developed an intuitive crop management system that has increased our yield by 30% and significantly reduced water waste.",
-      image: "/assets/images/testimonials/02.png",
-      name: "Kolic Chen",
-      position: "CTO of SwiftPay Financial",
+      text: "In the fast-paced world of HR, creating the right impression is crucial. This tool has revolutionized our resume screening process with its personalized recommendations, highlighting each candidate's unique strengths. It's a game-changer for recruitment experts.",
+      name: "Rachel B.",
+      position: "HR Director",
     },
     {
-      text: "Luminous transformed our agricultural business with their custom software solution. Their team developed an intuitive crop management system that has increased our yield by 30% and significantly reduced water waste.",
-      image: "/assets/images/testimonials/02.png",
-      name: "John Lee",
-      position: "CTO of SwiftPay Financial",
+      text: "Effective project management hinges on clear communication, and that's where the AI resume auditor shines. Its personalized feedback was instrumental in helping me articulate my project leadership skills. Highly recommended for project management professionals.",
+      name: "Liam J.",
+      position: "Project Management Consultant",
     },
     {
-      text: "Luminous transformed our agricultural business with their custom software solution. Their team developed an intuitive crop management system that has increased our yield by 30% and significantly reduced water waste.",
-      image: "/assets/images/testimonials/07.png",
-      name: "Michael Chen",
-      position: "CTO of SwiftPay Financial",
+      text: "A resume for a creative professional should be a reflection of their artistic flair. The AI resume auditor understood the nuances of my design experience, offering constructive feedback that elevated my resume's visual impact. It's a vital tool for creatives.",
+      name: "Kevin L.",
+      position: "Senior Graphic Designer",
     },
   ];
 
@@ -40,7 +36,12 @@ export default function TestimonialsThree() {
         <div className="row">
           <div className="col-lg-12">
             <div className="testimonails-title-wrapper-between"> 
-              <h2 className="title">What they said about us</h2>
+              <h2 className="title" style={{
+                fontSize: "48px",
+                fontWeight: "700",
+                lineHeight: "1.2",
+                marginBottom: "0"
+              }}>What they said about us</h2>
               <div className="swiper-btn">
                 <div className="swiper-button-next">
                   <i className="fa-regular fa-arrow-right"></i>
@@ -82,14 +83,34 @@ export default function TestimonialsThree() {
               >
                 {testimonials.map((testimonial, index) => (
                   <SwiperSlide key={index}>
-                    <div className="single-testimonials-about">
-                      <p className="disc">{testimonial.text}</p>
+                    <div className="single-testimonials-about" style={{
+                      height: "380px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between"
+                    }}>
+                      <p className="disc" style={{
+                        flex: "1",
+                        display: "flex",
+                        alignItems: "center",
+                        lineHeight: "1.6",
+                        fontSize: "16px"
+                      }}>{testimonial.text}</p>
                       <div className="author-area">
-                        <img
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          className="testimonial-image"
-                        />
+                        <div className="avatar" style={{
+                          width: "60px",
+                          height: "60px",
+                          backgroundColor: "#10365C",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "50%",
+                          color: "#fff",
+                          fontSize: "24px",
+                          fontWeight: "bold"
+                        }}>
+                          {testimonial.name.charAt(0)}
+                        </div>
                         <div className="information">
                           <h5 className="title">{testimonial.name}</h5>
                           <p>{testimonial.position}</p>

@@ -18,15 +18,11 @@ export const useMetaTags = (pageName) => {
                 setLoading(true);
                 setError(null);
                 
-                console.log('🔍 useMetaTags: Loading meta tags for:', pageName);
-                
                 const tags = await getMetaTagsForPage(pageName);
                 setMetaTags(tags);
                 
                 // Update document meta tags
                 updateDocumentMeta(tags);
-                
-                console.log('✅ useMetaTags: Meta tags loaded and applied for:', pageName);
                 
             } catch (err) {
                 console.error('❌ useMetaTags: Error loading meta tags:', err);

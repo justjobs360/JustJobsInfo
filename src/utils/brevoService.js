@@ -23,7 +23,6 @@ class BrevoService {
   async sendJobAlert({ toEmail, toName, jobs, keywords, locations, unsubscribeToken }) {
     try {
       if (!jobs || jobs.length === 0) {
-        console.log(`No jobs to send for ${toEmail}`);
         return { success: false, message: 'No jobs to send' };
       }
 
@@ -80,7 +79,6 @@ class BrevoService {
       const result = await response.json();
       
       if (response.ok) {
-        console.log(`Job alert sent successfully to ${toEmail}:`, result);
         return { success: true, messageId: result.messageId };
       } else {
         console.error('Failed to send job alert:', result);
@@ -251,7 +249,6 @@ JustJobsInfo Team
       const result = await response.json();
       
       if (response.ok) {
-        console.log(`Contact form notification sent successfully:`, result);
         return { success: true, messageId: result.messageId };
       } else {
         console.error('Failed to send contact form notification:', result);
