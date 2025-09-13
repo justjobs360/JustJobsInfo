@@ -59,7 +59,7 @@ function FeatureTwo() {
                                 <div className="icon">
                                     <img src="assets/images/about/icons/06.svg" alt="benefits" />
                                 </div>
-                                <h5 className="title">Blobal Access</h5>
+                                <h5 className="title">Global Access</h5>
                             </div>
                         </div>
                         <div className="col-lg-3 çol-md-4 col-sm-6 col-12">
