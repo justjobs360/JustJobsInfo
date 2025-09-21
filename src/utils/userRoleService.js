@@ -26,7 +26,10 @@ export const ADMIN_PERMISSIONS = {
     MANAGE_PAGES: 'manage_pages',
     
     // Analytics
-    VIEW_ANALYTICS: 'view_analytics'
+    VIEW_ANALYTICS: 'view_analytics',
+    
+    // User Management
+    MANAGE_USERS: 'manage_users'
 };
 
 // Default permissions for regular admins (SEO-focused)
@@ -47,7 +50,8 @@ export const DEFAULT_ADMIN_PERMISSIONS = [
 export const SUPER_ADMIN_PERMISSIONS = [
     ...DEFAULT_ADMIN_PERMISSIONS,
     // Super admin specific permissions
-    'manage_admins'
+    'manage_admins',
+    ADMIN_PERMISSIONS.MANAGE_USERS
 ];
 
 class UserRoleService {

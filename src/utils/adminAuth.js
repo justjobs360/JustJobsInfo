@@ -10,27 +10,35 @@ if (!admin.apps.length) {
       })
     });
   } catch (e) {
+    console.error('Firebase Admin initialization error:', e);
     // ignore double init
   }
 }
 
 export async function requireAdmin(request) {
   const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+  
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return { ok: false, status: 401, error: 'Missing Authorization header' };
   }
+  
   const idToken = authHeader.slice('Bearer '.length);
+  
   try {
-    const decoded = await admin.auth().verifyIdToken(idToken, true);
+    const decoded = await admin.auth().verifyIdToken(idToken, false);
     const userDoc = await admin.firestore().collection('users').doc(decoded.uid).get();
+    
     if (!userDoc.exists) {
       return { ok: false, status: 404, error: 'User not found' };
     }
+    
     const data = userDoc.data();
     const isAdmin = data.role === 'admin' || data.role === 'super_admin';
+    
     if (!isAdmin) {
       return { ok: false, status: 403, error: 'Admin privileges required' };
     }
+    
     return { ok: true, uid: decoded.uid, role: data.role, permissions: data.permissions || [] };
   } catch (e) {
     return { ok: false, status: 401, error: 'Invalid token' };

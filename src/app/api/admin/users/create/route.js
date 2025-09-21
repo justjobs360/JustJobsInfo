@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import * as admin from 'firebase-admin';
-import { ADMIN_PERMISSIONS, DEFAULT_ADMIN_PERMISSIONS, SUPER_ADMIN_PERMISSIONS } from '@/utils/userRoleService';
+import { requireAdmin } from '@/utils/adminAuth';
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
@@ -9,7 +9,7 @@ if (!admin.apps.length) {
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
       }),
     });
   } catch (error) {
@@ -19,118 +19,98 @@ if (!admin.apps.length) {
 
 export async function POST(request) {
   try {
-    const { email, uid, role, permissions, createdBy } = await request.json();
-
-    // Validate required fields - either email or uid must be provided
+    // Check admin authentication
+    const auth = await requireAdmin(request);
+    if (!auth.ok) {
+      return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
+    }
+    
+    // Only super admins can create other admins
+    if (auth.role !== 'super_admin') {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Only super admins can create other admins' 
+      }, { status: 403 });
+    }
+    
+    const body = await request.json();
+    const { email, uid, role = 'admin', permissions = [] } = body;
+    
     if (!email && !uid) {
       return NextResponse.json({ 
         success: false, 
         error: 'Either email or uid is required' 
       }, { status: 400 });
     }
-
-    if (!role) {
+    
+    if (!role || !['admin', 'super_admin'].includes(role)) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Role is required' 
+        error: 'Invalid role. Must be admin or super_admin' 
       }, { status: 400 });
     }
-
-    // Validate role
-    if (role !== 'admin' && role !== 'super_admin') {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Invalid role. Must be "admin" or "super_admin"' 
-      }, { status: 400 });
-    }
-
-    // Set permissions based on role
-    const finalPermissions = role === 'super_admin' 
-      ? SUPER_ADMIN_PERMISSIONS 
-      : (permissions || DEFAULT_ADMIN_PERMISSIONS);
-
-    let userRecord;
-    let userEmail;
-
-    if (uid) {
-      // Use existing user by UID
+    
+    let targetUid = uid;
+    
+    // If email is provided but no uid, try to find the user by email
+    if (email && !uid) {
       try {
-        userRecord = await admin.auth().getUser(uid);
-        userEmail = userRecord.email;
-        console.log(`✅ Found existing user by UID: ${userEmail}`);
+        const userRecord = await admin.auth().getUserByEmail(email);
+        targetUid = userRecord.uid;
       } catch (error) {
         return NextResponse.json({ 
           success: false, 
-          error: `User with UID ${uid} not found in Firebase Auth` 
-        }, { status: 404 });
-      }
-    } else {
-      // Use existing user by email
-      try {
-        userRecord = await admin.auth().getUserByEmail(email);
-        userEmail = email;
-        console.log(`✅ Found existing user by email: ${userEmail}`);
-      } catch (error) {
-        return NextResponse.json({ 
-          success: false, 
-          error: `User with email ${email} not found in Firebase Auth` 
+          error: `User with email ${email} not found` 
         }, { status: 404 });
       }
     }
-
-    // Check if user already has admin role in Firestore
-    const existingUserDoc = await admin.firestore().collection('users').doc(userRecord.uid).get();
+    
+    // Check if user document already exists
+    const existingUserDoc = await admin.firestore().collection('users').doc(targetUid).get();
     
     if (existingUserDoc.exists) {
       const existingData = existingUserDoc.data();
       if (existingData.role === 'admin' || existingData.role === 'super_admin') {
         return NextResponse.json({ 
           success: false, 
-          error: `User ${userEmail} is already an admin` 
+          error: 'User is already an admin' 
         }, { status: 409 });
       }
     }
-
-    // Create or update user document in Firestore
+    
+    // Set permissions based on role
+    const finalPermissions = role === 'super_admin' 
+      ? ['view_dashboard', 'manage_seo', 'manage_content', 'manage_blog_posts', 'manage_admins', 'manage_users']
+      : permissions;
+    
+    // Create or update user document
     const userData = {
-      uid: userRecord.uid,
-      email: userEmail,
       role,
       permissions: finalPermissions,
+      email: email || (existingUserDoc.exists ? existingUserDoc.data().email : ''),
       createdAt: existingUserDoc.exists ? existingUserDoc.data().createdAt : new Date().toISOString(),
-      createdBy: createdBy || 'super_admin',
       updatedAt: new Date().toISOString(),
-      isActive: true
+      updatedBy: auth.uid
     };
-
-    await admin.firestore().collection('users').doc(userRecord.uid).set(userData, { merge: true });
-
+    
+    await admin.firestore().collection('users').doc(targetUid).set(userData, { merge: true });
+    
     return NextResponse.json({
       success: true,
+      message: `User successfully promoted to ${role}`,
       user: {
-        uid: userRecord.uid,
-        email: userEmail,
+        uid: targetUid,
+        email: userData.email,
         role,
-        permissions: finalPermissions,
-        createdAt: userData.createdAt
-      },
-      message: `${userEmail} promoted to ${role === 'super_admin' ? 'Super Admin' : 'Admin'} successfully`
+        permissions: finalPermissions
+      }
     });
-
-  } catch (error) {
-    console.error('Error promoting user to admin:', error);
     
-    // Handle specific Firebase Auth errors
-    if (error.code === 'auth/user-not-found') {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'User not found in Firebase Auth' 
-      }, { status: 404 });
-    }
-
+  } catch (error) {
+    console.error('Error creating admin user:', error);
     return NextResponse.json({ 
       success: false, 
-      error: `Failed to promote user to admin: ${error.message}` 
+      error: `Failed to create admin user: ${error.message}` 
     }, { status: 500 });
   }
-} 
+}

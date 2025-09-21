@@ -116,6 +116,15 @@ const AdminLayout = ({ children }) => {
             superAdminOnly: true
         },
         
+        // User Management (super admin only)
+        {
+            name: 'User Management',
+            href: '/admin/users',
+            icon: '👥',
+            permission: null, // Super admin only
+            superAdminOnly: true
+        },
+        
         // Admin Management (super admin only)
         {
             name: 'Admin Management',

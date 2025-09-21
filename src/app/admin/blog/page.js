@@ -85,13 +85,9 @@ export default function BlogManagementPage() {
     setEditorContent(htmlContent);
   };
 
-     // Toggle editor mode
-   const toggleEditorMode = () => {
-     setEditorMode(prev => {
-       if (prev === 'visual') return 'html';
-       if (prev === 'html') return 'template';
-       return 'visual';
-     });
+     // Set editor mode
+   const setEditorModeDirect = (mode) => {
+     setEditorMode(mode);
    };
 
   // Handle template data changes
@@ -1066,15 +1062,64 @@ export default function BlogManagementPage() {
                             <div className="form-group">
                 <label>Content (HTML)</label>
                 <div className="editor-toggle-container">
-                  <button 
-                    className="rts-btn btn-primary"
-                    onClick={toggleEditorMode}
-                    style={{ marginBottom: '15px' }}
-                  >
-                    {editorMode === 'visual' ? '🖊️ Visual Editor' : 
-                     editorMode === 'html' ? '📝 HTML Editor' : 
-                     '📋 Template One'}
-                  </button>
+                  <div className="editor-tabs" style={{ 
+                    display: 'flex', 
+                    gap: '5px', 
+                    marginBottom: '15px',
+                    borderBottom: '1px solid #e0e0e0'
+                  }}>
+                    <button 
+                      className={`editor-tab ${editorMode === 'visual' ? 'active' : ''}`}
+                      onClick={() => setEditorModeDirect('visual')}
+                      style={{
+                        padding: '8px 16px',
+                        border: 'none',
+                        backgroundColor: editorMode === 'visual' ? '#007bff' : 'transparent',
+                        color: editorMode === 'visual' ? 'white' : '#666',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        borderRadius: '4px 4px 0 0',
+                        borderBottom: editorMode === 'visual' ? '2px solid #007bff' : '2px solid transparent'
+                      }}
+                    >
+                      🖊️ Visual
+                    </button>
+                    <button 
+                      className={`editor-tab ${editorMode === 'html' ? 'active' : ''}`}
+                      onClick={() => setEditorModeDirect('html')}
+                      style={{
+                        padding: '8px 16px',
+                        border: 'none',
+                        backgroundColor: editorMode === 'html' ? '#007bff' : 'transparent',
+                        color: editorMode === 'html' ? 'white' : '#666',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        borderRadius: '4px 4px 0 0',
+                        borderBottom: editorMode === 'html' ? '2px solid #007bff' : '2px solid transparent'
+                      }}
+                    >
+                      📝 HTML
+                    </button>
+                    <button 
+                      className={`editor-tab ${editorMode === 'template' ? 'active' : ''}`}
+                      onClick={() => setEditorModeDirect('template')}
+                      style={{
+                        padding: '8px 16px',
+                        border: 'none',
+                        backgroundColor: editorMode === 'template' ? '#007bff' : 'transparent',
+                        color: editorMode === 'template' ? 'white' : '#666',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        borderRadius: '4px 4px 0 0',
+                        borderBottom: editorMode === 'template' ? '2px solid #007bff' : '2px solid transparent'
+                      }}
+                    >
+                      📋 Template One
+                    </button>
+                  </div>
                   
                   {editorMode === 'visual' ? (
                     <div className="rich-text-editor">
