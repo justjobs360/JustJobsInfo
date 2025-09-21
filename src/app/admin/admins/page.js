@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PERMISSIONS, DEFAULT_ADMIN_PERMISSIONS } from '@/utils/userRoleService';
@@ -25,7 +25,7 @@ export default function AdminManagementPage() {
 
     useEffect(() => {
         loadAdmins();
-    }, []);
+    }, [loadAdmins]);
 
     // Helper functions
     const resetForm = () => {
@@ -81,7 +81,7 @@ export default function AdminManagementPage() {
         return matchesSearch && matchesRole;
     });
 
-    const loadAdmins = async () => {
+    const loadAdmins = useCallback(async () => {
         try {
             setLoading(true);
             console.log('🔄 Loading admin users...');
@@ -123,7 +123,7 @@ export default function AdminManagementPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user]);
 
     const handleCreateAdmin = async (e) => {
         e.preventDefault();
@@ -775,7 +775,7 @@ export default function AdminManagementPage() {
                                 </h3>
                                 {searchTerm && (
                                     <p style={{ fontSize: '14px', color: 'var(--color-body)', margin: '0 0 8px 0' }}>
-                                        Filtered by: "{searchTerm}"
+                                        Filtered by: &quot;{searchTerm}&quot;
                                     </p>
                                 )}
                             </div>
