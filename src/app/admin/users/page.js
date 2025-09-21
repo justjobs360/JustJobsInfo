@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { USER_ROLES, ADMIN_PERMISSIONS } from '@/utils/userRoleService';
@@ -19,9 +19,9 @@ export default function UserManagementPage() {
 
     useEffect(() => {
         loadUsers();
-    }, []);
+    }, [loadUsers]);
 
-    const loadUsers = async () => {
+    const loadUsers = useCallback(async () => {
         try {
             setLoading(true);
             
@@ -55,7 +55,7 @@ export default function UserManagementPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user]);
 
     const handleUpdateUserRole = async (userId, newRole) => {
         if (!confirm(`Are you sure you want to change this user's role to ${newRole === 'super_admin' ? 'Super Admin' : newRole === 'admin' ? 'Admin' : 'User'}?`)) {
@@ -423,7 +423,7 @@ export default function UserManagementPage() {
                                 </h3>
                                 {searchTerm && (
                                     <p style={{ fontSize: '14px', color: 'var(--color-body)', margin: '0 0 8px 0' }}>
-                                        Filtered by: "{searchTerm}"
+                                        Filtered by: &quot;{searchTerm}&quot;
                                     </p>
                                 )}
                             </div>
