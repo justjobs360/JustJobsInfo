@@ -348,7 +348,12 @@ export default function AdminDashboard() {
                                     </div>
                                     <div className="usage-text">
                                         <strong>{apiStats.monthlyUsage}</strong> / {apiStats.monthlyLimit} calls
-                                        <span className="percentage">({apiStats.usagePercentage.toFixed(1)}%)</span>
+                                        <span className="percentage">
+                                            ({apiStats.usagePercentage > 100 ? 
+                                                `OVER LIMIT (+${(apiStats.usagePercentage - 100).toFixed(1)}%)` : 
+                                                `${apiStats.usagePercentage.toFixed(1)}%`
+                                            })
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -358,11 +363,19 @@ export default function AdminDashboard() {
                                     <h3>Remaining Calls</h3>
                                 </div>
                                 <div className="api-stat-content">
-                                    <div className="big-number">{apiStats.monthlyLimit - apiStats.monthlyUsage}</div>
+                                    <div className="big-number" style={{ color: apiStats.monthlyUsage > apiStats.monthlyLimit ? '#dc3545' : 'var(--color-primary)' }}>
+                                        {apiStats.monthlyUsage > apiStats.monthlyLimit ? 
+                                            `-${apiStats.monthlyUsage - apiStats.monthlyLimit}` : 
+                                            apiStats.monthlyLimit - apiStats.monthlyUsage
+                                        }
+                                    </div>
                                     <div className="stat-description">
-                                        {apiStats.monthlyLimit - apiStats.monthlyUsage > 50 ? 'Plenty of calls remaining' : 
-                                         apiStats.monthlyLimit - apiStats.monthlyUsage > 20 ? 'Moderate usage' : 
-                                         apiStats.monthlyLimit - apiStats.monthlyUsage > 0 ? 'Low remaining calls' : 'No calls remaining'}
+                                        {apiStats.monthlyUsage > apiStats.monthlyLimit ? 
+                                            `OVER LIMIT by ${apiStats.monthlyUsage - apiStats.monthlyLimit} calls` :
+                                            apiStats.monthlyLimit - apiStats.monthlyUsage > 50 ? 'Plenty of calls remaining' : 
+                                            apiStats.monthlyLimit - apiStats.monthlyUsage > 20 ? 'Moderate usage' : 
+                                            apiStats.monthlyLimit - apiStats.monthlyUsage > 0 ? 'Low remaining calls' : 'No calls remaining'
+                                        }
                                     </div>
                                 </div>
                             </div>
