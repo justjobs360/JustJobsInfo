@@ -402,7 +402,7 @@ export default function AdminDashboard() {
                                 </div>
                                 <div className="api-info-card">
                                     <strong>⚡ Background Prewarming</strong>
-                                    <p>Cache refreshed every 12h with popular searches</p>
+                                    <p>Cache refreshed daily with popular searches (Hobby plan)</p>
                                 </div>
                                 <div className="api-info-card">
                                     <strong>🛡️ Budget Protection</strong>

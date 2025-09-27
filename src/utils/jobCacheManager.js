@@ -24,7 +24,7 @@ class JobCacheManager {
   constructor() {
     this.isPrewarming = false;
     this.lastPrewarmTime = null;
-    this.prewarmInterval = 12 * 60 * 60 * 1000; // 12 hours
+    this.prewarmInterval = 24 * 60 * 60 * 1000; // 24 hours (daily)
   }
 
   /**
@@ -43,7 +43,7 @@ class JobCacheManager {
       return false;
     }
 
-    // Prewarm if it's been more than 12 hours since last prewarm
+    // Prewarm if it's been more than 24 hours since last prewarm
     const now = Date.now();
     if (!this.lastPrewarmTime || (now - this.lastPrewarmTime) > this.prewarmInterval) {
       return true;
@@ -137,7 +137,7 @@ class JobCacheManager {
     }
 
     this.isPrewarming = true;
-      console.log('🚀 Starting cache prewarm (12-hour interval)...');
+      console.log('🚀 Starting cache prewarm (daily interval)...');
 
     try {
       const results = [];

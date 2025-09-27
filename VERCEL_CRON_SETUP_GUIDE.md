@@ -6,7 +6,7 @@
 
 Make sure these files exist in your project:
 - ✅ `vercel.json` (cron configuration)
-- ✅ `src/app/api/cron/prewarm-cache/route.js` (cron endpoint)
+- ✅ `src/app/api/cron/prewarm/route.js` (cron endpoint)
 - ✅ `src/utils/jobCacheManager.js` (cache management)
 - ✅ Environment variables in `.env.local`
 
@@ -51,7 +51,7 @@ Make sure these files exist in your project:
    {
      "crons": [
        {
-         "path": "/api/cron/prewarm-cache",
+         "path": "/api/cron/prewarm",
          "schedule": "0 */12 * * *"
        }
      ]
@@ -59,15 +59,15 @@ Make sure these files exist in your project:
    ```
 
 2. **Schedule Explanation:**
-   - `0 */12 * * *` = Every 12 hours at minute 0
-   - Runs at: 00:00, 12:00 (UTC time)
-   - If you want different times, adjust the schedule
+   - `0 12 * * *` = Daily at 12:00 PM UTC
+   - **Hobby Plan**: Can run anywhere between 12:00-12:59 PM UTC
+   - **Note**: Hobby plan only allows "once a day" scheduling
 
 ### **Step 5: Test the Cron Endpoint**
 
 1. **Manual Test:**
    ```bash
-   curl -X GET "https://your-domain.vercel.app/api/cron/prewarm-cache"
+   curl -X GET "https://your-domain.vercel.app/api/cron/prewarm"
    ```
 
 2. **Expected Response:**
@@ -134,7 +134,7 @@ Make sure these files exist in your project:
 
 2. **Test Endpoint Manually:**
    ```bash
-   curl -X POST "https://your-domain.vercel.app/api/cron/prewarm-cache" \
+   curl -X POST "https://your-domain.vercel.app/api/cron/prewarm" \
      -H "Content-Type: application/json" \
      -d '{"force": true}'
    ```
