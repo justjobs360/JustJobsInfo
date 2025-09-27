@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     const triggerPrewarm = async () => {
         setPrewarming(true);
         try {
-            const response = await fetch('/api/cron/prewarm-cache', {
+            const response = await fetch('/api/cron/prewarm', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

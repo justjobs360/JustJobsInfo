@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/prewarm-cache",
+      "path": "/api/cron/prewarm",
       "schedule": "0 */12 * * *"
     }
   ]
