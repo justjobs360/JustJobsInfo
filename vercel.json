@@ -1,13 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/cron/prewarm",
-      "schedule": "0 10 */2 * *" 
-    },
-    {
-      "path": "/api/cron/job-alerts",
-      "schedule": "0 8 * * *"
+      "path": "/api/cron/prewarm-cache",
+      "schedule": "0 */12 * * *"
     }
   ]
 }
-

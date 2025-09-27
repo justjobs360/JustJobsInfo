@@ -19,8 +19,60 @@ export default function AdminDashboard() {
         recentActivity: [],
         metrics: {}
     });
+    const [apiStats, setApiStats] = useState({
+        monthlyUsage: 0,
+        monthlyLimit: 100,
+        usagePercentage: 0,
+        nearLimit: false,
+        isPrewarming: false,
+        lastPrewarmTime: null,
+        cacheStatus: 'HEALTHY'
+    });
+    const [prewarming, setPrewarming] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const fetchApiStats = async () => {
+        try {
+            const response = await fetch('/api/jobs/cache-stats');
+            const data = await response.json();
+            
+            if (data.success) {
+                setApiStats(data.stats);
+            } else {
+                console.error('Failed to fetch API stats:', data.error);
+            }
+        } catch (error) {
+            console.error('Error fetching API stats:', error);
+        }
+    };
+
+    const triggerPrewarm = async () => {
+        setPrewarming(true);
+        try {
+            const response = await fetch('/api/cron/prewarm-cache', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ force: true })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(`Cache prewarming completed! Cached ${data.cached} searches.`);
+                fetchApiStats(); // Refresh API stats
+            } else {
+                alert(`Prewarming failed: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error triggering prewarm:', error);
+            alert('Failed to trigger cache prewarming');
+        } finally {
+            setPrewarming(false);
+        }
+    };
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -66,6 +118,11 @@ export default function AdminDashboard() {
         };
 
         fetchDashboardData();
+        fetchApiStats(); // Fetch API stats
+        
+        // Refresh API stats every 30 seconds
+        const interval = setInterval(fetchApiStats, 30000);
+        return () => clearInterval(interval);
     }, [isSuperAdmin]);
 
     const StatCard = ({ title, value, icon, color, loading = false, subtitle = null }) => (
@@ -246,6 +303,119 @@ export default function AdminDashboard() {
                         </>
                     )}
                 </div>
+
+                {/* API Usage Monitoring - Only for Super Admin */}
+                {isSuperAdmin() && (
+                    <div className="api-usage-section">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2 style={{ fontSize: '20px', fontWeight: '500', color: 'var(--color-heading-1)', margin: 0 }}>
+                                🔧 API Usage Monitoring
+                            </h2>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button 
+                                    onClick={() => fetchApiStats()}
+                                    className="btn btn-secondary btn-sm"
+                                >
+                                    Refresh
+                                </button>
+                                <button 
+                                    onClick={triggerPrewarm}
+                                    disabled={prewarming || apiStats.nearLimit}
+                                    className="btn btn-primary btn-sm"
+                                >
+                                    {prewarming ? 'Prewarming...' : 'Force Prewarm'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="api-stats-grid">
+                            <div className="api-stat-card">
+                                <div className="api-stat-header">
+                                    <h3>Monthly API Usage</h3>
+                                    <span className={`status-badge ${apiStats.nearLimit ? 'warning' : 'success'}`}>
+                                        {apiStats.cacheStatus}
+                                    </span>
+                                </div>
+                                <div className="api-stat-content">
+                                    <div className="usage-bar">
+                                        <div 
+                                            className="usage-fill" 
+                                            style={{ 
+                                                width: `${Math.min(apiStats.usagePercentage, 100)}%`,
+                                                backgroundColor: apiStats.nearLimit ? '#dc3545' : apiStats.usagePercentage > 70 ? '#ffc107' : '#28a745'
+                                            }}
+                                        ></div>
+                                    </div>
+                                    <div className="usage-text">
+                                        <strong>{apiStats.monthlyUsage}</strong> / {apiStats.monthlyLimit} calls
+                                        <span className="percentage">({apiStats.usagePercentage.toFixed(1)}%)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="api-stat-card">
+                                <div className="api-stat-header">
+                                    <h3>Remaining Calls</h3>
+                                </div>
+                                <div className="api-stat-content">
+                                    <div className="big-number">{apiStats.monthlyLimit - apiStats.monthlyUsage}</div>
+                                    <div className="stat-description">
+                                        {apiStats.monthlyLimit - apiStats.monthlyUsage > 50 ? 'Plenty of calls remaining' : 
+                                         apiStats.monthlyLimit - apiStats.monthlyUsage > 20 ? 'Moderate usage' : 
+                                         apiStats.monthlyLimit - apiStats.monthlyUsage > 0 ? 'Low remaining calls' : 'No calls remaining'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="api-stat-card">
+                                <div className="api-stat-header">
+                                    <h3>Cache Status</h3>
+                                </div>
+                                <div className="api-stat-content">
+                                    <div className="cache-info">
+                                        <div className="cache-item">
+                                            <span className="label">Prewarming:</span>
+                                            <span className={`value ${apiStats.isPrewarming ? 'active' : 'inactive'}`}>
+                                                {apiStats.isPrewarming ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </div>
+                                        <div className="cache-item">
+                                            <span className="label">Last Prewarm:</span>
+                                            <span className="value">
+                                                {apiStats.lastPrewarmTime !== null ? 
+                                                  `${Math.round((Date.now() - apiStats.lastPrewarmTime) / (1000 * 60 * 60))} hours ago` : 
+                                                  'Never'
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="api-info-section">
+                            <h4>💡 How It Works</h4>
+                            <div className="api-info-grid">
+                                <div className="api-info-card">
+                                    <strong>🎯 Smart Caching</strong>
+                                    <p>Popular searches cached for 24h, reducing API calls by 95%</p>
+                                </div>
+                                <div className="api-info-card">
+                                    <strong>⚡ Background Prewarming</strong>
+                                    <p>Cache refreshed every 12h with popular searches</p>
+                                </div>
+                                <div className="api-info-card">
+                                    <strong>🛡️ Budget Protection</strong>
+                                    <p>Serves stale cache when approaching limit</p>
+                                </div>
+                                <div className="api-info-card">
+                                    <strong>📊 Real-time Monitoring</strong>
+                                    <p>Live tracking ensures we never exceed limits</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Quick Actions */}
                 <div className="quick-actions-section">
@@ -432,6 +602,208 @@ export default function AdminDashboard() {
                 )}
 
             </div>
+            
+            {/* API Usage Styles */}
+            <style jsx>{`
+                .api-usage-section {
+                    background: #f8f9fa;
+                    padding: 30px;
+                    border-radius: 8px;
+                    margin: 30px 0;
+                    border: 1px solid #e9ecef;
+                }
+                
+                .api-stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+                
+                .api-stat-card {
+                    background: white;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                
+                .api-stat-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+                
+                .api-stat-header h3 {
+                    margin: 0;
+                    font-size: 16px;
+                    color: #333;
+                }
+                
+                .status-badge {
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+                
+                .status-badge.success {
+                    background: #d4edda;
+                    color: #155724;
+                }
+                
+                .status-badge.warning {
+                    background: #fff3cd;
+                    color: #856404;
+                }
+                
+                .usage-bar {
+                    height: 8px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    margin-bottom: 10px;
+                }
+                
+                .usage-fill {
+                    height: 100%;
+                    transition: width 0.3s ease;
+                }
+                
+                .usage-text {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 14px;
+                }
+                
+                .percentage {
+                    color: #666;
+                    font-weight: normal;
+                }
+                
+                .big-number {
+                    font-size: 32px;
+                    font-weight: bold;
+                    color: var(--color-primary);
+                    margin-bottom: 5px;
+                }
+                
+                .stat-description {
+                    color: #666;
+                    font-size: 14px;
+                }
+                
+                .cache-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .cache-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 14px;
+                }
+                
+                .cache-item .label {
+                    color: #666;
+                }
+                
+                .cache-item .value.active {
+                    color: #28a745;
+                    font-weight: 600;
+                }
+                
+                .cache-item .value.inactive {
+                    color: #666;
+                }
+                
+                .api-info-section {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 6px;
+                    border-left: 4px solid var(--color-primary);
+                }
+                
+                .api-info-section h4 {
+                    margin: 0 0 15px 0;
+                    font-size: 16px;
+                    color: #333;
+                }
+                
+                .api-info-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 15px;
+                }
+                
+                .api-info-card {
+                    padding: 15px;
+                    background: #f8f9fa;
+                    border-radius: 6px;
+                    border-left: 3px solid var(--color-primary);
+                }
+                
+                .api-info-card strong {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-size: 14px;
+                    color: #333;
+                }
+                
+                .api-info-card p {
+                    margin: 0;
+                    font-size: 13px;
+                    color: #666;
+                    line-height: 1.4;
+                }
+                
+                .btn-sm {
+                    padding: 6px 12px;
+                    font-size: 12px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .btn:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+                
+                .btn-primary {
+                    background: var(--color-primary);
+                    color: white;
+                }
+                
+                .btn-primary:hover:not(:disabled) {
+                    background: #0056b3;
+                }
+                
+                .btn-secondary {
+                    background: #6c757d;
+                    color: white;
+                }
+                
+                .btn-secondary:hover:not(:disabled) {
+                    background: #545b62;
+                }
+                
+                @media (max-width: 768px) {
+                    .api-stats-grid {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .api-info-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            `}</style>
         </AdminLayout>
     );
 } 
