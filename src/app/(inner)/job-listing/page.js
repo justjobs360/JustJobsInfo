@@ -30,6 +30,7 @@ export default function JobListingPage() {
     const [shareModalOpen, setShareModalOpen] = useState(false);
     const [selectedJobForShare, setSelectedJobForShare] = useState(null);
     const triedGeo = useRef(false);
+    const triedGeoFallback = useRef(false);
     const initialSearchTriggered = useRef(false);
     const router = useRouter();
     const searchParams = useSearchParams();
