@@ -26,7 +26,7 @@ export default function Home() {
                                             This Cookies Policy explains how justjobs.info uses cookies and similar tracking technologies.
                                         </p>
                                     </div>
-                                    <div className="mid-content">
+                                    <div className="mid-content" style={{marginBottom: 0,  paddingBottom: 0}}>
                                         <h3 className="title mt--40 mb--20">What Are Cookies</h3>
                                         <p className="disc">
                                             Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently and to provide a better user experience.
@@ -64,7 +64,7 @@ export default function Home() {
                     </div>
                 </div>
                 
-                <div className="service-area-details-wrapper border-bottom legal-page">
+                <div className="service-area-details-wrapper border-bottom legal-page" style={{ marginTop: '0', paddingTop: '0px' }}>
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12">
@@ -88,6 +88,27 @@ export default function Home() {
                                             <li><strong>Safari:</strong> Preferences &gt; Privacy &gt; Manage Website Data</li>
                                             <li><strong>Edge:</strong> Settings &gt; Cookies and site permissions &gt; Cookies and site data</li>
                                         </ul>
+                                        <style dangerouslySetInnerHTML={{
+                                            __html: `
+                                                .service-area-details-wrapper .mid-content ul.disc li::marker,
+                                                .service-area-details-wrapper .mid-content ul.disc-list li::marker {
+                                                    font-size: 20px !important;
+                                                    color: #007bff !important;
+                                                    font-weight: bold !important;
+                                                }
+                                                .service-area-details-wrapper .mid-content ul.disc li,
+                                                .service-area-details-wrapper .mid-content ul.disc-list li {
+                                                    font-size: 20px !important;
+                                                    line-height: 1.6 !important;
+                                                    margin-bottom: 12px !important;
+                                                }
+                                                .service-area-details-wrapper .mid-content ul.disc,
+                                                .service-area-details-wrapper .mid-content ul.disc-list {
+                                                    padding-left: 20px !important;
+                                                    list-style-type: disc !important;
+                                                }
+                                            `
+                                        }} />
                                         
                                         <h3 className="title mt--40 mb--20">Cookie Consent</h3>
                                         <p className="disc">
@@ -101,7 +122,7 @@ export default function Home() {
                                         
                                         <h3 className="title mt--40 mb--20">Contact Us</h3>
                                         <p className="disc">
-                                            If you have any questions about our use of cookies or this Cookies Policy, please contact us at: info@justjobs.info
+                                            If you have any questions about our use of cookies or this Cookies Policy, please contact us at: enquiries@justjobs.info
                                         </p>
                                     </div>
                                 </div>

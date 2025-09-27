@@ -6,11 +6,11 @@ import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
 import toast from 'react-hot-toast';
 
 export default function BlogManagementPage() {
-  const { hasPermission } = useAuth();
+  const { hasPermission, user } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [authors, setAuthors] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const [showComments, setShowComments] = useState(null);
@@ -26,7 +26,9 @@ export default function BlogManagementPage() {
     tags: [],
     status: 'published',
     author: '',
-    authorImg: '',
+    authorId: '',
+    authorBio: '',
+    authorRole: '',
     image: '',
     bannerImg: '',
     publishedDate: ''
@@ -35,7 +37,6 @@ export default function BlogManagementPage() {
   // Image upload states
   const [imageUploadType, setImageUploadType] = useState('url'); // 'url' or 'upload'
   const [bannerUploadType, setBannerUploadType] = useState('url');
-  const [authorUploadType, setAuthorUploadType] = useState('url');
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // Editor states
@@ -431,18 +432,6 @@ export default function BlogManagementPage() {
     }
   };
 
-  // Fetch categories
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/blogs/categories');
-      const result = await response.json();
-      if (result.success) {
-        setCategories(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
 
   // Fetch all tags
   const fetchTags = async () => {
@@ -463,12 +452,51 @@ export default function BlogManagementPage() {
     }
   };
 
+  // Fetch authors
+  const fetchAuthors = async () => {
+    try {
+      if (!user) {
+        console.log('User not authenticated for author fetch');
+        return;
+      }
+      
+      const idToken = await user.getIdToken();
+      
+      const response = await fetch('/api/admin/authors?limit=100', {
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      if (result.success) {
+        setAuthors(result.data.authors);
+      }
+    } catch (error) {
+      console.error('Error fetching authors:', error);
+    }
+  };
+
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  // Handle author selection
+  const handleAuthorChange = (e) => {
+    const authorId = e.target.value;
+    const selectedAuthor = authors.find(author => author._id === authorId);
+    
+    setFormData(prev => ({
+      ...prev,
+      authorId: authorId,
+      author: selectedAuthor ? selectedAuthor.name : '',
+      authorBio: selectedAuthor ? selectedAuthor.bio : '',
+      authorRole: selectedAuthor ? selectedAuthor.title : ''
     }));
   };
 
@@ -505,7 +533,7 @@ export default function BlogManagementPage() {
 
     const formData = new FormData();
     formData.append('image', file);
-    formData.append('type', type); // 'blog', 'banner', or 'author'
+    formData.append('type', type); // 'blog' or 'banner'
 
     try {
       setUploadingImage(true);
@@ -522,8 +550,6 @@ export default function BlogManagementPage() {
           setFormData(prev => ({ ...prev, image: result.data.url }));
         } else if (type === 'banner') {
           setFormData(prev => ({ ...prev, bannerImg: result.data.url }));
-        } else if (type === 'author') {
-          setFormData(prev => ({ ...prev, authorImg: result.data.url }));
         }
         toast.success('Image uploaded successfully!');
       } else {
@@ -625,7 +651,9 @@ export default function BlogManagementPage() {
       tags: blog.tags || [],
       status: blog.status,
       author: blog.author,
-      authorImg: blog.authorImg,
+      authorId: blog.authorId || '',
+      authorBio: blog.authorBio || '',
+      authorRole: blog.authorRole || '',
       image: blog.image,
       bannerImg: blog.bannerImg,
       publishedDate: formattedDate
@@ -656,7 +684,9 @@ export default function BlogManagementPage() {
       tags: [],
       status: 'published',
       author: '',
-      authorImg: '',
+      authorId: '',
+      authorBio: '',
+      authorRole: '',
       image: '',
       bannerImg: '',
       publishedDate: ''
@@ -666,7 +696,6 @@ export default function BlogManagementPage() {
     setShowPreview(false); // Reset preview mode
     setImageUploadType('url');
     setBannerUploadType('url');
-    setAuthorUploadType('url');
     // Reset template data
     setTemplateData({
       mainTitle: '',
@@ -713,8 +742,8 @@ export default function BlogManagementPage() {
      // Initialize data
    useEffect(() => {
      fetchBlogs();
-     fetchCategories();
      fetchTags();
+     fetchAuthors();
    }, []);
    
 
@@ -749,23 +778,42 @@ export default function BlogManagementPage() {
             </button>
             
             {/* Quick Links */}
-            <a 
-              href="/admin/seo/meta-tags"
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'var(--color-primary)',
-                color: '#fff',
-                textDecoration: 'none',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontWeight: '500',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              🏷️ Manage Meta Tags
-            </a>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <a 
+                href="/admin/authors"
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#28a745',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                👤 Manage Authors
+              </a>
+              <a 
+                href="/admin/seo/meta-tags"
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: 'var(--color-primary)',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                🏷️ Manage Meta Tags
+              </a>
+            </div>
           </div>
         </div>
 
@@ -820,17 +868,17 @@ export default function BlogManagementPage() {
                 <div className="col-md-6">
                   <div className="form-group">
                     <label>Category</label>
-                    <select
+                    <input
+                      type="text"
                       name="category"
                       value={formData.category}
                       onChange={handleInputChange}
                       className="form-control"
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map((category, index) => (
-                        <option key={index} value={category}>{category}</option>
-                      ))}
-                    </select>
+                      placeholder="e.g., Technology, Business, Innovation"
+                    />
+                    <small className="text-muted">
+                      Enter any category name for this blog post
+                    </small>
                   </div>
                 </div>
                 <div className="col-md-6">
@@ -853,14 +901,23 @@ export default function BlogManagementPage() {
               <div className="row">
                 <div className="col-md-4">
                   <div className="form-group">
-                    <label>Author</label>
-                    <input
-                      type="text"
-                      name="author"
-                      value={formData.author}
-                      onChange={handleInputChange}
+                    <label>Select Author</label>
+                    <select
+                      name="authorId"
+                      value={formData.authorId}
+                      onChange={handleAuthorChange}
                       className="form-control"
-                    />
+                    >
+                      <option value="">Choose an author...</option>
+                      {authors.filter(author => author.isActive).map((author) => (
+                        <option key={author._id} value={author._id}>
+                          {author.name} {author.title ? `(${author.title})` : ''}
+                        </option>
+                      ))}
+                    </select>
+                    <small className="text-muted">
+                      Or <a href="/admin/authors" target="_blank" style={{color: 'var(--color-primary)'}}>manage authors</a>
+                    </small>
                   </div>
                 </div>
                 <div className="col-md-4">
@@ -875,58 +932,43 @@ export default function BlogManagementPage() {
                     />
                   </div>
                 </div>
-                <div className="col-md-4">
-                  <div className="form-group">
-                    <label>Author Image</label>
-                    <div className="image-input-group">
-                      <div className="upload-type-selector">
-                        <label>
-                          <input
-                            type="radio"
-                            name="authorUploadType"
-                            value="url"
-                            checked={authorUploadType === 'url'}
-                            onChange={() => setAuthorUploadType('url')}
-                          />
-                          URL
-                        </label>
-                        <label>
-                          <input
-                            type="radio"
-                            name="authorUploadType"
-                            value="upload"
-                            checked={authorUploadType === 'upload'}
-                            onChange={() => setAuthorUploadType('upload')}
-                          />
-                          Upload
-                        </label>
-                      </div>
-                      {authorUploadType === 'url' ? (
-                        <input
-                          type="text"
-                          name="authorImg"
-                          value={formData.authorImg}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          placeholder="https://example.com/author.jpg"
-                        />
-                      ) : (
-                        <div className="file-upload-area">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileChange(e, 'author')}
-                            className="file-input"
-                            id="authorImageUpload"
-                          />
-                          <label htmlFor="authorImageUpload" className="file-upload-label">
-                            {uploadingImage ? 'Uploading...' : 'Choose Author Image'}
-                          </label>
-                        </div>
-                      )}
+              </div>
+
+              {/* Author Details Section */}
+              {formData.authorId && (
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label>Author Bio</label>
+                      <textarea
+                        name="authorBio"
+                        value={formData.authorBio}
+                        onChange={handleInputChange}
+                        className="form-control"
+                        rows="3"
+                        placeholder="Author's bio will be auto-filled from selected author"
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label>Author Role/Title</label>
+                      <input
+                        type="text"
+                        name="authorRole"
+                        value={formData.authorRole}
+                        onChange={handleInputChange}
+                        className="form-control"
+                        placeholder="Author's role will be auto-filled from selected author"
+                        readOnly
+                      />
                     </div>
                   </div>
                 </div>
+              )}
+
+              <div className="row">
               </div>
 
               <div className="row">

@@ -261,7 +261,7 @@ export default function RegisterPage() {
             // 5. Send email verification
             await sendEmailVerification(userCredential.user, {
                 url: `${window.location.origin}/verify-email`,
-                handleCodeInApp: false
+                handleCodeInApp: true
             });
 
             // 6. Sign out the user immediately after registration

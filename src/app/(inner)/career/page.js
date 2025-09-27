@@ -120,6 +120,8 @@ export default function Home() {
                                         <a
                                             className="video-play-button play-video popup-video"
                                             href="https://www.youtube.com/watch?v=vZE0j_WCRvI"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                         >
                                             <span />
                                         </a>
@@ -232,18 +234,16 @@ export default function Home() {
                         <div className="row g-5 mt--30">
                             <div className="col-lg-6 wow fadeInUp" data-wow-delay=".1s">
                                 <div className="single-job-opening-card">
-                                    <h4 className="title">IT Consultant</h4>
+                                    <h4 className="title">Product Manager</h4>
                                     <p>
-                                        Responsibilities: Work with clients to assess their IT needs,
-                                        develop strategic roadmaps, and implement tailored solutions.
+                                    <span>Responsibilities:</span> Define product strategy, coordinate teams, prioritize features, and ensure successful product development and launch.
                                     </p>
                                     <p>
-                                        Qualifications: Strong analytical skills, excellent communication
-                                        abilities, and a background in IT strategy and implementation.
+                                    <span>Qualifications:</span> Experience in product management, project management skills, and understanding of UX and job search products.
                                     </p>
                                     <div className="tag-wrapper">
                                         <div className="single">
-                                            <span>IT Consulting</span>
+                                            <span>Product Roadmap</span>
                                         </div>
                                         <div className="single">
                                             <span>IT Solutions</span>
@@ -255,7 +255,7 @@ export default function Home() {
                                     <div className="bottom-area">
                                         <div className="selary-range">
                                             <p>
-                                                $1000 - $12000 <span>USD/month</span>
+                                                $1000 - $1200 <span>USD/month</span>
                                             </p>
                                         </div>
                                         <a href="#" className="rts-btn btn-primary btn-bold">
@@ -266,32 +266,28 @@ export default function Home() {
                             </div>
                             <div className="col-lg-6 wow fadeInUp" data-wow-delay=".3s">
                                 <div className="single-job-opening-card">
-                                    <h4 className="title">Help Desk Technician</h4>
+                                    <h4 className="title">Content Marketing Specialist</h4>
                                     <p>
-                                        <span>Responsibilities:</span> Work with clients to assess their
-                                        IT needs, develop strategic roadmaps, and implement tailored
-                                        solutions.
+                                        <span>Responsibilities:</span>Create and optimize career content, manage SEO, drive traffic growth via campaigns and social media.
                                     </p>
                                     <p>
-                                        <span>Qualifications:</span> Strong analytical skills, excellent
-                                        communication abilities, and a background in IT strategy and
-                                        implementation.
+                                        <span>Qualifications:</span> Excellent writing skills, SEO knowledge, content marketing experience, and understanding of job search industry.
                                     </p>
                                     <div className="tag-wrapper">
                                         <div className="single">
-                                            <span>IT Consulting</span>
+                                            <span>Content Strategy</span>
                                         </div>
                                         <div className="single">
-                                            <span>IT Solutions</span>
+                                            <span>SEO</span>
                                         </div>
                                         <div className="single">
-                                            <span>Consulting Services</span>
+                                            <span>Social Media</span>
                                         </div>
                                     </div>
                                     <div className="bottom-area">
                                         <div className="selary-range">
                                             <p>
-                                                $1000 - $12000 <span>USD/month</span>
+                                                $650 - $800 <span>USD/month</span>
                                             </p>
                                         </div>
                                         <a href="#" className="rts-btn btn-primary btn-bold">
@@ -316,27 +312,24 @@ export default function Home() {
                                 <Accordion defaultActiveKey="0">
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>
-                                        What types of IT consulting services do you offer?
+                                        What roles are currently open at Justjobs?
                                         </Accordion.Header>
                                         <Accordion.Body>
-                                        Each pricing plan offers a unique combination of services such as web
-                                        design, SEO, social media management, content marketing, &amp; more.
+                                        We offer temp positions like IT Consultant and Help Desk Technician to join our innovative team.
                                         </Accordion.Body>
                                     </Accordion.Item>
                                     <Accordion.Item eventKey="1">
                                         <Accordion.Header>
-                                        What types of accounts can I open online?
+                                        How can I apply for a job listed on Justjobs?
                                         </Accordion.Header>
                                         <Accordion.Body>
-                                        Each pricing plan offers a unique combination of services such as web
-                                        design, SEO, social media management, content marketing, &amp; more.
+                                        Click &quot;Apply Now&quot; on the job listing and complete the online application form.
                                         </Accordion.Body>
                                     </Accordion.Item>
                                     <Accordion.Item eventKey="2">
-                                        <Accordion.Header>Do I need to make an initial deposit?</Accordion.Header>
+                                        <Accordion.Header>What values guide Justjobs as an employer?</Accordion.Header>
                                         <Accordion.Body>
-                                        Each pricing plan offers a unique combination of services such as web
-                                        design, SEO, social media management, content marketing, &amp; more.
+                                        Openness, innovation, collaboration, excellence, growth, and service are core to our culture.
                                         </Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>

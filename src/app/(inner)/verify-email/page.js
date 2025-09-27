@@ -36,12 +36,16 @@ export default function VerifyEmailPage() {
                 if (!oobCode) {
                     setVerificationStatus('error');
                     setErrorMessage('Invalid verification link. Please check your email for the correct link.');
+                    console.error('No oobCode found in URL parameters:', window.location.search);
                     return;
                 }
+
+                console.log('Processing verification with oobCode:', oobCode.substring(0, 20) + '...');
 
                 // Apply the verification code
                 await applyActionCode(auth, oobCode);
                 
+                console.log('Email verification successful');
                 setVerificationStatus('success');
                 toast.success('Email verified successfully! You can now login.');
                 
@@ -68,6 +72,13 @@ export default function VerifyEmailPage() {
                         break;
                     case 'auth/expired-action-code':
                         errorMsg = 'Verification link has expired. Please request a new one.';
+                        break;
+                    case 'auth/email-already-verified':
+                        errorMsg = 'Your email is already verified. You can now login.';
+                        // If already verified, redirect to login after a short delay
+                        setTimeout(() => {
+                            router.push('/login');
+                        }, 2000);
                         break;
                     default:
                         errorMsg = error.message || 'Email verification failed. Please try again.';

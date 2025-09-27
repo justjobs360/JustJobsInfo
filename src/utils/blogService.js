@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { getCollection } from './mongodb';
+import { getCollection, getDatabase } from './mongodb';
 
 const BLOG_COLLECTION = 'Blogs';
 
@@ -75,6 +75,35 @@ async function getBlogs(page = 1, limit = 6, search = '', category = '', status 
       .skip(skip)
       .limit(limit)
       .toArray();
+
+    // Populate author information if authorId exists
+    if (blogs.length > 0) {
+      const db = await getDatabase();
+      const authorsCollection = db.collection('authors');
+      
+      for (let blog of blogs) {
+        if (blog.authorId) {
+          try {
+            console.log('🔍 Looking up author for blog:', blog._id, 'authorId:', blog.authorId);
+            const author = await authorsCollection.findOne({ _id: new ObjectId(blog.authorId) });
+            if (author) {
+              console.log('✅ Found author:', author.name, 'image:', author.image);
+              // Update blog with author information
+              blog.authorImg = author.image;
+              blog.authorBio = author.bio;
+              blog.authorRole = author.title;
+              blog.authorSocialLinks = author.socialLinks;
+            } else {
+              console.log('❌ Author not found for authorId:', blog.authorId);
+            }
+          } catch (error) {
+            console.error('❌ Error fetching author for blog:', blog._id, 'authorId:', blog.authorId, error);
+          }
+        } else {
+          console.log('⚠️ No authorId found for blog:', blog._id);
+        }
+      }
+    }
     
     console.log('📝 Retrieved blogs:', blogs.length);
     
@@ -109,6 +138,31 @@ async function getBlogBySlug(slug) {
         { _id: blog._id },
         { $inc: { views: 1 } }
       );
+
+      // Populate author information if authorId exists
+      if (blog.authorId) {
+        try {
+          console.log('🔍 Looking up author for blog detail:', blog._id, 'authorId:', blog.authorId);
+          const db = await getDatabase();
+          const authorsCollection = db.collection('authors');
+          const author = await authorsCollection.findOne({ _id: new ObjectId(blog.authorId) });
+          
+          if (author) {
+            console.log('✅ Found author for blog detail:', author.name, 'image:', author.image);
+            // Update blog with author information
+            blog.authorImg = author.image;
+            blog.authorBio = author.bio;
+            blog.authorRole = author.title;
+            blog.authorSocialLinks = author.socialLinks;
+          } else {
+            console.log('❌ Author not found for blog detail authorId:', blog.authorId);
+          }
+        } catch (error) {
+          console.error('❌ Error fetching author for blog detail:', blog._id, 'authorId:', blog.authorId, error);
+        }
+      } else {
+        console.log('⚠️ No authorId found for blog detail:', blog._id);
+      }
     }
     
     return blog;

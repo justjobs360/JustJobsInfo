@@ -9,19 +9,19 @@ import "swiper/css/pagination";
 export default function TestimonialsThree() {
   const testimonials = [
     {
-      text: "As a dedicated software engineer, I value precision highly. This AI resume auditor impressed me with its grasp of the technical subtleties of my profession. It helped me refine the way I present my skills, making it an invaluable asset for anyone in the tech industry.",
-      name: "Anna Z.",
-      position: "Senior Software Engineer",
+      text: "Justjobs.info transformed my job search! Their resume audit pinpointed exactly what needed improvement. I landed multiple interviews within weeks. Highly recommend it to anyone looking to stand out.",
+      name: "Linda M",
+      position: "Software Developer",
     },
     {
-      text: "In the fast-paced world of HR, creating the right impression is crucial. This tool has revolutionized our resume screening process with its personalized recommendations, highlighting each candidate's unique strengths. It's a game-changer for recruitment experts.",
-      name: "Rachel B.",
-      position: "HR Director",
+      text: "I love how simple and effective the platform is. The AI-powered tools gave me real-time insights into my resume’s performance. It boosted my confidence and helped me secure my dream role.",
+      name: "Priya P",
+      position: "Project Manager",
     },
     {
-      text: "Effective project management hinges on clear communication, and that's where the AI resume auditor shines. Its personalized feedback was instrumental in helping me articulate my project leadership skills. Highly recommended for project management professionals.",
-      name: "Liam J.",
-      position: "Project Management Consultant",
+      text: "The personalized feedback from Justjobs.info helped me tailor my resume perfectly for my industry. The job listings are comprehensive and easy to navigate. This platform made my career jump seamless.",
+      name: "Alex T",
+      position: "HR Manager",
     },
     {
       text: "A resume for a creative professional should be a reflection of their artistic flair. The AI resume auditor understood the nuances of my design experience, offering constructive feedback that elevated my resume's visual impact. It's a vital tool for creatives.",

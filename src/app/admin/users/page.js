@@ -17,10 +17,6 @@ export default function UserManagementPage() {
     const [dataSource, setDataSource] = useState(null);
     const [syncing, setSyncing] = useState(false);
 
-    useEffect(() => {
-        loadUsers();
-    }, [loadUsers]);
-
     const loadUsers = useCallback(async () => {
         try {
             setLoading(true);
@@ -56,6 +52,10 @@ export default function UserManagementPage() {
             setLoading(false);
         }
     }, [user]);
+
+    useEffect(() => {
+        loadUsers();
+    }, [loadUsers]);
 
     const handleUpdateUserRole = async (userId, newRole) => {
         if (!confirm(`Are you sure you want to change this user's role to ${newRole === 'super_admin' ? 'Super Admin' : newRole === 'admin' ? 'Admin' : 'User'}?`)) {

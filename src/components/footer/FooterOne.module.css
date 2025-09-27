@@ -1,0 +1,19 @@
+/* Mobile styles - show SillyLittleTools below copyright */
+@media (max-width: 768px) {
+    .mobileDevLink {
+        display: block !important;
+    }
+    .desktopDevLink {
+        display: none !important;
+    }
+}
+
+/* Desktop styles - show SillyLittleTools beside copyright */
+@media (min-width: 769px) {
+    .mobileDevLink {
+        display: none !important;
+    }
+    .desktopDevLink {
+        display: inline !important;
+    }
+}

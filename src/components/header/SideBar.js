@@ -72,27 +72,100 @@ function SideBar({ isSidebarOpen, toggleSidebar }) {
 
   return (
     <div>
-      <div id="side-bar" className={`side-bar header-two ${isSidebarOpen ? 'show' : ''}`}>
+      <div id="side-bar" className={`side-bar header-two ${isSidebarOpen ? 'show' : ''}`} style={{ overflow: 'hidden' }}>
         <button className="close-icon-menu" aria-label="Close Menu" onClick={toggleSidebar}>
           <i className="far fa-times"></i>
         </button>
-        <div className="mobile-menu-main">
+        <div className="mobile-menu-main" style={{ overflow: 'hidden', height: '100vh' }}>
+          {/* Override any CSS that might be adding "justjobs" text */}
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              .side-bar::before,
+              .mobile-menu-main::before,
+              .side-bar .mobile-menu-main::before {
+                content: none !important;
+              }
+            `
+          }} />
           {/* User Profile Section */}
           {user && (
-            <div className="user-profile-mobile mt--20 mb--30">
-              <div className="profile-info">
-                <div className="profile-icon-mobile">
+            <div className="user-profile-mobile" style={{
+              padding: '20px 0',
+              background: '#ffffff',
+              borderRadius: '8px',
+              margin: '15px 0',
+              border: '1px solid #e9ecef'
+            }}>
+              {/* Row 1: Profile Icon and Email */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                marginBottom: '18px',
+                padding: '0 15px'
+              }}>
+                <div className="profile-icon-mobile" style={{
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
+                  background: 'var(--color-primary)',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  flexShrink: 0,
+                  margin: 0
+                }}>
                   {getInitials(user.email)}
                 </div>
-                <div className="user-details">
-                  <span className="user-email">{user.email}</span>
-                  <button 
-                    onClick={handleLogout}
-                    className="logout-btn-mobile"
-                  >
-                    Logout
-                  </button>
+                <div className="user-email" style={{
+                  fontSize: '14px',
+                  color: '#333',
+                  fontWeight: '500',
+                  lineHeight: '1.5',
+                  wordBreak: 'break-all',
+                  flex: 1,
+                  margin: 0,
+                  paddingTop: '2px'
+                }}>
+                  {user.email}
                 </div>
+              </div>
+              
+              {/* Row 2: Logout Button */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                paddingLeft: '81px'
+              }}>
+                <button 
+                  onClick={handleLogout}
+                  className="logout-btn-mobile"
+                  style={{
+                    background: 'var(--color-primary)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    minWidth: '90px',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#0056b3';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'var(--color-primary)';
+                    e.target.style.transform = 'translateY(0)';
+                  }}
+                >
+                  Logout
+                </button>
               </div>
             </div>
           )}
@@ -219,7 +292,7 @@ function SideBar({ isSidebarOpen, toggleSidebar }) {
               </li>
               <li>
                 <Link href="https://x.com/justjobs_info" target="_blank" rel="noopener noreferrer" aria-label="Follow us on X" data-description="social">
-                  <i className="fa-brands fa-x-twitter" />
+                  <span style={{ fontWeight: 'bold', fontSize: '16px', color: 'white' }}>𝕏</span>
                 </Link>
               </li>
               <li>
@@ -238,6 +311,22 @@ function SideBar({ isSidebarOpen, toggleSidebar }) {
                 </Link>
               </li>
             </ul>
+          </div>
+          
+          {/* Developed by SillyLittleTools - Below Social Icons */}
+          <div className="developed-by-mobile" style={{
+            marginTop: '30px',
+            textAlign: 'center',
+            padding: '0 15px'
+          }}>
+            <p style={{
+              fontSize: '14px',
+              color: 'var(--color-primary)',
+              fontWeight: '600',
+              margin: 0
+            }}>
+              <span style={{color:"#000000"}}>Developed by</span> <Link href="https://sillylittletools.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>SillyLittleTools</Link>
+            </p>
           </div>
         </div>
         {/* mobile menu area end */}

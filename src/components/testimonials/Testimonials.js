@@ -6,7 +6,11 @@ function Testimonials() {
     return (
         <div>
             {/* testimonials area start */}
-            <div id="testimonials" className="testimonials-area-start rts-section-gapTop bg-primary position-relative">
+            <div id="testimonials" className="testimonials-area-start rts-section-gapTop bg-primary position-relative" style={{
+                minHeight: '500px',
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
                 <div className="shape-top-right wow slideInLeft" data-wow-offset={160}>
                     <img
                         loading="lazy"
@@ -15,7 +19,11 @@ function Testimonials() {
                         alt="testimopnials"
                     />
                 </div>
-                <div className="container">
+                <div className="container" style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="title-between-wrapper">
@@ -26,9 +34,16 @@ function Testimonials() {
                             </div>
                         </div>
                     </div>
-                    <div className="row mt--80">
+                    <div className="row mt--80" style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'stretch'
+                    }}>
                         <div className="col-lg-12 ">
-                            <div className="swiper mySwiper-Testimonials">
+                            <div className="swiper mySwiper-Testimonials" style={{
+                                height: '100%',
+                                minHeight: '400px'
+                            }}>
 
                                 <Swiper
                                     slidesPerView={2}
@@ -56,11 +71,21 @@ function Testimonials() {
                                         },
                                     }}
                                     speed={1000}
+                                    style={{
+                                        height: '100%',
+                                        minHeight: '400px'
+                                    }}
                                 >
                                     <SwiperSlide>
-                                        <div className="single-testimonials-area-one">
+                                        <div className="single-testimonials-area-one" style={{
+                                            height: '100%',
+                                            minHeight: '400px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between'
+                                        }}>
                                             <p className="disc">
-                                                &quot;As a dedicated software engineer, I value precision highly. This AI resume auditor impressed me with its grasp of the technical subtleties of my profession. It helped me refine the way I present my skills, making it an invaluable asset for anyone in the tech industry.&quot;
+                                                &quot;Justjobs.info transformed my job search! Their resume audit pinpointed exactly what needed improvement. I landed multiple interviews within weeks. Highly recommend it to anyone looking to stand out.&quot;
                                             </p>
                                             <div className="author-wrapper">
                                                 <div className="avatar" style={{
@@ -78,16 +103,22 @@ function Testimonials() {
                                                     A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Anonymous</h6>
-                                                    <span className="desig">Technology Professional</span>
+                                                    <h6 className="title">Linda M.</h6>
+                                                    <span className="desig">Software Developer</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </SwiperSlide>
                                     <SwiperSlide>
-                                        <div className="single-testimonials-area-one">
+                                        <div className="single-testimonials-area-one" style={{
+                                            height: '100%',
+                                            minHeight: '400px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between'
+                                        }}>
                                             <p className="disc">
-                                                &quot;Effective project management hinges on clear communication, and that&apos;s where the AI resume auditor shines. Its personalized feedback was instrumental in helping me articulate my project leadership skills. Highly recommended for project management professionals.&quot;
+                                                &quot;I love how simple and effective the platform is. The AI-powered tools gave me real-time insights into my resume’s performance. It boosted my confidence and helped me secure my dream role..&quot;
                                             </p>
                                             <div className="author-wrapper">
                                                 <div className="avatar" style={{
@@ -105,16 +136,22 @@ function Testimonials() {
                                                     A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Anonymous</h6>
-                                                    <span className="desig">Technology Professional</span>
+                                                    <h6 className="title">Priya P.</h6>
+                                                    <span className="desig">Project Manager</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </SwiperSlide>
                                     <SwiperSlide>
-                                        <div className="single-testimonials-area-one">
+                                        <div className="single-testimonials-area-one" style={{
+                                            height: '100%',
+                                            minHeight: '400px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between'
+                                        }}>
                                             <p className="disc">
-                                                &quot;In the fast-paced world of HR, creating the right impression is crucial. This tool has revolutionized our resume screening process with its personalized recommendations, highlighting each candidate&apos;s unique strengths. It&apos;s a game-changer for recruitment experts.&quot;
+                                                &quot;The personalized feedback from Justjobs.info helped me tailor my resume perfectly for my industry. The job listings are comprehensive and easy to navigate. This platform made my career jump seamless.&quot;
                                             </p>
                                             <div className="author-wrapper">
                                             <div className="avatar" style={{
@@ -132,14 +169,20 @@ function Testimonials() {
                                                     A
                                                 </div>
                                                 <div className="information">
-                                                    <h6 className="title">Anonymous</h6>
-                                                    <span className="desig">Technology Professional</span>
+                                                    <h6 className="title">Alex T.</h6>
+                                                    <span className="desig">HR Manager</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </SwiperSlide>
                                     <SwiperSlide>
-                                        <div className="single-testimonials-area-one">
+                                        <div className="single-testimonials-area-one" style={{
+                                            height: '100%',
+                                            minHeight: '400px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between'
+                                        }}>
                                             <p className="disc">
                                                 &quot;As a dedicated software engineer, I value precision highly. This AI resume auditor impressed me with its grasp of the technical subtleties of my profession. It helped me refine the way I present my skills, making it an invaluable asset for anyone in the tech industry.&quot;
                                             </p>

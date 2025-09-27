@@ -1,13 +1,13 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
-import HeaderTwo from "@/components/header/HeaderTwo";
+import HeaderOne from "@/components/header/HeaderOne";
 import { ReactSVG } from 'react-svg';
 import "../legal-pages.css";
 export default function Home() {
     return (
         <div className='#'>
-            <HeaderTwo />
+            <HeaderOne />
 
             <>
                 <div className="container-large">
@@ -18,7 +18,7 @@ export default function Home() {
                     ></div>
                     {/* service area end */}
                 </div>
-                <div className="service-area-details-wrapper legal-page">
+                <div className="service-area-details-wrapper legal-page" style={{marginBottom: 0, paddingBottom: 0}}>
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12">
@@ -29,7 +29,7 @@ export default function Home() {
                                             Welcome to justjobs!
                                         </p>
                                     </div>
-                                    <div className="mid-content">
+                                    <div className="mid-content" style={{marginBottom: 0,  paddingBottom: 0}}>
                                         <p className="disc">
                                             These terms and conditions outline the rules and regulations for the use of justjobs&apos;s Website, located at https://justjobs.info.
                                         </p>
@@ -47,38 +47,89 @@ export default function Home() {
                                         
                                         <h3 className="title mt--40 mb--20">License</h3>
                                         <p className="disc">
-                                            Unless otherwise stated, justjobs.info and/or its licensors own the intellectual property rights for all material on justjobs.info. All intellectual property rights are reserved. You may access this from justjobs.info for your own personal use subjected to restrictions set in these terms and conditions.
+                                        All content on Justjobs.info is owned by Justjobs and its licensors. Users are welcome to access and use the website freely for personal, non-commercial purposes, such as job searching and resume building. However, copying, redistributing, or using the material for commercial purposes without permission is prohibited. By using the site, you agree to respect these terms and the intellectual property rights protected here.
                                         </p>
                                         <p className="disc">You must not:</p>
-                                        <ul className="disc-list">
-                                            <li>Republish material from justjobs.info</li>
-                                            <li>Sell, rent or sub-license material from justjobs.info</li>
-                                            <li>Reproduce, duplicate or copy material from justjobs.info</li>
-                                            <li>Redistribute content from justjobs.info</li>
+                                        <ul className="disc" style={{ 
+                                            marginBottom: 0,
+                                            paddingLeft: '25px',
+                                            listStyleType: 'disc'
+                                        }}>
+                                            <li style={{ 
+                                                marginBottom: '10px',
+                                                fontSize: 'inherit',
+                                                lineHeight: 'inherit',
+                                                color: 'inherit',
+                                                position: 'relative'
+                                            }}>Republish material from justjobs.info for commercial purposes without permission</li>
+                                            <li style={{ 
+                                                marginBottom: '10px',
+                                                fontSize: 'inherit',
+                                                lineHeight: 'inherit',
+                                                color: 'inherit',
+                                                position: 'relative'
+                                            }}>Sell, rent, or sublicense any content from the site</li>
+                                            <li style={{ 
+                                                marginBottom: '10px',
+                                                fontSize: 'inherit',
+                                                lineHeight: 'inherit',
+                                                color: 'inherit',
+                                                position: 'relative'
+                                            }}>Reproduce, duplicate, or copy content beyond personal use</li>
+                                            <li style={{ 
+                                                marginBottom: '10px',
+                                                fontSize: 'inherit',
+                                                lineHeight: 'inherit',
+                                                color: 'inherit',
+                                                position: 'relative'
+                                            }}>Redistribute site content for commercial purposes without explicit authorization</li>
                                         </ul>
+                                        <style dangerouslySetInnerHTML={{
+                                            __html: `
+                                                .service-area-details-wrapper .mid-content ul.disc li::marker,
+                                                .service-area-details-wrapper .mid-content ul.disc-list li::marker {
+                                                    font-size: 20px !important;
+                                                    color: #007bff !important;
+                                                    font-weight: bold !important;
+                                                }
+                                                .service-area-details-wrapper .mid-content ul.disc li,
+                                                .service-area-details-wrapper .mid-content ul.disc-list li {
+                                                    font-size: 20px !important;
+                                                    line-height: 1.6 !important;
+                                                    margin-bottom: 12px !important;
+                                                }
+                                                .service-area-details-wrapper .mid-content ul.disc,
+                                                .service-area-details-wrapper .mid-content ul.disc-list {
+                                                    padding-left: 20px !important;
+                                                    list-style-type: disc !important;
+                                                }
+                                            `
+                                        }} />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="service-area-details-wrapper border-bottom legal-page">
+                <div className="service-area-details-wrapper border-bottom legal-page" style={{ marginTop: '0', paddingTop: '40px' }}>
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12">
                                 <div className="inner-content">
                                     <div className="mid-content pt--0">
-                                        <h3 className="title mt--40 mb--20">User Comments and Content</h3>
+                                        <h3 className="title mt--0 mb--20">User Comments and Content</h3>
                                         <p className="disc">
                                             Parts of this website offer an opportunity for users to post and exchange opinions and information in certain areas of the website. justjobs.info does not filter, edit, publish or review Comments prior to their presence on the website. Comments do not reflect the views and opinions of justjobs.info, its agents and/or affiliates.
                                         </p>
                                         <p className="disc">You warrant and represent that:</p>
-                                        <ul className="disc-list">
-                                            <li>You are entitled to post the Comments on our website and have all necessary licenses and consents to do so</li>
-                                            <li>The Comments do not invade any intellectual property right, including without limitation copyright, patent or trademark of any third party</li>
-                                            <li>The Comments do not contain any defamatory, libelous, offensive, indecent or otherwise unlawful material</li>
-                                            <li>The Comments will not be used to solicit or promote business or present commercial activities or unlawful activity</li>
-                                        </ul>
+                                        <div className="disc" style={{ fontSize: "16px", fontWeight: "400" }}>
+                                            <ul className="disc-list" style={{ paddingLeft: "1.2em", marginBottom: 0 }}>
+                                                <li>You are entitled to post the Comments on our website and have all necessary licenses and consents to do so</li>
+                                                <li>The Comments do not invade any intellectual property right, including without limitation copyright, patent or trademark of any third party</li>
+                                                <li>The Comments do not contain any defamatory, libelous, offensive, indecent or otherwise unlawful material</li>
+                                                <li>The Comments will not be used to solicit or promote business or present commercial activities or unlawful activity</li>
+                                            </ul>
+                                        </div>
                                         
                                         <h3 className="title mt--40 mb--20">Hyperlinking to our Content</h3>
                                         <p className="disc">

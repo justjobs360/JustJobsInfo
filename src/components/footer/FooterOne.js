@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import styles from './FooterOne.module.css';
 
 function FooterOne() {
     const pathname = usePathname();
@@ -274,7 +275,24 @@ function FooterOne() {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="copyright-wrapper">
-                                <p>© 2025 JustJobs. All rights reserved.</p>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                        <p style={{ margin: 0 }}>© 2025 JustJobs. All rights reserved.</p>
+                                        <span className={styles.desktopDevLink} style={{ 
+                                            fontSize: 'inherit', 
+                                            color: 'inherit'
+                                        }}>
+                                            | Developed by <Link href="https://sillylittletools.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>SillyLittleTools</Link>
+                                        </span>
+                                    </div>
+                                    <p className={styles.mobileDevLink} style={{ 
+                                        margin: 0, 
+                                        fontSize: '12px', 
+                                        color: '#888'
+                                    }}>
+                                        Developed by <Link href="https://sillylittletools.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>SillyLittleTools</Link>
+                                    </p>
+                                </div>
                                 <div className="social-copyright-area">
                                     <ul>
                                         <li aria-label="Visit our Facebook page">

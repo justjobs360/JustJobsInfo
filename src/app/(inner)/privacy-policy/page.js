@@ -25,7 +25,7 @@ export default function Home() {
                                     <div className="top">
                                         <h1 className="title">Privacy Policy</h1>
                                         <p className="disc">
-                                            Last updated: December 15, 2023
+                                            Last updated: September 12, 2025
                                         </p>
                                     </div>
                                     <div className="mid-content">
@@ -58,6 +58,27 @@ export default function Home() {
                                             <li><strong>Website</strong> refers to justjobs.info, accessible from https://justjobs.info</li>
                                             <li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li>
                                         </ul>
+                                        <style dangerouslySetInnerHTML={{
+                                            __html: `
+                                                .service-area-details-wrapper .mid-content ul.disc li::marker,
+                                                .service-area-details-wrapper .mid-content ul.disc-list li::marker {
+                                                    font-size: 20px !important;
+                                                    color: #007bff !important;
+                                                    font-weight: bold !important;
+                                                }
+                                                .service-area-details-wrapper .mid-content ul.disc li,
+                                                .service-area-details-wrapper .mid-content ul.disc-list li {
+                                                    font-size: 20px !important;
+                                                    line-height: 1.6 !important;
+                                                    margin-bottom: 12px !important;
+                                                }
+                                                .service-area-details-wrapper .mid-content ul.disc,
+                                                .service-area-details-wrapper .mid-content ul.disc-list {
+                                                    padding-left: 20px !important;
+                                                    list-style-type: disc !important;
+                                                }
+                                            `
+                                        }} />
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +180,7 @@ export default function Home() {
                                         
                                         <h4 className="title mt--30 mb--15">Contact Us</h4>
                                         <p className="disc">
-                                            If you have any questions about this Privacy Policy, You can contact us: info@justjobs.info
+                                            If you have any questions about this Privacy Policy, You can contact us: enquiries@justjobs.info
                                         </p>
                                     </div>
                                 </div>

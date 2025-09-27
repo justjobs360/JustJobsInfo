@@ -585,21 +585,62 @@ export default function BlogDetails() {
                         </div>
                       </div>
                     </div>
-                    <div className="author-area">
-                      <div className="thumbnail details mb_sm--15">
+                    <div className="author-area" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      marginTop: '30px',
+                      padding: '20px',
+                      background: '#f8f9fa',
+                      borderRadius: '8px'
+                    }}>
+                      <div style={{
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#f8f9fa',
+                        border: '3px solid #e9ecef'
+                      }}>
                         <img
                           src={getAuthorImageUrl(blogPost.authorImg)}
                           alt={blogPost.author}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%'
+                          }}
                           onError={(e) => {
                             console.log('❌ Author image failed to load:', e.target.src);
                             e.target.src = '/assets/images/blog/details/author.jpg';
                           }}
                         />
                       </div>
-                      <div className="author-details team">
-                        <span className="desig">{blogPost.authorRole || 'Author'}</span>
-                        <h5>{blogPost.author}</h5>
-                        <p className="disc">
+                      <div style={{ flex: 1 }}>
+                        <span style={{
+                          fontSize: '14px',
+                          color: '#666',
+                          fontWeight: '500',
+                          marginBottom: '5px',
+                          display: 'block'
+                        }}>{blogPost.authorRole || 'Author'}</span>
+                        <h5 style={{
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: 'var(--color-heading-1)',
+                          margin: '0 0 10px 0'
+                        }}>{blogPost.author}</h5>
+                        <p style={{
+                          fontSize: '14px',
+                          lineHeight: '1.5',
+                          color: '#666',
+                          margin: 0
+                        }}>
                           {blogPost.authorBio || 'No author bio available.'}
                         </p>
                       </div>
