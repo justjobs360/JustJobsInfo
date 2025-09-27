@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
@@ -40,7 +40,7 @@ export default function AuthorManagementPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // Fetch authors
-  const fetchAuthors = async (page = 1, search = '') => {
+  const fetchAuthors = useCallback(async (page = 1, search = '') => {
     try {
       setLoading(true);
       
@@ -78,7 +78,7 @@ export default function AuthorManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -271,14 +271,14 @@ export default function AuthorManagementPage() {
   // Initialize data
   useEffect(() => {
     fetchAuthors();
-  }, []);
+  }, [fetchAuthors]);
 
   if (!hasPermission('manage_blog_posts')) {
     return (
       <AdminLayout>
         <div className="admin-content">
           <div className="alert alert-danger">
-            You don't have permission to manage authors.
+            You don&apos;t have permission to manage authors.
           </div>
         </div>
       </AdminLayout>
