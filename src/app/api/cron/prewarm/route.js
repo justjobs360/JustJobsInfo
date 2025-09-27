@@ -1,81 +1,60 @@
 import { NextResponse } from 'next/server';
-import { jobCacheManager } from '@/utils/jobCacheManager';
+import { getPopularQueries } from '@/utils/usageService';
 
 export async function GET(request) {
   try {
-    // Verify this is a Vercel cron request
-    const cronSecret = process.env.CRON_SECRET;
     const authHeader = request.headers.get('authorization');
-    
-    // Check if it's a Vercel cron request or has proper auth
-    const isVercelCron = request.headers.get('user-agent')?.includes('vercel-cron');
-    
-    if (cronSecret && !isVercelCron && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('🕐 Vercel cron job triggered: Cache prewarming');
-    
-    // Run the prewarm process
-    const result = await jobCacheManager.prewarmCache();
-    
-    if (result.success) {
-      console.log(`✅ Prewarm completed successfully: ${result.cached} searches cached`);
-      return NextResponse.json({
-        success: true,
-        message: 'Cache prewarming completed',
-        cached: result.cached,
-        searches: result.searches,
-        timestamp: new Date().toISOString()
-      });
-    } else {
-      console.log(`⚠️ Prewarm completed with issues: ${result.reason || result.error}`);
-      return NextResponse.json({
-        success: false,
-        message: result.reason || result.error,
-        timestamp: new Date().toISOString()
-      }, { status: 200 }); // Still return 200 as this might be expected
+    const popularKeys = await getPopularQueries(5, 1);
+    let warmed = 0;
+
+    for (const key of popularKeys) {
+      try {
+        // Keys look like: jobs:v1:query=...|location=...|employment_types=...|remote=...|date_posted=...|page=...|num_pages=...
+        const params = new URLSearchParams();
+        const parts = key.split('|');
+        for (const part of parts) {
+          const [k, v] = part.split('=');
+          if (!k || v === undefined) continue;
+          switch (k) {
+            case 'jobs:v1:query':
+            case 'query':
+              params.set('query', decodeURIComponent(v));
+              break;
+            case 'location':
+              params.set('location', decodeURIComponent(v));
+              break;
+            case 'employment_types':
+              if (v) params.set('employment_types', v);
+              break;
+            case 'remote':
+              if (v) params.set('remote_jobs_only', v);
+              break;
+            case 'date_posted':
+              if (v) params.set('date_posted', v);
+              break;
+            case 'page':
+              params.set('page', v);
+              break;
+            case 'num_pages':
+              params.set('num_pages', v);
+              break;
+          }
+        }
+
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/jobs/search?${params.toString()}`;
+        await fetch(url, { method: 'GET' });
+        warmed++;
+      } catch (e) {
+        // Continue warming other keys
+      }
     }
 
-  } catch (error) {
-    console.error('❌ Cron job failed:', error);
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    }, { status: 500 });
-  }
-}
-
-// Allow POST for manual triggers
-export async function POST(request) {
-  try {
-    const body = await request.json();
-    const { force } = body;
-    
-    console.log('🔧 Manual cache prewarming triggered');
-    
-    // Force prewarm if requested
-    if (force) {
-      jobCacheManager.lastPrewarmTime = null; // Reset last prewarm time
-    }
-    
-    const result = await jobCacheManager.prewarmCache();
-    
-    return NextResponse.json({
-      success: result.success,
-      message: result.success ? 'Cache prewarming completed' : (result.reason || result.error),
-      cached: result.cached || 0,
-      searches: result.searches || [],
-      timestamp: new Date().toISOString()
-    });
-
-  } catch (error) {
-    console.error('❌ Manual prewarm failed:', error);
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    }, { status: 500 });
+    return NextResponse.json({ ok: true, warmed, total: popularKeys.length });
+  } catch (e) {
+    return NextResponse.json({ ok: false, error: 'Prewarm failed' }, { status: 500 });
   }
 }
