@@ -98,6 +98,14 @@ const AdminLayout = ({ children }) => {
             permission: ADMIN_PERMISSIONS.MANAGE_CONTENT
         },
         
+        // Footer Management (for both super admin and admin)
+        {
+            name: 'Footer Management',
+            href: '/admin/footer',
+            icon: '🦶',
+            permission: ADMIN_PERMISSIONS.MANAGE_FOOTER
+        },
+        
         // Contact Forms (super admin only)
         {
             name: 'Contact Forms',
@@ -166,6 +174,7 @@ const AdminLayout = ({ children }) => {
                                 
                                 // Check if item is super admin only
                                 const isSuperAdminOnly = item.superAdminOnly && !isSuperAdmin();
+                                
                                 
                                 if (!hasAccess || isSuperAdminOnly) return null;
                                 

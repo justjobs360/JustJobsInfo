@@ -1,6 +1,40 @@
 import { ObjectId } from 'mongodb';
 import { getCollection, getDatabase } from './mongodb';
 
+// Convert markdown-like content to HTML for blog rendering
+function convertMarkdownToHTML(content) {
+  if (!content) return '';
+  
+  return content
+    // Convert links with target="_blank" first
+    .replace(/\[([^\]]+)\]\(([^)]+)\)\{target="_blank"\}/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    // Convert regular links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    // Convert bold text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Convert italic text
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Convert underline text
+    .replace(/__(.*?)__/g, '<u>$1</u>')
+    // Convert strikethrough text
+    .replace(/~~(.*?)~~/g, '<s>$1</s>')
+    // Convert headers
+    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
+    .replace(/^##### (.*$)/gm, '<h5>$1</h5>')
+    .replace(/^###### (.*$)/gm, '<h6>$1</h6>')
+    // Convert bullet lists
+    .replace(/^• (.*$)/gm, '<li>$1</li>')
+    // Convert numbered lists
+    .replace(/^1\. (.*$)/gm, '<li>$1</li>')
+    // Convert blockquotes
+    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+    // Convert line breaks
+    .replace(/\n/g, '<br>');
+}
+
 const BLOG_COLLECTION = 'Blogs';
 
 // Get blog collection instance
@@ -82,6 +116,11 @@ async function getBlogs(page = 1, limit = 6, search = '', category = '', status 
       const authorsCollection = db.collection('authors');
       
       for (let blog of blogs) {
+        // Convert markdown content to HTML for blog list items
+        if (blog.content) {
+          blog.content = convertMarkdownToHTML(blog.content);
+        }
+        
         if (blog.authorId) {
           try {
             console.log('🔍 Looking up author for blog:', blog._id, 'authorId:', blog.authorId);
@@ -138,6 +177,11 @@ async function getBlogBySlug(slug) {
         { _id: blog._id },
         { $inc: { views: 1 } }
       );
+
+      // Convert markdown content to HTML
+      if (blog.content) {
+        blog.content = convertMarkdownToHTML(blog.content);
+      }
 
       // Populate author information if authorId exists
       if (blog.authorId) {
@@ -539,5 +583,6 @@ export {
   addComment,
   getBlogComments,
   getBlogStats,
-  initializeBlogs
+  initializeBlogs,
+  convertMarkdownToHTML
 }; 

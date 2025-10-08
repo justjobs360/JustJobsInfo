@@ -2,7 +2,7 @@
 import React from 'react'
 import Link from 'next/link';
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from '@/components/footer/FooterOne';
+import FooterOneDynamic from '@/components/footer/FooterOneDynamic';
 
 function page() {
     return (
@@ -118,7 +118,7 @@ function page() {
                 </Link>
             </div>
             </div>
-            <FooterOne />
+            <FooterOneDynamic />
         </div>
     )
 }

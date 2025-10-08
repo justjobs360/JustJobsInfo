@@ -3,9 +3,9 @@ import React from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import styles from './FooterOne.module.css';
+import styles from './FooterOneDynamic.module.css';
 
-function FooterOne() {
+function FooterOneDynamic() {
     const pathname = usePathname();
 
     // Helper function to check if a link is active
@@ -333,4 +333,4 @@ function FooterOne() {
     )
 }
 
-export default FooterOne
+export default FooterOneDynamic

@@ -45,6 +45,13 @@ export default function BlogManagementPage() {
   const [showPreview, setShowPreview] = useState(false);
   const editorRef = useRef(null);
 
+  // Image insertion states
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [imageInsertionType, setImageInsertionType] = useState('url'); // 'url' or 'upload'
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploadingContentImage, setUploadingContentImage] = useState(false);
+  const contentImageFileRef = useRef(null);
+
   // Template form states
   const [templateData, setTemplateData] = useState({
     mainTitle: '',
@@ -334,7 +341,12 @@ export default function BlogManagementPage() {
       case 'createLink':
         const url = prompt('Enter URL:');
         if (url) {
-          replacement = `[${selectedText}](${url})`;
+          const openInNewTab = confirm('Open link in new tab?');
+          if (openInNewTab) {
+            replacement = `[${selectedText}](${url}){target="_blank"}`;
+          } else {
+            replacement = `[${selectedText}](${url})`;
+          }
         } else {
           return;
         }
@@ -404,10 +416,75 @@ export default function BlogManagementPage() {
    
    // Insert image at cursor position
    const insertImage = () => {
-     const imageUrl = prompt('Enter image URL:');
-     if (imageUrl) {
-       const imageHTML = `<img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; margin: 15px 0;" />`;
+     setShowImageModal(true);
+     setImageUrl('');
+     setImageInsertionType('url');
+   };
+
+   // Handle content image upload
+   const handleContentImageUpload = async (file) => {
+     if (!file) return;
+
+     const formData = new FormData();
+     formData.append('image', file);
+     formData.append('type', 'blog');
+
+     try {
+       setUploadingContentImage(true);
+       const response = await fetch('/api/upload-image', {
+         method: 'POST',
+         body: formData,
+       });
+
+       const result = await response.json();
+
+       if (result.success) {
+         const imageHTML = `<img src="${result.data.url}" alt="Blog image" style="max-width: 100%; height: auto; margin: 15px 0;" />`;
+         insertHTML(imageHTML);
+         setShowImageModal(false);
+         toast.success('Image uploaded and inserted successfully!');
+       } else {
+         toast.error(result.error || 'Failed to upload image');
+       }
+     } catch (error) {
+       console.error('Error uploading content image:', error);
+       toast.error('Failed to upload image');
+     } finally {
+       setUploadingContentImage(false);
+     }
+   };
+
+   // Handle content image file selection
+   const handleContentImageFileChange = (e) => {
+     const file = e.target.files[0];
+     if (file) {
+       // Validate file type
+       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+       if (!allowedTypes.includes(file.type)) {
+         toast.error('Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed.');
+         return;
+       }
+
+       // Validate file size (max 5MB)
+       const maxSize = 5 * 1024 * 1024; // 5MB
+       if (file.size > maxSize) {
+         toast.error('File size too large. Maximum size is 5MB.');
+         return;
+       }
+
+       handleContentImageUpload(file);
+     }
+   };
+
+   // Insert image from URL
+   const insertImageFromUrl = () => {
+     if (imageUrl.trim()) {
+       const imageHTML = `<img src="${imageUrl.trim()}" alt="Blog image" style="max-width: 100%; height: auto; margin: 15px 0;" />`;
        insertHTML(imageHTML);
+       setShowImageModal(false);
+       setImageUrl('');
+     } else {
+       toast.error('Please enter a valid image URL');
      }
    };
 
@@ -1506,6 +1583,8 @@ export default function BlogManagementPage() {
                           <div 
                             dangerouslySetInnerHTML={{ 
                               __html: editorContent
+                                .replace(/\[([^\]]+)\]\(([^)]+)\)\{target="_blank"\}/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>') // Links with target="_blank"
+                                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>') // Regular links
                                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
                                 .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
                                 .replace(/__(.*?)__/g, '<u>$1</u>') // Underline
@@ -2486,7 +2565,7 @@ export default function BlogManagementPage() {
 
         /* Use your existing typography classes */
         .editor-content h1 {
-          font-size: var(--h1);
+          font-size: var(--h1); /* Same size as blog title - use sparingly */
           font-weight: var(--p-bold);
           margin: 30px 0 15px 0;
           color: var(--color-heading-1);
@@ -2494,11 +2573,11 @@ export default function BlogManagementPage() {
         }
 
         .editor-content h2 {
-          font-size: var(--h2);
+          font-size: 32px; /* Reduced from 48px to work better with blog title */
           font-weight: var(--p-bold);
           margin: 25px 0 12px 0;
           color: var(--color-heading-1);
-          line-height: 1.1;
+          line-height: 1.2;
         }
 
         .editor-content h3 {
@@ -2653,7 +2732,7 @@ export default function BlogManagementPage() {
            }
            
            .editor-content h2 {
-             font-size: 28px;
+             font-size: 26px; /* Reduced proportionally for mobile */
            }
            
                        .editor-content h3 {
@@ -2706,7 +2785,163 @@ export default function BlogManagementPage() {
             gap: 10px;
           }
         }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
       `}</style>
+
+      {/* Image Insertion Modal */}
+      {showImageModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '30px',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflow: 'auto'
+          }}>
+            <h3 style={{ marginBottom: '20px', color: 'var(--color-heading-1)' }}>Insert Image</h3>
+            
+            {/* Upload Type Selector */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '10px', fontWeight: '600' }}>Choose Method:</label>
+              <div style={{ display: 'flex', gap: '15px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    value="url"
+                    checked={imageInsertionType === 'url'}
+                    onChange={(e) => setImageInsertionType(e.target.value)}
+                  />
+                  From URL
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    value="upload"
+                    checked={imageInsertionType === 'upload'}
+                    onChange={(e) => setImageInsertionType(e.target.value)}
+                  />
+                  Upload File
+                </label>
+              </div>
+            </div>
+
+            {/* URL Input */}
+            {imageInsertionType === 'url' && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Image URL:</label>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+            )}
+
+            {/* File Upload */}
+            {imageInsertionType === 'upload' && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Choose Image:</label>
+                <input
+                  ref={contentImageFileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleContentImageFileChange}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+                <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                  Supported formats: JPEG, PNG, WebP, GIF (Max: 5MB)
+                </p>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  setShowImageModal(false);
+                  setImageUrl('');
+                }}
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  backgroundColor: 'white',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              {imageInsertionType === 'url' && (
+                <button
+                  onClick={insertImageFromUrl}
+                  disabled={uploadingContentImage}
+                  style={{
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'white',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Insert Image
+                </button>
+              )}
+              {imageInsertionType === 'upload' && uploadingContentImage && (
+                <div style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#f0f0f0',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #ddd',
+                    borderTop: '2px solid var(--color-primary)',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }}></div>
+                  Uploading...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 } 

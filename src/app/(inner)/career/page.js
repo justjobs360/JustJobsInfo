@@ -1,6 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import CtaSeven from "@/components/cta/CtaPartner";
 import Accordion from "react-bootstrap/Accordion";
@@ -344,7 +344,7 @@ export default function Home() {
 
 
             <CtaThree />
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

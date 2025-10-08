@@ -23,6 +23,50 @@ export default function AdminManagementPage() {
         permissions: [...DEFAULT_ADMIN_PERMISSIONS]
     });
 
+    const loadAdmins = useCallback(async () => {
+        try {
+            setLoading(true);
+            console.log('🔄 Loading admin users...');
+            
+            // Simple direct approach - use the existing working users API
+            if (!user) {
+                toast.error('User not authenticated');
+                return;
+            }
+            
+            const idToken = await user.getIdToken(true);
+            
+            // Use hybrid endpoint that tries real Firestore first, falls back to mock if needed
+            const response = await fetch('/api/admin/users/hybrid-list', {
+                headers: {
+                    'Authorization': `Bearer ${idToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Filter for admin users on the client side
+                const adminUsers = (result.users || []).filter(user => 
+                    user.role === 'admin' || user.role === 'super_admin'
+                );
+                setAdmins(adminUsers);
+                console.log(`✅ Loaded ${adminUsers.length} admin users`);
+            } else {
+                console.log('⚠️ Failed to load admin users:', result.error);
+                setAdmins([]);
+                toast.error(`Failed to load admin users: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('❌ Error loading admin users:', error);
+            toast.error(`Failed to load admin users: ${error.message}`);
+            setAdmins([]);
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
+
     useEffect(() => {
         loadAdmins();
     }, [loadAdmins]);
@@ -80,50 +124,6 @@ export default function AdminManagementPage() {
         const matchesRole = roleFilter === 'all' || admin.role === roleFilter;
         return matchesSearch && matchesRole;
     });
-
-    const loadAdmins = useCallback(async () => {
-        try {
-            setLoading(true);
-            console.log('🔄 Loading admin users...');
-            
-            // Simple direct approach - use the existing working users API
-            if (!user) {
-                toast.error('User not authenticated');
-                return;
-            }
-            
-            const idToken = await user.getIdToken(true);
-            
-            // Use hybrid endpoint that tries real Firestore first, falls back to mock if needed
-            const response = await fetch('/api/admin/users/hybrid-list', {
-                headers: {
-                    'Authorization': `Bearer ${idToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Filter for admin users on the client side
-                const adminUsers = (result.users || []).filter(user => 
-                    user.role === 'admin' || user.role === 'super_admin'
-                );
-                setAdmins(adminUsers);
-                console.log(`✅ Loaded ${adminUsers.length} admin users`);
-            } else {
-                console.log('⚠️ Failed to load admin users:', result.error);
-                setAdmins([]);
-                toast.error(`Failed to load admin users: ${result.error}`);
-            }
-        } catch (error) {
-            console.error('❌ Error loading admin users:', error);
-            toast.error(`Failed to load admin users: ${error.message}`);
-            setAdmins([]);
-        } finally {
-            setLoading(false);
-        }
-    }, [user]);
 
     const handleCreateAdmin = async (e) => {
         e.preventDefault();

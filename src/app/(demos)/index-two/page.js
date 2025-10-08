@@ -1,7 +1,7 @@
 
 import BannerTwo from "@/components/banner/BannerTwo";
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import Brand from "@/components/brand/Brand";
 import ServiceTwo from "@/components/services/ServiceTwo";
@@ -21,7 +21,7 @@ export default function Home() {
             <TestimonialsTwo />
             <BlogTwo />
             <CtaTwo />
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

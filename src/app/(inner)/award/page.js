@@ -1,7 +1,7 @@
 
 "use client"
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import Testimonials from "@/components/testimonials/Testimonials";
 import CtaOne from "@/components/cta/CtaOne";
@@ -204,7 +204,7 @@ export default function Home() {
                 {/* rts cta area end */}
 
             </div>
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

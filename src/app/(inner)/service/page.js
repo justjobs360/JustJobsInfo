@@ -1,7 +1,7 @@
 
 import ServiceBanner from "@/components/banner/ServiceBanner";
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import ServiceSeven from "@/components/services/ServiceSeven";
 import ServiceList from "@/components/services/ServiceList";
@@ -25,7 +25,7 @@ export default function Home() {
 
             <TestimonialsFive/>
             <CtaSix/>
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

@@ -6,7 +6,7 @@ import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
 import './admin.css';
 
 export default function AdminDashboard() {
-    const { userRole, hasPermission, isSuperAdmin } = useAuth();
+    const { userRole, hasPermission, isSuperAdmin, user } = useAuth();
     const [stats, setStats] = useState({
         totalAdmins: 0,
         totalCVs: 0,
@@ -307,6 +307,69 @@ export default function AdminDashboard() {
                                     href="/admin/downloadable-resources"
                                     permission={ADMIN_PERMISSIONS.MANAGE_CONTENT}
                                 />
+                                <QuickAction
+                                    title="Footer Management"
+                                    description="Manage footer links and social media links"
+                                    icon="🦶"
+                                    href="/admin/footer"
+                                    permission={ADMIN_PERMISSIONS.MANAGE_FOOTER}
+                                />
+                                <div className="quick-action-card" style={{ 
+                                    background: 'white', 
+                                    padding: '20px', 
+                                    borderRadius: '8px', 
+                                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                                    border: '1px solid #e0e0e0'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                        <span style={{ fontSize: '24px', marginRight: '12px' }}>🔧</span>
+                                        <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '500' }}>Update Permissions</h3>
+                                    </div>
+                                    <p style={{ margin: '0 0 15px 0', fontSize: '14px', color: '#666' }}>
+                                        Update existing admin permissions to include Footer Management
+                                    </p>
+                                    <button 
+                                        onClick={async () => {
+                                            try {
+                                                if (!user) {
+                                                    toast.error('User not authenticated');
+                                                    return;
+                                                }
+                                                
+                                                const idToken = await user.getIdToken();
+                                                
+                                                const response = await fetch('/api/admin/update-permissions', {
+                                                    method: 'POST',
+                                                    headers: { 
+                                                        'Authorization': `Bearer ${idToken}`,
+                                                        'Content-Type': 'application/json' 
+                                                    }
+                                                });
+                                                const data = await response.json();
+                                                if (data.success) {
+                                                    toast.success(data.message);
+                                                    // Reload the page to refresh permissions
+                                                    window.location.reload();
+                                                } else {
+                                                    toast.error(data.error || 'Failed to update permissions');
+                                                }
+                                            } catch (error) {
+                                                toast.error('Failed to update permissions');
+                                            }
+                                        }}
+                                        style={{
+                                            background: 'var(--color-primary)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '8px 16px',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px'
+                                        }}
+                                    >
+                                        Update Permissions
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             // Regular Admin Actions (SEO focused)
@@ -359,6 +422,13 @@ export default function AdminDashboard() {
                                     icon="📥"
                                     href="/admin/downloadable-resources"
                                     permission={ADMIN_PERMISSIONS.MANAGE_CONTENT}
+                                />
+                                <QuickAction
+                                    title="Footer Management"
+                                    description="Manage footer links and social media links"
+                                    icon="🦶"
+                                    href="/admin/footer"
+                                    permission={ADMIN_PERMISSIONS.MANAGE_FOOTER}
                                 />
                             </>
                         )}

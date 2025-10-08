@@ -2,7 +2,7 @@
 "use client";
 import AboutBanner from "@/components/banner/AboutBanner";
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import Wedo from "@/components/whatwe-do/Wedo";
 import FeatureOne from "@/components/feature/FeatureOne";
@@ -28,7 +28,7 @@ export default function About() {
             <BrandTwo />
             <TestimonialsThree />
             <Ctaabout />
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
         </DynamicMetaTags>

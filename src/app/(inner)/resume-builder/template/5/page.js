@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import HeaderOne from "@/components/header/HeaderOne";
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeBuilderForm from "@/components/resume/ResumeBuilderForm";
 
 import html2pdf from 'html2pdf.js';
@@ -1617,7 +1617,7 @@ export default function ResumeEditorPage({ params }) {
         </div>
       </div>
       <BackToTop />
-      <FooterOne />
+      <FooterOneDynamic />
 
     </>
   );

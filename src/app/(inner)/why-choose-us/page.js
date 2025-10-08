@@ -2,7 +2,7 @@
 import React from 'react'
 import HeaderTwo from "@/components/header/HeaderTwo";
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import CtaOne from "@/components/cta/CtaOne";
 import Accordion from "react-bootstrap/Accordion";
 function page() {
@@ -400,7 +400,7 @@ function page() {
             </div>
             {/* why choose us pricing area end */}
             <CtaOne />
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </>
 

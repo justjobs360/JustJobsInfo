@@ -1,6 +1,6 @@
 
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import TestimonialsThree from "@/components/testimonials/TestimonialsThree";
 import TeamSingleBanner from "@/components/banner/TeamSingleBanner";
@@ -77,7 +77,7 @@ export default function Home() {
             </div>
         </div>
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

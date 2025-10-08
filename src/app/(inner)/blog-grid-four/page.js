@@ -2,7 +2,7 @@
 import BackToTop from "@/components/common/BackToTop";
 import React from "react";
 import HeaderTwo from "@/components/header/HeaderTwo";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import AOS from "aos";
@@ -181,7 +181,7 @@ function page() {
 
 
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
 
     )

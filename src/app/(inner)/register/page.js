@@ -8,7 +8,7 @@ import Link from 'next/link';
 import './register.css';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ReCaptcha from "@/components/security/ReCaptcha";
 
 
@@ -521,7 +521,7 @@ export default function RegisterPage() {
                 </div>
             </div>
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
     );
 } 

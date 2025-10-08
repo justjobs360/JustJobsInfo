@@ -2,24 +2,58 @@
 import BackToTop from "@/components/common/BackToTop";
 import React, { useState, useEffect } from "react";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import BlogMain from './BlogMain';
 import toast from 'react-hot-toast';
 
 // Skeleton component for blog cards
 const BlogSkeleton = () => (
-  <div className="single-blog-area-start border-none">
-    <div className="thumbnail">
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    background: '#fff',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+    border: '1px solid #f0f0f0'
+  }}>
+    <div className="thumbnail" style={{
+      display: 'block',
+      width: '100%',
+      height: '250px',
+      overflow: 'hidden',
+      borderRadius: '0'
+    }}>
       <div className="skeleton-image"></div>
     </div>
-    <div className="inner-content-area">
-      <div className="top-area">
+    <div className="inner-content-area" style={{
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '20px 0 28px 0',
+      minHeight: '300px'
+    }}>
+      <div className="top-area" style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         <div className="skeleton-category"></div>
         <div className="skeleton-title"></div>
         <div className="skeleton-description"></div>
-        <div className="bottom-author-area">
+        <div className="skeleton-description" style={{ width: '85%' }}></div>
+        <div className="skeleton-description" style={{ width: '90%' }}></div>
+        <div className="bottom-author-area" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '15px',
+          marginTop: 'auto',
+          paddingTop: '20px',
+          borderTop: '1px solid #f0f0f0'
+        }}>
           <div className="skeleton-author-img"></div>
-          <div className="author-area-info">
+          <div className="author-area-info" style={{ flex: 1 }}>
             <div className="skeleton-author-name"></div>
             <div className="skeleton-date"></div>
           </div>
@@ -57,7 +91,7 @@ function BlogsPage() {
             setLoading(true);
             const params = new URLSearchParams({
                 page: page.toString(),
-                limit: '6',
+                limit: '15',
                 search: search
             });
 
@@ -142,34 +176,46 @@ function BlogsPage() {
                         </div>
 
                         {/* Blogs Grid */}
-                        <div className="row g-5">
+                        <div className="row g-5" style={{ alignItems: 'stretch' }}>
                             {loading ? (
                                 // Loading skeleton
-                                Array.from({ length: 6 }).map((_, index) => (
-                                    <div key={index} className="col-lg-4 col-md-6 col-sm-12">
-                                        <BlogSkeleton />
+                                Array.from({ length: 15 }).map((_, index) => (
+                                    <div key={index} className="col-lg-4 col-md-6 col-sm-12" style={{ display: 'flex' }}>
+                                        <div style={{ flex: 1, height: '610px' }}>
+                                            <BlogSkeleton />
+                                        </div>
                                     </div>
                                 ))
                             ) : blogs.length > 0 ? (
                                 blogs.map((blog, index) => (
-                                    <div key={blog._id || index} className="col-lg-4 col-md-6 col-sm-12">
-                                        <div className="single-blog-area-start border-none">
-                                                <BlogMain
-                                                    blogCategory={blog.category}
-                                                    Slug={blog.slug}
-                                                    blogImage={blog.image}
-                                                    authorImg={blog.authorImg}
-                                                    blogTitle={blog.title}
-                                                    blogAuthor={blog.author}
-                                                    blogPublishedDate={blog.publishedDate}
+                                    <div key={blog._id || index} className="col-lg-4 col-md-6 col-sm-12" style={{ display: 'flex' }}>
+                                        <div style={{ flex: 1, height: '610px' }}>
+                                            <BlogMain
+                                                blogCategory={blog.category}
+                                                Slug={blog.slug}
+                                                blogImage={blog.image}
+                                                authorImg={blog.authorImg}
+                                                blogTitle={blog.title}
+                                                blogAuthor={blog.author}
+                                                blogPublishedDate={blog.publishedDate}
                                                 blogDescription={blog.description}
-                                                />
+                                            />
                                         </div>
                                     </div>
                                 ))
                             ) : (
                                 <div className="col-12 text-center">
-                                    <p>No blogs found.</p>
+                                    <div style={{
+                                        padding: '60px 20px',
+                                        background: '#fff',
+                                        borderRadius: '12px',
+                                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+                                    }}>
+                                        <h3 style={{ color: '#666', marginBottom: '16px' }}>No blogs found</h3>
+                                        <p style={{ color: '#999', margin: 0 }}>
+                                            {searchTerm ? `No results found for "${searchTerm}"` : 'Check back later for new blog posts.'}
+                                        </p>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -225,7 +271,7 @@ function BlogsPage() {
             </>
 
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
 
             <style jsx>{`
                 .search-form {
@@ -305,22 +351,22 @@ function BlogsPage() {
 
                 .skeleton-category {
                     width: 80px;
-                    height: 20px;
-                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                    background-size: 200% 100%;
-                    animation: loading 1.5s infinite;
-                    border-radius: 4px;
-                    margin-bottom: 10px;
-                }
-
-                .skeleton-title {
-                    width: 100%;
                     height: 24px;
                     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
                     background-size: 200% 100%;
                     animation: loading 1.5s infinite;
+                    border-radius: 12px;
+                    margin-bottom: 20px;
+                }
+
+                .skeleton-title {
+                    width: 100%;
+                    height: 56px;
+                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                    background-size: 200% 100%;
+                    animation: loading 1.5s infinite;
                     border-radius: 4px;
-                    margin-bottom: 10px;
+                    margin-bottom: 24px;
                 }
 
                 .skeleton-description {
@@ -330,17 +376,17 @@ function BlogsPage() {
                     background-size: 200% 100%;
                     animation: loading 1.5s infinite;
                     border-radius: 4px;
-                    margin-bottom: 15px;
+                    margin-bottom: 12px;
                 }
 
                 .skeleton-author-img {
-                    width: 40px;
-                    height: 40px;
+                    width: 50px;
+                    height: 50px;
                     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
                     background-size: 200% 100%;
                     animation: loading 1.5s infinite;
                     border-radius: 50%;
-                    margin-right: 10px;
+                    flex-shrink: 0;
                 }
 
                 .skeleton-author-name {

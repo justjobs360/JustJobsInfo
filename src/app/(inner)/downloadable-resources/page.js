@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import './downloadable-resources.css';
 
 export default function DownloadableResourcesPage() {
@@ -59,7 +59,7 @@ export default function DownloadableResourcesPage() {
                     </div>
                 </div>
                 <BackToTop />
-                <FooterOne />
+                <FooterOneDynamic />
             </>
         );
     }
@@ -87,7 +87,7 @@ export default function DownloadableResourcesPage() {
                     </div>
                 </div>
                 <BackToTop />
-                <FooterOne />
+                <FooterOneDynamic />
             </>
         );
     }
@@ -143,7 +143,7 @@ export default function DownloadableResourcesPage() {
                 </div>
             </div>
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
     );
 }

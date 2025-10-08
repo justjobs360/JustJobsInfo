@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, Fragment } from 'react';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ShareJobModal from "@/components/modals/ShareJobModal";
 import './job-listing.css';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -1139,7 +1139,7 @@ export default function JobListingPage() {
                 </div>
             </div>
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
             
             {/* Share Job Modal */}

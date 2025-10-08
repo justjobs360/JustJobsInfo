@@ -11,6 +11,7 @@ export default function JobListingsPage() {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
+    const [statusFilter, setStatusFilter] = useState('all');
     const [form, setForm] = useState({
         title: '', company: '', location: '', type: 'Full-time',
         salary_min: '', salary_max: '', description: '', apply_link: '', featured: false, status: 'active'
@@ -28,7 +29,7 @@ export default function JobListingsPage() {
                         headers = { Authorization: `Bearer ${idToken}` };
                     }
                 } catch {}
-                const res = await fetch('/api/admin/jobs?status=active&limit=100', { headers });
+                const res = await fetch('/api/admin/jobs?limit=100', { headers });
                 const data = await res.json();
                 if (data.success) {
                     const mapped = (data.jobs || []).map(j => ({
@@ -73,7 +74,7 @@ export default function JobListingsPage() {
                 </div>
 
                 {/* Actions */}
-                <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
                     <button
                         style={{
                             padding: '12px 24px',
@@ -90,6 +91,25 @@ export default function JobListingsPage() {
                     >
                         + Add New Job
                     </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-heading-1)' }}>Filter by Status:</label>
+                        <select 
+                            value={statusFilter} 
+                            onChange={e => setStatusFilter(e.target.value)}
+                            style={{
+                                padding: '8px 12px',
+                                border: '1px solid #ddd',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                backgroundColor: '#fff'
+                            }}
+                        >
+                            <option value="all">All</option>
+                            <option value="active">Active</option>
+                            <option value="draft">Draft</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
                     <button
                         style={{
                             padding: '12px 24px',
@@ -177,6 +197,7 @@ export default function JobListingsPage() {
                                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, marginBottom: 6 }}>Status</label>
                                     <select className="form-control" value={form.status} onChange={e=>setForm({...form, status:e.target.value})}>
                                         <option value="active">Active</option>
+                                        <option value="draft">Draft</option>
                                         <option value="expired">Expired</option>
                                     </select>
                                 </div>
@@ -212,7 +233,7 @@ export default function JobListingsPage() {
                                         // reload list
                                         const reloadHeaders = { ...headers };
                                         delete reloadHeaders['Content-Type'];
-                                        const res2 = await fetch('/api/admin/jobs?status=active&limit=100', { headers: reloadHeaders });
+                                        const res2 = await fetch('/api/admin/jobs?limit=100', { headers: reloadHeaders });
                                         const d2 = await res2.json();
                                         if (d2.success) {
                                             const mapped = (d2.jobs || []).map(j => ({
@@ -249,12 +270,16 @@ export default function JobListingsPage() {
                     <div className="activity-card">
                         <div style={{ padding: '24px' }}>
                             <div style={{ marginBottom: '20px' }}>
-                                <h3 style={{ fontSize: '18px', fontWeight: '500', color: 'var(--color-heading-1)', margin: '0 0 16px 0' }}>All Job Listings</h3>
-                                <p style={{ fontSize: '14px', color: 'var(--color-body)', margin: 0 }}>Total jobs: {jobs.length}</p>
+                                <h3 style={{ fontSize: '18px', fontWeight: '500', color: 'var(--color-heading-1)', margin: '0 0 16px 0' }}>
+                                    {statusFilter === 'all' ? 'All Job Listings' : `${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Jobs`}
+                                </h3>
+                                <p style={{ fontSize: '14px', color: 'var(--color-body)', margin: 0 }}>
+                                    Showing {jobs.filter(job => statusFilter === 'all' || job.status === statusFilter).length} of {jobs.length} total jobs
+                                </p>
                             </div>
                             
                             <div className="activity-list">
-                                {jobs.map((job) => (
+                                {jobs.filter(job => statusFilter === 'all' || job.status === statusFilter).map((job) => (
                                     <div key={job.id} className="activity-item">
                                         <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                                             <span style={{ fontSize: '14px', color: 'var(--color-body)', marginRight: '12px' }}>💼</span>
@@ -287,8 +312,8 @@ export default function JobListingsPage() {
                                                 fontSize: '12px', 
                                                 padding: '4px 8px', 
                                                 borderRadius: '12px',
-                                                backgroundColor: job.status === 'active' ? 'var(--color-success)' : '#6c757d',
-                                                color: '#fff'
+                                                backgroundColor: job.status === 'active' ? 'var(--color-success)' : job.status === 'draft' ? '#ffc107' : '#6c757d',
+                                                color: job.status === 'draft' ? '#000' : '#fff'
                                             }}>
                                                 {job.status}
                                             </span>
@@ -330,7 +355,7 @@ export default function JobListingsPage() {
                                                     await fetch(`/api/admin/jobs/${job.id}`, { method:'PUT', headers, body: JSON.stringify({ featured: !job.featured }) });
                                                     const reloadHeaders = { ...headers };
                                                     delete reloadHeaders['Content-Type'];
-                                                    const res2 = await fetch('/api/admin/jobs?status=active&limit=100', { headers: reloadHeaders });
+                                                    const res2 = await fetch('/api/admin/jobs?limit=100', { headers: reloadHeaders });
                                                     const d2 = await res2.json();
                                                     if (d2.success) {
                                                         const mapped = (d2.jobs || []).map(j => ({

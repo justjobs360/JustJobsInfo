@@ -22,7 +22,7 @@ function ServiceList() {
               Get expert feedback and actionable tips to polish your resume and stand out in job applications.
               </p>
             </div>
-            <a href="#" className="arrow-btn">
+            <a href="/resume-audit" className="arrow-btn">
               <img src="assets/images/service/icons/13.svg" alt="service" />
             </a>
           </div>
@@ -40,7 +40,7 @@ function ServiceList() {
               Create professional, ATS-friendly resumes quickly using our intuitive online builder designed for all career stages.
               </p>
             </div>
-            <a href="#" className="arrow-btn">
+            <a href="/resume-builder" className="arrow-btn">
               <img src="assets/images/service/icons/13.svg" alt="service" />
             </a>
           </div>
@@ -58,7 +58,7 @@ function ServiceList() {
               Discover the latest job openings across multiple industries and locations tailored to your skills and goals.
               </p>
             </div>
-            <a href="#" className="arrow-btn">
+            <a href="/job-listing" className="arrow-btn">
               <img src="assets/images/service/icons/13.svg" alt="service" />
             </a>
           </div>
@@ -76,7 +76,7 @@ function ServiceList() {
               Access articles, tutorials, and expert advice to navigate job searches, interviews, and career growth.
               </p>
             </div>
-            <a href="#" className="arrow-btn">
+            <a href="/downloadable-resources" className="arrow-btn">
               <img src="assets/images/service/icons/13.svg" alt="service" />
             </a>
           </div>

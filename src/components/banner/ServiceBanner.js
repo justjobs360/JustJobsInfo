@@ -25,7 +25,7 @@ function ServiceBanner() {
                                     data-wow-offset={120}
                                     data-wow-delay=".4s"
                                 >
-                                    Empowering Your Career Journey with Tailored Job Resources and Tools
+                                    Empower Your Career Journey
                                 </h1>
                                 <p
                                     className="disc wow fadeInUp"

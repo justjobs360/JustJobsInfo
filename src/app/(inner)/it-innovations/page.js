@@ -1,7 +1,7 @@
 "use client"
 import { ReactSVG } from 'react-svg';
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import FeatureTwo from "@/components/feature/FeatureTwo";
 import TestimonialsFive from "@/components/testimonials/TestimonialsFive";
@@ -159,7 +159,7 @@ export default function Home() {
                 </div>
             </>
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

@@ -2,7 +2,7 @@
 import BackToTop from "@/components/common/BackToTop";
 import React from "react";
 import HeaderTwo from "@/components/header/HeaderTwo";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Posts from '@/data/Posts.json';
 import BlogGridMain from './BlogListMain';
 function page() {
@@ -282,7 +282,7 @@ function page() {
             </>
 
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
 
     )

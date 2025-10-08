@@ -1,6 +1,6 @@
 
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import CtaOne from "@/components/cta/CtaOne";
 
@@ -211,7 +211,7 @@ export default function Home() {
 
 
             <CtaOne />
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

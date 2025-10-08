@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react';
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import BackToTop from "@/components/common/BackToTop";
 import { ReactSVG } from 'react-svg';
 import './askgenie.css';
@@ -201,7 +201,7 @@ export default function AskGenie() {
                 </div>
             </div>
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

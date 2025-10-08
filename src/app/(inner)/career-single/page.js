@@ -1,6 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import CtaSeven from "@/components/cta/CtaPartner";
 function page() {
@@ -199,7 +199,7 @@ function page() {
             </div>
             {/* career single bottom main end */}
             <CtaSeven />
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </>
 

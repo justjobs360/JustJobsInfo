@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeUpload from "@/components/resume-audit/ResumeUpload";
 import AuditResults from "@/components/resume-audit/AuditResults";
 import HowItWorks from "@/components/resume-audit/HowItWorks";
@@ -105,7 +105,7 @@ export default function ResumeAuditPage() {
             </div>
             <CtaOne />
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </DynamicMetaTags>
     );
 }

@@ -24,6 +24,7 @@ export const ADMIN_PERMISSIONS = {
     MANAGE_CONTENT: 'manage_content',
     MANAGE_BLOG_POSTS: 'manage_blog_posts',
     MANAGE_PAGES: 'manage_pages',
+    MANAGE_FOOTER: 'manage_footer',
     
     // Analytics
     VIEW_ANALYTICS: 'view_analytics',
@@ -43,6 +44,7 @@ export const DEFAULT_ADMIN_PERMISSIONS = [
     ADMIN_PERMISSIONS.MANAGE_CONTENT,
     ADMIN_PERMISSIONS.MANAGE_BLOG_POSTS,
     ADMIN_PERMISSIONS.MANAGE_PAGES,
+    ADMIN_PERMISSIONS.MANAGE_FOOTER,
     ADMIN_PERMISSIONS.VIEW_ANALYTICS
 ];
 

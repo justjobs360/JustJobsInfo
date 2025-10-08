@@ -6,7 +6,7 @@ import { applyActionCode, checkActionCode } from 'firebase/auth';
 import toast from 'react-hot-toast';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
 
 export default function VerifyEmailPage() {
@@ -252,7 +252,7 @@ export default function VerifyEmailPage() {
                     </div>
                 </div>
             </div>
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
 
             <style jsx>{`

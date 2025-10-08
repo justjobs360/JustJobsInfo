@@ -1,6 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import React, { useRef, useState } from "react";
 import { ReactSVG } from 'react-svg';
@@ -276,7 +276,7 @@ export default function Home() {
                 {/* rts location area end */}
             </>
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
         </DynamicMetaTags>

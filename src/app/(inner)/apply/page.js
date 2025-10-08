@@ -1,6 +1,6 @@
 
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 
 export default function Home() {
@@ -156,7 +156,7 @@ export default function Home() {
 
 
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

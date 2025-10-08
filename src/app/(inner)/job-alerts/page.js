@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import './job-alerts.css';
 import '../job-listing/job-listing.css';
 
@@ -494,7 +494,7 @@ export default function JobAlertsPage() {
         </div>
       </div>
 
-      <FooterOne />
+      <FooterOneDynamic />
       <BackToTop />
     </>
   );

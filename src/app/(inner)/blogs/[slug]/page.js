@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import BackToTop from "@/components/common/BackToTop";
 
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ReCaptcha from "@/components/security/ReCaptcha";
 import toast from 'react-hot-toast';
 
@@ -450,7 +450,7 @@ export default function BlogDetails() {
           </div>
         </div>
         <BlogDetailSkeleton />
-        <FooterOne />
+        <FooterOneDynamic />
         <BackToTop />
       </div>
     );
@@ -484,7 +484,7 @@ export default function BlogDetails() {
             </div>
           </div>
         </div>
-        <FooterOne />
+        <FooterOneDynamic />
         <BackToTop />
       </div>
     );
@@ -1063,7 +1063,7 @@ export default function BlogDetails() {
         </div>
       </>
 
-      <FooterOne />
+      <FooterOneDynamic />
       <BackToTop />
 
       <style jsx>{`

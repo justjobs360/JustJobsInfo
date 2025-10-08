@@ -1,6 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import { ReactSVG } from 'react-svg';
 import "../legal-pages.css";
@@ -183,7 +183,7 @@ export default function Home() {
 
 
 
-            <FooterOne />
+            <FooterOneDynamic />
             <BackToTop />
         </div>
     );

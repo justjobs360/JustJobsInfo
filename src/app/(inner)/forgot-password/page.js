@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
 import './forgot-password.css';
 
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
                 </div>
             </div>
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
     );
 } 

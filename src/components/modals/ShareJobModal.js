@@ -14,6 +14,17 @@ const ShareJobModal = ({ isOpen, onClose, job }) => {
 
   const shareOptions = [
     {
+      id: 'twitter',
+      name: 'X',
+      icon: 'fa-brands fa-x-twitter',
+      color: '#000000',
+      action: () => {
+        const text = `${jobText} #jobs #careers`;
+        const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(jobUrl)}&text=${encodeURIComponent(text)}`;
+        window.open(url);
+      }
+    },
+    {
       id: 'email',
       name: 'Email',
       icon: 'fas fa-envelope',
@@ -41,17 +52,6 @@ const ShareJobModal = ({ isOpen, onClose, job }) => {
       color: '#0077b5',
       action: () => {
         const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(jobUrl)}&title=${encodeURIComponent(jobTitle)}&summary=${encodeURIComponent(jobText)}`;
-        window.open(url);
-      }
-    },
-    {
-      id: 'twitter',
-      name: 'Twitter',
-      icon: 'fab fa-twitter',
-      color: '#1da1f2',
-      action: () => {
-        const text = `${jobText} #jobs #careers`;
-        const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(jobUrl)}&text=${encodeURIComponent(text)}`;
         window.open(url);
       }
     },
@@ -232,6 +232,7 @@ const ShareJobModal = ({ isOpen, onClose, job }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                justifyContent: 'center',
                 padding: '1.25rem',
                 border: '2px solid #e5e7eb',
                 borderRadius: '8px',
@@ -240,7 +241,8 @@ const ShareJobModal = ({ isOpen, onClose, job }) => {
                 transition: 'all 0.2s ease',
                 textDecoration: 'none',
                 color: 'inherit',
-                minHeight: '120px'
+                minHeight: '120px',
+                textAlign: 'center'
               }}
               onMouseEnter={(e) => {
                 e.target.style.borderColor = option.color;

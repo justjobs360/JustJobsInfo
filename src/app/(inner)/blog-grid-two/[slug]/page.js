@@ -7,7 +7,7 @@ import HeaderTwo from "@/components/header/HeaderTwo";
 import BackToTop from "@/components/common/BackToTop";
 import Posts from '@/data/Posts.json';
 
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 
 export default function BlogDetails() {
   const { slug } = useParams(); // Get the slug from URL parameters
@@ -528,7 +528,7 @@ export default function BlogDetails() {
 
 
 
-      <FooterOne />
+      <FooterOneDynamic />
 
 
       <BackToTop />

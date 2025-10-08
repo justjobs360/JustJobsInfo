@@ -1,20 +1,41 @@
 /* Banner Component Specific Styles */
 
-/* Mobile-specific styles for Register Now button in BannerOne */
+/* Three buttons container styling */
+.banner-buttons-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.banner-buttons-container .rts-btn {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Mobile-specific styles for three buttons in BannerOne */
 @media only screen and (max-width: 767px) {
-    .banner-wrapper-one .landingbtnmedia.rts-btn.btn-primary,
-    .rts-banner-area-start .landingbtnmedia.rts-btn.btn-primary,
-    .landingbtnmedia.rts-btn.btn-primary {
+    .banner-buttons-container {
+        flex-direction: column;
+        gap: 15px;
         margin-bottom: 25% !important;
         margin-bottom: 25vh !important; /* Fallback with viewport height */
+    }
+    
+    .banner-buttons-container .rts-btn {
+        width: 100%;
+        max-width: 280px;
+        min-width: unset;
     }
 }
 
 /* Additional specificity for all mobile devices */
 @media screen and (max-width: 768px) {
-    .banner-wrapper-one .landingbtnmedia.rts-btn.btn-primary,
-    .rts-banner-area-start .landingbtnmedia.rts-btn.btn-primary,
-    .landingbtnmedia.rts-btn.btn-primary {
+    .banner-buttons-container {
         margin-bottom: 25% !important;
         padding-bottom: 20px !important; /* Additional padding for extra space */
     }
@@ -22,10 +43,34 @@
 
 /* Tablet and small desktop override */
 @media screen and (min-width: 769px) {
-    .banner-wrapper-one .landingbtnmedia.rts-btn.btn-primary,
-    .rts-banner-area-start .landingbtnmedia.rts-btn.btn-primary,
-    .landingbtnmedia.rts-btn.btn-primary {
+    .banner-buttons-container {
         margin-bottom: 0 !important; /* Reset margin on larger screens */
         padding-bottom: 15px !important; /* Reset padding on larger screens */
+    }
+}
+
+/* Medium screens - 2 buttons per row */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .banner-buttons-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .banner-buttons-container .rts-btn {
+        flex: 0 0 calc(50% - 10px);
+        max-width: 220px;
+    }
+}
+
+/* Large screens - 3 buttons per row */
+@media screen and (min-width: 1025px) {
+    .banner-buttons-container {
+        flex-wrap: nowrap;
+        justify-content: center;
+    }
+    
+    .banner-buttons-container .rts-btn {
+        flex: 1;
+        max-width: 250px;
     }
 } 

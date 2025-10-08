@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeTemplateGrid from '@/components/resume/ResumeTemplateGrid';
 import ResumeEditor from '@/components/resume/ResumeEditor';
 import './resume-builder.css';
@@ -658,7 +658,7 @@ export default function ResumeBuilderPage() {
                 </div>
             </div>
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
     );
 }

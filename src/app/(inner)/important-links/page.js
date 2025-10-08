@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOne from "@/components/footer/FooterOne";
+import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import './important-links.css';
 
 export default function ImportantLinksPage() {
@@ -59,7 +59,7 @@ export default function ImportantLinksPage() {
                     </div>
                 </div>
                 <BackToTop />
-                <FooterOne />
+                <FooterOneDynamic />
             </>
         );
     }
@@ -87,7 +87,7 @@ export default function ImportantLinksPage() {
                     </div>
                 </div>
                 <BackToTop />
-                <FooterOne />
+                <FooterOneDynamic />
             </>
         );
     }
@@ -128,7 +128,7 @@ export default function ImportantLinksPage() {
                 </div>
             </div>
             <BackToTop />
-            <FooterOne />
+            <FooterOneDynamic />
         </>
     );
 } 

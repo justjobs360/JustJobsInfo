@@ -42,19 +42,42 @@ function BannerOne() {
 
 
                                 </p>
-                                {!isAuthenticated && (
+                                <div className="banner-buttons-container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="700">
                                     <a
-                                        href="/register"
-                                        className="rts-btn btn-primary landingbtnmedia" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="700" 
+                                        href="/resume-audit"
+                                        className="rts-btn btn-primary landingbtnmedia"
                                     >
-                                        Register Now
+                                        Audit Your Resume
                                         <ReactSVG
                                             className="injectable"
-                                            src="assets/images/banner/01.svg"
-                                            alt="icons"
+                                            src="assets/images/service/icons/08.svg"
+                                            alt="audit icon"
                                         />
                                     </a>
-                                )}
+                                    
+                                    <a
+                                        href="/job-fit"
+                                        className="rts-btn btn-primary landingbtnmedia"
+                                    >
+                                        Job Fit
+                                        <ReactSVG
+                                            className="injectable"
+                                            src="assets/images/service/icons/12.svg"
+                                            alt="job fit icon"
+                                        />
+                                    </a>
+                                    <a
+                                        href="/resume-builder"
+                                        className="rts-btn btn-primary landingbtnmedia"
+                                    >
+                                        Create Your Resume
+                                        <ReactSVG
+                                            className="injectable"
+                                            src="assets/images/service/icons/09.svg"
+                                            alt="create icon"
+                                        />
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
