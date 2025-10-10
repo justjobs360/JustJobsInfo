@@ -6,6 +6,7 @@ import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import JobFitUpload from "@/components/job-fit/JobFitUpload";
 import JobFitResults from "@/components/job-fit/JobFitResults";
 import HowItWorks from "@/components/job-fit/HowItWorks";
+import JobFitHistory from "@/components/job-fit/JobFitHistory";
 import CtaOne from "@/components/cta/CtaOne";
 import { JobFitService } from '@/utils/jobFitService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +18,7 @@ export default function JobFitPage() {
     const [analysisData, setAnalysisData] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState('');
+    const [resetKey, setResetKey] = useState(0);
 
     const handleAnalysisSubmit = async (formData) => {
         setIsProcessing(true);
@@ -58,6 +60,7 @@ export default function JobFitPage() {
     const handleNewAnalysis = () => {
         setAnalysisData(null);
         setError('');
+        setResetKey(prev => prev + 1); // Increment reset key to trigger form reset
     };
 
     return (
@@ -88,6 +91,7 @@ export default function JobFitPage() {
                         {!analysisData ? (
                             <>
                                 <JobFitUpload 
+                                    key={resetKey}
                                     onAnalysisSubmit={handleAnalysisSubmit}
                                     isProcessing={isProcessing}
                                 />
@@ -100,6 +104,13 @@ export default function JobFitPage() {
                             />
                         )}
                     </div>
+
+                    {/* History Section - Only show when not processing and not showing results */}
+                    {!isProcessing && !analysisData && user && (
+                        <div style={{ marginTop: '60px', marginBottom: '40px' }}>
+                            <JobFitHistory embedded={true} />
+                        </div>
+                    )}
                 </div>
             </div>
             <CtaOne />

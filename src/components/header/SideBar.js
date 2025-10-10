@@ -134,12 +134,32 @@ function SideBar({ isSidebarOpen, toggleSidebar }) {
                 </div>
               </div>
               
-              {/* Row 2: Logout Button */}
+              {/* Row 2: Account and Logout Buttons */}
               <div style={{
                 display: 'flex',
+                gap: '8px',
                 justifyContent: 'flex-start',
                 paddingLeft: '81px'
               }}>
+                <Link
+                  href="/account"
+                  onClick={toggleSidebar}
+                  style={{
+                    background: '#f8f9fa',
+                    color: 'var(--color-heading-1)',
+                    border: '1px solid #e9ecef',
+                    padding: '12px 20px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  My Account
+                </Link>
                 <button 
                   onClick={handleLogout}
                   className="logout-btn-mobile"
@@ -200,6 +220,16 @@ function SideBar({ isSidebarOpen, toggleSidebar }) {
                   style={isActive('/resume-builder') ? { color: 'var(--color-primary)' } : {}}
                 >
                   Resume Builder
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/job-fit" 
+                  className={`main ${isActive('/job-fit') ? 'active' : ''}`} 
+                  onClick={toggleSidebar}
+                  style={isActive('/job-fit') ? { color: 'var(--color-primary)' } : {}}
+                >
+                  Job Fit
                 </Link>
               </li>
               <li>

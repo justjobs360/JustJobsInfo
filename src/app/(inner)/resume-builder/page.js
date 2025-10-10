@@ -579,8 +579,8 @@ export default function ResumeBuilderPage() {
 
     // When a template is selected, navigate to the dynamic page
     const handleTemplateSelect = (template) => {
-        if (template.category === 'premium' && !isAuthenticated) {
-            alert('Please register or login to access premium templates');
+        if (!isAuthenticated) {
+            router.push('/register');
             return;
         }
         router.push(`/resume-builder/template/${template.id}`);
@@ -604,10 +604,9 @@ export default function ResumeBuilderPage() {
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>
                             <button className="rts-btn btn-primary" style={{ fontSize: '18px', padding: '14px 36px', marginBottom: 0, minWidth: '220px' }}
-                                onClick={() => router.push('/resume-builder/template/1')}
-                                // Disabled if no template, but always enabled for now
+                                onClick={() => isAuthenticated ? router.push('/resume-builder/template/1') : router.push('/register')}
                             >
-                                Create my resume
+                                {isAuthenticated ? 'Create my resume' : 'Register to Use'}
                             </button>
                             {/* FILTER BAR */}
                             <div className="resume-filter-bar" style={{

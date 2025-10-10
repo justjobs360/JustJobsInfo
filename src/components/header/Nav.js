@@ -61,6 +61,15 @@ function Nav() {
                                 Resume Builder
                             </Link>
                         </li>
+                        <li className="has-dropdown position-static with-megamenu margin-single-0">
+                            <Link 
+                                className={`nav-link ${isActive('/job-fit') ? 'active' : ''}`} 
+                                href="/job-fit"
+                                style={isActive('/job-fit') ? { color: 'var(--color-primary)' } : {}}
+                            >
+                                Job Fit
+                            </Link>
+                        </li>
                         <li>
                             <Link 
                                 className={`nav-link ${isActive('/job-listing') ? 'active' : ''}`} 

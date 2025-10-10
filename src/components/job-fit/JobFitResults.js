@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function JobFitResults({ analysisData, onNewAnalysis }) {
     const { 
@@ -8,11 +8,22 @@ export default function JobFitResults({ analysisData, onNewAnalysis }) {
         scoringRationale,
         strengths, 
         gaps, 
-        recommendations, 
+        recommendations,
+        atsOptimization,
         jobTitle, 
         companyName,
         industrySector 
     } = analysisData;
+
+    // State for expandable score breakdown items
+    const [expandedItems, setExpandedItems] = useState({});
+
+    const toggleExpanded = (key) => {
+        setExpandedItems(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    };
 
     const getScoreColor = (score) => {
         if (score >= 80) return '#10b981'; // Green
@@ -63,6 +74,13 @@ ${gaps.map((gap, index) => `${index + 1}. ${gap}`).join('\n')}
 
 RECOMMENDATIONS:
 ${recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
+
+ATS OPTIMIZATION TIPS:
+${atsOptimization && atsOptimization.length > 0 ? atsOptimization.map((tip, index) => `${index + 1}. ${tip}`).join('\n') : `1. Use industry-standard section headings (Experience, Education, Skills)
+2. Include relevant keywords from the job description throughout your resume
+3. Use standard fonts (Arial, Calibri, Times New Roman) for better parsing
+4. Avoid tables, graphics, and complex formatting that ATS may not read
+5. Save your resume as a .docx file for optimal ATS compatibility`}
 
 FIT SCORE GUIDE:
 - 80-100: Excellent/Strong Fit - Meets or exceeds most requirements
@@ -138,18 +156,25 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                             fontSize: '16px', 
                             fontWeight: '600', 
                             color: 'var(--color-primary)',
-                            marginBottom: '10px'
+                            marginBottom: '15px',
+                            textAlign: 'left'
                         }}>
                             📊 Scoring Rationale
                         </h4>
-                        <p style={{ 
+                        <div style={{ 
                             fontSize: '14px', 
                             color: 'var(--color-body)',
-                            lineHeight: '1.6',
-                            margin: 0
+                            lineHeight: '1.8',
+                            textAlign: 'left'
                         }}>
-                            {scoringRationale}
-                        </p>
+                            {scoringRationale.split('\n').map((paragraph, index) => (
+                                paragraph.trim() && (
+                                    <p key={index} style={{ marginBottom: '12px' }}>
+                                        {paragraph.trim()}
+                                    </p>
+                                )
+                            ))}
+                        </div>
                     </div>
                 )}
 
@@ -160,7 +185,7 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                         borderRadius: '12px',
                         padding: '25px',
                         marginTop: '25px',
-                        maxWidth: '800px',
+                        maxWidth: '1200px',
                         margin: '25px auto 0'
                     }}>
                         <h4 style={{ 
@@ -172,27 +197,86 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                         }}>
                             Detailed Score Breakdown
                         </h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
-                            {Object.entries(scoreBreakdown).map(([key, value]) => (
-                                <div key={key} style={{ background: '#fff', padding: '15px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                        <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-heading-1)', textTransform: 'capitalize' }}>
-                                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                                        </span>
-                                        <span style={{ fontSize: '16px', fontWeight: '700', color: getScoreColor(value) }}>
-                                            {value}%
-                                        </span>
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+                            gap: '15px' 
+                        }}>
+                            {Object.entries(scoreBreakdown).filter(([key]) => typeof scoreBreakdown[key] === 'object' || typeof scoreBreakdown[key] === 'number').map(([key, value]) => {
+                                const scoreValue = typeof value === 'object' ? value.score : value;
+                                const isExpanded = expandedItems[key];
+                                const hasComparison = typeof value === 'object' && (value.resumeItems || value.jobItems);
+                                
+                                return (
+                                    <div key={key} style={{ background: '#fff', padding: '15px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                                                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-heading-1)', textTransform: 'capitalize' }}>
+                                                    {key.replace(/([A-Z])/g, ' $1').trim()}
+                                                </span>
+                                                {hasComparison && (
+                                                    <button
+                                                        onClick={() => toggleExpanded(key)}
+                                                        style={{
+                                                            background: 'transparent',
+                                                            border: '1px solid #d1d5db',
+                                                            borderRadius: '4px',
+                                                            padding: '2px 8px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '12px',
+                                                            color: 'var(--color-primary)',
+                                                            transition: 'all 0.2s ease'
+                                                        }}
+                                                    >
+                                                        {isExpanded ? '−' : '+'} Compare
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <span style={{ fontSize: '16px', fontWeight: '700', color: getScoreColor(scoreValue) }}>
+                                                {scoreValue}%
+                                            </span>
+                                        </div>
+                                        <div style={{ background: '#e5e7eb', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                                            <div style={{ 
+                                                width: `${scoreValue}%`, 
+                                                height: '100%', 
+                                                background: getScoreColor(scoreValue),
+                                                transition: 'width 0.3s ease'
+                                            }}></div>
+                                        </div>
+                                        
+                                        {/* Expandable Comparison */}
+                                        {hasComparison && isExpanded && (
+                                            <div style={{ marginTop: '15px', padding: '12px', background: '#f9fafb', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '13px' }}>
+                                                    <div>
+                                                        <h5 style={{ fontSize: '13px', fontWeight: '600', color: '#059669', marginBottom: '8px' }}>✓ On Your Resume</h5>
+                                                        <ul style={{ margin: 0, paddingLeft: '18px', color: 'var(--color-body)', lineHeight: '1.6' }}>
+                                                            {(value.resumeItems || []).map((item, idx) => (
+                                                                <li key={idx} style={{ marginBottom: '4px' }}>{item}</li>
+                                                            ))}
+                                                            {(!value.resumeItems || value.resumeItems.length === 0) && (
+                                                                <li style={{ fontStyle: 'italic', color: '#9ca3af' }}>No items identified</li>
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                    <div>
+                                                        <h5 style={{ fontSize: '13px', fontWeight: '600', color: '#0963d3', marginBottom: '8px' }}>⚡ Required by Job</h5>
+                                                        <ul style={{ margin: 0, paddingLeft: '18px', color: 'var(--color-body)', lineHeight: '1.6' }}>
+                                                            {(value.jobItems || []).map((item, idx) => (
+                                                                <li key={idx} style={{ marginBottom: '4px' }}>{item}</li>
+                                                            ))}
+                                                            {(!value.jobItems || value.jobItems.length === 0) && (
+                                                                <li style={{ fontStyle: 'italic', color: '#9ca3af' }}>No items identified</li>
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div style={{ background: '#e5e7eb', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
-                                        <div style={{ 
-                                            width: `${value}%`, 
-                                            height: '100%', 
-                                            background: getScoreColor(value),
-                                            transition: 'width 0.3s ease'
-                                        }}></div>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -247,6 +331,33 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                                 {recommendation}
                             </li>
                         ))}
+                    </ul>
+                </div>
+
+                {/* ATS Optimization Card */}
+                <div className="result-card ats-optimization">
+                    <div className="card-header">
+                        <div className="card-icon">
+                            🤖
+                        </div>
+                        <h3 className="card-title">ATS Optimization</h3>
+                    </div>
+                    <ul className="result-list">
+                        {atsOptimization && atsOptimization.length > 0 ? (
+                            atsOptimization.map((item, index) => (
+                                <li key={index} className="result-item">
+                                    {item}
+                                </li>
+                            ))
+                        ) : (
+                            <>
+                                <li className="result-item">Use industry-standard section headings (Experience, Education, Skills)</li>
+                                <li className="result-item">Include relevant keywords from the job description throughout your resume</li>
+                                <li className="result-item">Use standard fonts (Arial, Calibri, Times New Roman) for better parsing</li>
+                                <li className="result-item">Avoid tables, graphics, and complex formatting that ATS may not read</li>
+                                <li className="result-item">Save your resume as a .docx file for optimal ATS compatibility</li>
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>

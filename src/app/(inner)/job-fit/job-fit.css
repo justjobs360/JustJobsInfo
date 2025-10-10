@@ -4,6 +4,71 @@
     min-height: 100vh;
 }
 
+/* Job Fit History Section */
+.job-fit-history-section {
+    padding: 40px 0;
+}
+
+.job-fit-history-section h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-heading-1);
+    margin-bottom: 8px;
+}
+
+.job-fit-history-section .history-table-desktop {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.job-fit-history-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.job-fit-history-section thead {
+    background: #f8f9fa;
+}
+
+.job-fit-history-section th,
+.job-fit-history-section td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.job-fit-history-section th {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-heading-1);
+}
+
+.job-fit-history-section tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.job-fit-history-section tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive History Table */
+@media (max-width: 768px) {
+    .job-fit-history-section table {
+        font-size: 12px;
+    }
+    
+    .job-fit-history-section th,
+    .job-fit-history-section td {
+        padding: 12px 8px;
+    }
+    
+    .job-fit-history-section h2 {
+        font-size: 22px;
+    }
+}
+
 /* Shimmer animation for progress bar */
 @keyframes shimmer {
     0% {

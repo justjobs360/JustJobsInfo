@@ -30,7 +30,7 @@ const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) =>
             `}</style>
             <div className="resume-template-grid">
                 {templates.map((template, idx) => {
-                    const isLocked = template.category === 'premium' && !isAuthenticated;
+                    const isLocked = !isAuthenticated;
                     const isHovered = hoveredIndex === idx;
                     return (
                         <div
@@ -99,9 +99,8 @@ const ResumeTemplateGrid = ({ templates, onTemplateSelect, isAuthenticated }) =>
                                         boxShadow: '0 2px 8px rgba(9,99,211,0.10)',
                                     }}
                                     onClick={() => onTemplateSelect(template)}
-                                    disabled={isLocked}
                                 >
-                                    {isLocked ? 'Login to Use' : 'Use this template'}
+                                    {isLocked ? 'Register to Use' : 'Use this template'}
                                 </button>
                             </div>
                             {/* Row: Monochrome + PDF/DOCX badges */}

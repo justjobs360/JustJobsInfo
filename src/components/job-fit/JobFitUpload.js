@@ -138,11 +138,11 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
                             {/* Left Column: 70% width - Title, Paragraph, Job Description */}
                             <div className="col-lg-8 col-md-12 job-fit-upload-left">
                                 <div className="banner-wrapper-one banner-wrapper-one-job-fit">
-                                    <span className="pre-title" data-aos="fade-up" data-aos-duration="1000"></span>
-                                    <h1 className="title job-fit-title" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300" style={{ color: 'var(--color-heading-1)' }}>
+                                    <span className="pre-title"></span>
+                                    <h1 className="title job-fit-title" style={{ color: 'var(--color-heading-1)' }}>
                                         Find Your <span style={{ color: 'var(--color-primary)' }}>Perfect Job </span><br />Match Today
                                     </h1>
-                                    <p data-aos="fade-up" data-aos-delay="500" style={{ color: 'var(--color-body)' }}>
+                                    <p style={{ color: 'var(--color-body)' }}>
                                         Submit a job description and your resume to receive an objective analysis of how well you fit the role. Get honest, actionable feedback to improve your chances of landing your dream job.
                                     </p>
                                 </div>
@@ -170,7 +170,7 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
 
                             {/* Right Column: 30% width - Resume Upload */}
                             <div className="col-lg-4 col-md-12">
-                                <div className="upload-section" data-aos="fade-up" data-aos-duration="1000" style={{ width: '100%' }}>
+                                <div className="upload-section" style={{ width: '100%' }}>
                                     <div 
                                         className={`upload-area-integrated ${isDragOver ? 'drag-over' : ''}`}
                                         style={{

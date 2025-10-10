@@ -76,6 +76,12 @@ const AdminLayout = ({ children }) => {
             permission: ADMIN_PERMISSIONS.VIEW_ANALYTICS
         },
         {
+            name: 'Job Fit Stats',
+            href: '/admin/job-fit',
+            icon: '🎯',
+            permission: ADMIN_PERMISSIONS.VIEW_ANALYTICS
+        },
+        {
             name: 'Resume Templates',
             href: '/admin/resume/templates',
             icon: '📄',

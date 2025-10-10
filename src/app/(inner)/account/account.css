@@ -1,0 +1,61 @@
+.account-page {
+    min-height: 70vh;
+    background: #ffffff;
+}
+
+.account-page .page-header {
+    background: linear-gradient(135deg, rgba(9, 99, 211, 0.05) 0%, rgba(9, 99, 211, 0.02) 100%);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 40px;
+}
+
+.account-tabs button:hover:not(:disabled) {
+    background: rgba(9, 99, 211, 0.1);
+}
+
+.account-tabs button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.tab-content {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .account-page .page-header {
+        padding: 30px 20px;
+    }
+
+    .account-page .page-header h1 {
+        font-size: 24px !important;
+    }
+
+    .account-page .page-header p {
+        font-size: 14px !important;
+    }
+
+    .account-tabs button {
+        font-size: 13px !important;
+        padding: 10px 16px !important;
+    }
+
+    .account-page .page-header > div {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+

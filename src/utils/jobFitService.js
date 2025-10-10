@@ -6,12 +6,15 @@ class JobFitService {
             formDataToSend.append('jobDescription', formData.jobDescription);
             formDataToSend.append('resumeFile', formData.resumeFile);
 
+            const headers = {};
+            if (user) {
+                headers['x-user-id'] = user.uid;
+                headers['x-user-email'] = user.email;
+            }
+
             const response = await fetch('/api/job-fit/analyze', {
                 method: 'POST',
-                headers: {
-                    'Authorization': user ? `Bearer ${user.token}` : ''
-                    // Don't set Content-Type, let the browser set it with the boundary for multipart/form-data
-                },
+                headers,
                 body: formDataToSend
             });
 

@@ -3,40 +3,40 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
-import '../../admin.css';
+import '../admin.css';
 
-export default function ResumeStatsPage() {
+export default function JobFitStatsPage() {
     const { hasPermission } = useAuth();
     const [stats, setStats] = useState({
-        totalAudits: 0,
-        thisMonthAudits: 0,
-        thisWeekAudits: 0,
-        todayAudits: 0,
-        averageScore: 0,
+        totalAnalyses: 0,
+        thisMonthAnalyses: 0,
+        thisWeekAnalyses: 0,
+        todayAnalyses: 0,
+        averageFitScore: 0,
         userStats: { authenticated: 0, guests: 0 },
         recentActivity: []
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    // CV viewer state
+    // Analysis viewer state
     const [activeTab, setActiveTab] = useState('stats');
-    const [cvs, setCvs] = useState([]);
-    const [cvLoading, setCvLoading] = useState(false);
-    const [cvError, setCvError] = useState(null);
+    const [analyses, setAnalyses] = useState([]);
+    const [analysisLoading, setAnalysisLoading] = useState(false);
+    const [analysisError, setAnalysisError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
-    const [totalCvs, setTotalCvs] = useState(0);
+    const [totalAnalyses, setTotalAnalyses] = useState(0);
 
-    // Fetch real audit statistics
+    // Fetch real job fit statistics
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                console.log('🔄 Fetching resume audit stats...');
+                console.log('🔄 Fetching job fit stats...');
                 
-                const response = await fetch('/api/admin/resume-audit-stats', {
+                const response = await fetch('/api/admin/job-fit-stats', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -69,11 +69,11 @@ export default function ResumeStatsPage() {
         }
     }, [hasPermission]);
 
-    // Fetch CVs function
-    const fetchCvs = async (page = 1, search = '') => {
+    // Fetch Analyses function
+    const fetchAnalyses = async (page = 1, search = '') => {
         try {
-            setCvLoading(true);
-            console.log('🔄 Fetching CVs...', { page, search });
+            setAnalysisLoading(true);
+            console.log('🔄 Fetching Job Fit Analyses...', { page, search });
             
             const params = new URLSearchParams({
                 page: page.toString(),
@@ -83,7 +83,7 @@ export default function ResumeStatsPage() {
                 sortOrder: 'desc'
             });
 
-            const response = await fetch(`/api/admin/cv-list?${params}`, {
+            const response = await fetch(`/api/admin/job-fit-list?${params}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,84 +91,53 @@ export default function ResumeStatsPage() {
             });
 
             const result = await response.json();
-            console.log('📋 CVs API response:', result);
+            console.log('📋 Analyses API response:', result);
 
             if (!response.ok) {
-                throw new Error(result.error || `HTTP ${response.status}: Failed to fetch CVs`);
+                throw new Error(result.error || `HTTP ${response.status}: Failed to fetch analyses`);
             }
 
             if (result.success) {
-                setCvs(result.data.cvs);
+                setAnalyses(result.data.analyses);
                 setCurrentPage(result.data.pagination.currentPage);
                 setTotalPages(result.data.pagination.totalPages);
-                setTotalCvs(result.data.pagination.totalCount);
-                setCvError(null);
+                setTotalAnalyses(result.data.pagination.totalCount);
+                setAnalysisError(null);
             } else {
-                throw new Error(result.error || 'Failed to fetch CVs');
+                throw new Error(result.error || 'Failed to fetch analyses');
             }
         } catch (err) {
-            console.error('❌ Error fetching CVs:', err);
-            setCvError(err.message);
+            console.error('❌ Error fetching analyses:', err);
+            setAnalysisError(err.message);
         } finally {
-            setCvLoading(false);
+            setAnalysisLoading(false);
         }
     };
 
-    // Load CVs when switching to CVs tab
+    // Load analyses when switching to analyses tab
     useEffect(() => {
-        if (activeTab === 'cvs' && hasPermission(ADMIN_PERMISSIONS.VIEW_ANALYTICS)) {
-            fetchCvs(currentPage, searchTerm);
+        if (activeTab === 'analyses' && hasPermission(ADMIN_PERMISSIONS.VIEW_ANALYTICS)) {
+            fetchAnalyses(currentPage, searchTerm);
         }
     }, [activeTab, currentPage, hasPermission]);
 
     // Handle search with debouncing
     useEffect(() => {
-        if (activeTab === 'cvs') {
+        if (activeTab === 'analyses') {
             const timer = setTimeout(() => {
                 setCurrentPage(1);
-                fetchCvs(1, searchTerm);
+                fetchAnalyses(1, searchTerm);
             }, 500);
             return () => clearTimeout(timer);
         }
     }, [searchTerm, activeTab]);
-
-    // Handle CV download
-    const handleDownloadCv = async (cvId, fileName) => {
-        try {
-            console.log('📥 Downloading CV:', cvId, fileName);
-            
-            const response = await fetch(`/api/admin/cv-download/${cvId}`, {
-                method: 'GET',
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to download CV');
-            }
-
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            
-            console.log('✅ CV downloaded successfully');
-        } catch (err) {
-            console.error('❌ Error downloading CV:', err);
-            alert(`Failed to download CV: ${err.message}`);
-        }
-    };
 
     if (!hasPermission(ADMIN_PERMISSIONS.VIEW_ANALYTICS)) {
         return (
             <AdminLayout>
                 <div style={{ textAlign: 'center', padding: '40px' }}>
                     <h2 style={{ color: 'var(--color-danger)' }}>Access Denied</h2>
-                    <p>You don&apos;t have permission to view resume audit stats.</p>
+                    <p>You don&apos;t have permission to view job fit stats.</p>
                 </div>
             </AdminLayout>
         );
@@ -180,11 +149,11 @@ export default function ResumeStatsPage() {
             <AdminLayout>
                 <div className="admin-dashboard">
                     <div className="dashboard-header">
-                        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Resume Audit Management</h1>
+                        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Job Fit Management</h1>
                         <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Loading statistics...</p>
                     </div>
                     <div style={{ textAlign: 'center', padding: '40px' }}>
-                        <div style={{ fontSize: '18px', color: 'var(--color-body)' }}>📊 Loading audit statistics...</div>
+                        <div style={{ fontSize: '18px', color: 'var(--color-body)' }}>📊 Loading job fit statistics...</div>
                     </div>
                 </div>
             </AdminLayout>
@@ -197,7 +166,7 @@ export default function ResumeStatsPage() {
             <AdminLayout>
                 <div className="admin-dashboard">
                     <div className="dashboard-header">
-                        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Resume Audit Management</h1>
+                        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Job Fit Management</h1>
                         <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Error loading statistics</p>
                     </div>
                     <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -227,8 +196,8 @@ export default function ResumeStatsPage() {
         <AdminLayout>
             <div className="admin-dashboard">
                 <div className="dashboard-header">
-                    <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Resume Audit Management</h1>
-                    <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Track statistics and manage uploaded CVs</p>
+                    <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Job Fit Management</h1>
+                    <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Track statistics and manage job fit analyses</p>
                 </div>
 
                 {/* Tab Navigation */}
@@ -253,12 +222,12 @@ export default function ResumeStatsPage() {
                             📊 Statistics
                         </button>
                         <button
-                            onClick={() => setActiveTab('cvs')}
+                            onClick={() => setActiveTab('analyses')}
                             style={{
                                 padding: '8px 16px',
                                 border: 'none',
-                                background: activeTab === 'cvs' ? 'var(--color-primary)' : 'transparent',
-                                color: activeTab === 'cvs' ? 'white' : 'var(--color-body)',
+                                background: activeTab === 'analyses' ? 'var(--color-primary)' : 'transparent',
+                                color: activeTab === 'analyses' ? 'white' : 'var(--color-body)',
                                 borderRadius: '8px',
                                 cursor: 'pointer',
                                 fontSize: '13px',
@@ -268,7 +237,7 @@ export default function ResumeStatsPage() {
                                 width: '150px'
                             }}
                         >
-                            📁 Uploaded CVs ({stats.totalAudits})
+                            📁 Analyses ({stats.totalAnalyses})
                         </button>
                     </div>
                 </div>
@@ -284,8 +253,8 @@ export default function ResumeStatsPage() {
                                 <span style={{ fontSize: '24px' }}>📊</span>
                             </div>
                             <div style={{ marginLeft: '16px' }}>
-                                <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>Total Audits</p>
-                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.totalAudits.toLocaleString()}</p>
+                                <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>Total Analyses</p>
+                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.totalAnalyses.toLocaleString()}</p>
                             </div>
                         </div>
                     </div>
@@ -297,7 +266,7 @@ export default function ResumeStatsPage() {
                             </div>
                             <div style={{ marginLeft: '16px' }}>
                                 <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>This Month</p>
-                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.thisMonthAudits}</p>
+                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.thisMonthAnalyses}</p>
                             </div>
                         </div>
                     </div>
@@ -309,7 +278,7 @@ export default function ResumeStatsPage() {
                                     </div>
                                     <div style={{ marginLeft: '16px' }}>
                                         <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>This Week</p>
-                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.thisWeekAudits}</p>
+                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.thisWeekAnalyses}</p>
                                     </div>
                                 </div>
                             </div>
@@ -320,8 +289,8 @@ export default function ResumeStatsPage() {
                                 <span style={{ fontSize: '24px' }}>⭐</span>
                             </div>
                             <div style={{ marginLeft: '16px' }}>
-                                <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>Average Score</p>
-                                <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.averageScore}/100</p>
+                                <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>Average Fit Score</p>
+                                <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.averageFitScore}/100</p>
                             </div>
                         </div>
                     </div>
@@ -345,7 +314,7 @@ export default function ResumeStatsPage() {
                             </div>
                             <div style={{ marginLeft: '16px' }}>
                                         <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-body)', margin: '0 0 4px 0' }}>Today</p>
-                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.todayAudits}</p>
+                                        <p style={{ fontSize: '24px', fontWeight: '600', color: 'var(--color-heading-1)', margin: 0 }}>{stats.todayAnalyses}</p>
                             </div>
                         </div>
                     </div>
@@ -417,15 +386,15 @@ export default function ResumeStatsPage() {
                     </>
                 )}
 
-                {/* CV Viewer Tab */}
-                {activeTab === 'cvs' && (
+                {/* Analyses Viewer Tab */}
+                {activeTab === 'analyses' && (
                     <div>
                         {/* Search and Controls */}
                         <div style={{ marginBottom: '24px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
                             <div style={{ flex: '1', minWidth: '300px' }}>
                                 <input
                                     type="text"
-                                    placeholder="Search by filename, user email, or user ID..."
+                                    placeholder="Search by job title, company, or user email..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     style={{
@@ -442,21 +411,21 @@ export default function ResumeStatsPage() {
                                 />
                             </div>
                             <div style={{ color: 'var(--color-body)', fontSize: '14px', whiteSpace: 'nowrap' }}>
-                                {totalCvs} CVs total
+                                {totalAnalyses} analyses total
                             </div>
                         </div>
 
-                        {/* CV List Content */}
-                        {cvLoading ? (
+                        {/* Analysis List Content */}
+                        {analysisLoading ? (
                             <div style={{ textAlign: 'center', padding: '40px' }}>
-                                <div style={{ fontSize: '18px', color: 'var(--color-body)' }}>📋 Loading CVs...</div>
+                                <div style={{ fontSize: '18px', color: 'var(--color-body)' }}>📋 Loading analyses...</div>
                             </div>
-                        ) : cvError ? (
+                        ) : analysisError ? (
                             <div style={{ textAlign: 'center', padding: '40px' }}>
-                                <div style={{ color: 'var(--color-danger)', marginBottom: '16px' }}>❌ Error loading CVs</div>
-                                <div style={{ color: 'var(--color-body)', fontSize: '14px', marginBottom: '16px' }}>{cvError}</div>
+                                <div style={{ color: 'var(--color-danger)', marginBottom: '16px' }}>❌ Error loading analyses</div>
+                                <div style={{ color: 'var(--color-body)', fontSize: '14px', marginBottom: '16px' }}>{analysisError}</div>
                                 <button 
-                                    onClick={() => fetchCvs(currentPage, searchTerm)} 
+                                    onClick={() => fetchAnalyses(currentPage, searchTerm)} 
                                     style={{ 
                                         padding: '8px 16px', 
                                         background: 'var(--color-primary)', 
@@ -469,62 +438,64 @@ export default function ResumeStatsPage() {
                                     Retry
                                 </button>
                             </div>
-                        ) : cvs.length === 0 ? (
+                        ) : analyses.length === 0 ? (
                             <div style={{ textAlign: 'center', padding: '40px' }}>
                                 <span style={{ fontSize: '48px' }}>📭</span>
-                                <h3 style={{ color: 'var(--color-heading-1)', margin: '16px 0 8px 0' }}>No CVs Found</h3>
+                                <h3 style={{ color: 'var(--color-heading-1)', margin: '16px 0 8px 0' }}>No Analyses Found</h3>
                                 <p style={{ color: 'var(--color-body)', margin: 0 }}>
-                                    {searchTerm ? 'Try adjusting your search criteria' : 'No CVs have been uploaded yet'}
+                                    {searchTerm ? 'Try adjusting your search criteria' : 'No job fit analyses have been performed yet'}
                                 </p>
                             </div>
                         ) : (
                             <>
-                                {/* CV Table */}
+                                {/* Analysis Table */}
                                 <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e9ecef', overflow: 'hidden' }}>
                                     <div className="table-responsive">
                                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                             <thead style={{ background: '#f8f9fa' }}>
                                                 <tr>
                                                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>
-                                                        File Details
+                                                        Job Details
                                                     </th>
                                                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>
                                                         User
                                                     </th>
                                                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>
-                                                        Score
+                                                        Fit Score
                                                     </th>
                                                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>
-                                                        Uploaded
+                                                        Resume
                                                     </th>
-                                                    <th style={{ padding: '16px', textAlign: 'center', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>
-                                                        Actions
+                                                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>
+                                                        Created
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {cvs.map((cv, index) => (
-                                                    <tr key={cv.id} style={{ borderBottom: index < cvs.length - 1 ? '1px solid #f8f9fa' : 'none' }}>
+                                                {analyses.map((analysis, index) => (
+                                                    <tr key={analysis.id} style={{ borderBottom: index < analyses.length - 1 ? '1px solid #f8f9fa' : 'none' }}>
                                                         <td style={{ padding: '16px', verticalAlign: 'top' }}>
                                                             <div>
                                                                 <div style={{ fontWeight: '500', color: 'var(--color-heading-1)', marginBottom: '4px', fontSize: '14px' }}>
-                                                                    {cv.fileName}
+                                                                    {analysis.jobTitle || 'Untitled Position'}
                                                                 </div>
                                                                 <div style={{ fontSize: '12px', color: 'var(--color-body)', marginBottom: '2px' }}>
-                                                                    {cv.fileSizeFormatted} • {cv.fileType}
+                                                                    {analysis.companyName || 'Company not specified'}
                                                                 </div>
-                                                                <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>
-                                                                    {cv.extractedTextLength} characters extracted
-                                                                </div>
+                                                                {analysis.industrySector && (
+                                                                    <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>
+                                                                        Industry: {analysis.industrySector}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </td>
                                                         <td style={{ padding: '16px', verticalAlign: 'top' }}>
                                                             <div>
                                                                 <div style={{ fontWeight: '500', color: 'var(--color-heading-1)', fontSize: '14px', marginBottom: '2px' }}>
-                                                                    {cv.userType}
+                                                                    {analysis.userType}
                                                                 </div>
                                                                 <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>
-                                                                    {cv.userEmail}
+                                                                    {analysis.userEmail}
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -535,36 +506,56 @@ export default function ResumeStatsPage() {
                                                                 borderRadius: '12px',
                                                                 fontSize: '12px',
                                                                 fontWeight: '600',
-                                                                background: cv.score >= 80 ? '#d4edda' : cv.score >= 60 ? '#fff3cd' : '#f8d7da',
-                                                                color: cv.score >= 80 ? '#155724' : cv.score >= 60 ? '#856404' : '#721c24'
+                                                                background: analysis.fitScore >= 80 ? '#d4edda' : analysis.fitScore >= 60 ? '#fff3cd' : '#f8d7da',
+                                                                color: analysis.fitScore >= 80 ? '#155724' : analysis.fitScore >= 60 ? '#856404' : '#721c24'
                                                             }}>
-                                                                {cv.score}/100
+                                                                {analysis.fitScore}/100
+                                                            </div>
+                                                            <div style={{ fontSize: '11px', color: 'var(--color-body)', marginTop: '4px' }}>
+                                                                {analysis.fitLevel}
+                                                            </div>
+                                                        </td>
+                                                        <td style={{ padding: '16px', verticalAlign: 'top' }}>
+                                                            <div>
+                                                                <div style={{ fontSize: '12px', color: 'var(--color-body)', marginBottom: '4px' }}>
+                                                                    {analysis.resumeFileName || 'N/A'}
+                                                                </div>
+                                                                <div style={{ fontSize: '11px', color: 'var(--color-body)', marginBottom: '6px' }}>
+                                                                    {analysis.resumeFileSize ? `${(analysis.resumeFileSize / 1024).toFixed(1)} KB` : ''}
+                                                                </div>
+                                                                <a
+                                                                    href={`/api/admin/job-fit-resume/${analysis.id}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    style={{
+                                                                        fontSize: '12px',
+                                                                        color: 'var(--color-primary)',
+                                                                        textDecoration: 'none',
+                                                                        display: 'inline-flex',
+                                                                        alignItems: 'center',
+                                                                        gap: '4px',
+                                                                        padding: '4px 8px',
+                                                                        borderRadius: '4px',
+                                                                        border: '1px solid var(--color-primary)',
+                                                                        transition: 'all 0.3s ease'
+                                                                    }}
+                                                                    onMouseOver={(e) => {
+                                                                        e.target.style.background = 'var(--color-primary)';
+                                                                        e.target.style.color = 'white';
+                                                                    }}
+                                                                    onMouseOut={(e) => {
+                                                                        e.target.style.background = 'transparent';
+                                                                        e.target.style.color = 'var(--color-primary)';
+                                                                    }}
+                                                                >
+                                                                    📥 Download
+                                                                </a>
                                                             </div>
                                                         </td>
                                                         <td style={{ padding: '16px', verticalAlign: 'top' }}>
                                                             <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>
-                                                                {cv.timeAgo}
+                                                                {analysis.timeAgo}
                                                             </div>
-                                                        </td>
-                                                        <td style={{ padding: '16px', textAlign: 'center', verticalAlign: 'top' }}>
-                                                            <button
-                                                                onClick={() => handleDownloadCv(cv.id, cv.fileName)}
-                                                                style={{
-                                                                    padding: '6px 12px',
-                                                                    background: 'var(--color-primary)',
-                                                                    color: 'white',
-                                                                    border: 'none',
-                                                                    borderRadius: '4px',
-                                                                    cursor: 'pointer',
-                                                                    fontSize: '12px',
-                                                                    fontWeight: '500',
-                                                                    transition: 'background-color 0.3s ease'
-                                                                }}
-                                                                onMouseEnter={(e) => e.target.style.background = '#1a4ba1'}
-                                                                onMouseLeave={(e) => e.target.style.background = 'var(--color-primary)'}
-                                                            >
-                                                                📥 Download
-                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -620,4 +611,5 @@ export default function ResumeStatsPage() {
             </div>
         </AdminLayout>
     );
-} 
+}
+

@@ -124,6 +124,10 @@ function HeaderOne() {
                                             </div>
                                             {showProfileDropdown && (
                                                 <div className="profile-dropdown">
+                                                    <Link href="/account" className="dropdown-item">
+                                                        <i className="fas fa-user me-2"></i>
+                                                        My Account
+                                                    </Link>
                                                     <Link href="/job-alerts" className="dropdown-item">
                                                         <i className="fas fa-bell me-2"></i>
                                                         Job Alerts
@@ -181,6 +185,10 @@ function HeaderOne() {
                                             </div>
                                             {showProfileDropdown && (
                                                 <div className="profile-dropdown">
+                                                    <Link href="/account" className="dropdown-item">
+                                                        <i className="fas fa-user me-2"></i>
+                                                        My Account
+                                                    </Link>
                                                     <Link href="/job-alerts" className="dropdown-item">
                                                         <i className="fas fa-bell me-2"></i>
                                                         Job Alerts

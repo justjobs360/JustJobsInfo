@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import mammoth from 'mammoth';
+import { getCollection } from '@/utils/mongodb';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -52,11 +53,13 @@ export async function POST(request) {
             }, { status: 400 });
         }
 
-        // Extract text from DOCX/DOC file
+        // Extract text from DOCX/DOC file and store file buffer
         let resumeContent = '';
+        let resumeFileBuffer = null;
         try {
             const arrayBuffer = await resumeFile.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
+            resumeFileBuffer = buffer; // Store for database
             const result = await mammoth.extractRawText({ buffer });
             resumeContent = result.value;
 
@@ -103,12 +106,36 @@ Provide your analysis in JSON format with this EXACT structure:
 {
     "fitScore": [number 0-100],
     "scoreBreakdown": {
-        "hardSkills": [percentage 0-100],
-        "softSkills": [percentage 0-100],
-        "experience": [percentage 0-100],
-        "education": [percentage 0-100],
-        "keywordMatch": [percentage 0-100],
-        "transferableSkills": [percentage 0-100]
+        "hardSkills": {
+            "score": [percentage 0-100],
+            "resumeItems": ["Skill 1 found on resume", "Skill 2 found on resume"],
+            "jobItems": ["Required skill 1 from job", "Required skill 2 from job"]
+        },
+        "softSkills": {
+            "score": [percentage 0-100],
+            "resumeItems": ["Soft skill 1 demonstrated", "Soft skill 2 demonstrated"],
+            "jobItems": ["Required soft skill 1", "Required soft skill 2"]
+        },
+        "experience": {
+            "score": [percentage 0-100],
+            "resumeItems": ["Experience 1", "Experience 2"],
+            "jobItems": ["Required experience 1", "Required experience 2"]
+        },
+        "education": {
+            "score": [percentage 0-100],
+            "resumeItems": ["Qualification 1", "Qualification 2"],
+            "jobItems": ["Required qualification 1", "Required qualification 2"]
+        },
+        "keywordMatch": {
+            "score": [percentage 0-100],
+            "resumeItems": ["Keyword 1", "Keyword 2"],
+            "jobItems": ["Required keyword 1", "Required keyword 2"]
+        },
+        "transferableSkills": {
+            "score": [percentage 0-100],
+            "resumeItems": ["Transferable skill 1", "Transferable skill 2"],
+            "jobItems": ["Applicable skill 1", "Applicable skill 2"]
+        }
     },
     "fitLevel": "[Excellent Fit|Good Fit|Moderate Fit|Weak Fit]",
     "strengths": [
@@ -132,7 +159,14 @@ Provide your analysis in JSON format with this EXACT structure:
         "Actionable recommendation 4 to bridge gaps",
         "Actionable recommendation 5 to bridge gaps"
     ],
-    "scoringRationale": "Clear explanation of how the score was calculated, mentioning percentage matches and key factors",
+    "atsOptimization": [
+        "ATS tip 1 specific to this resume and job",
+        "ATS tip 2 specific to this resume and job",
+        "ATS tip 3 specific to this resume and job",
+        "ATS tip 4 specific to this resume and job",
+        "ATS tip 5 specific to this resume and job"
+    ],
+    "scoringRationale": "Clear explanation of how the score was calculated, mentioning percentage matches and key factors. Use paragraph breaks (\\n) to separate different points for readability.",
     "jobTitle": "[Extract job title from description]",
     "companyName": "[Extract company name if available, otherwise 'Not specified']",
     "industrySector": "[Identify industry: IT, Finance, Healthcare, Marketing, etc.]"
@@ -204,7 +238,16 @@ IMPORTANT INSTRUCTIONS:
         // Validate score breakdown if present
         if (analysisData.scoreBreakdown) {
             Object.keys(analysisData.scoreBreakdown).forEach(key => {
-                analysisData.scoreBreakdown[key] = Math.max(0, Math.min(100, parseInt(analysisData.scoreBreakdown[key] || 0)));
+                // Handle both old format (number) and new format (object with score)
+                if (typeof analysisData.scoreBreakdown[key] === 'object') {
+                    analysisData.scoreBreakdown[key].score = Math.max(0, Math.min(100, parseInt(analysisData.scoreBreakdown[key].score || 0)));
+                    // Ensure arrays exist
+                    if (!analysisData.scoreBreakdown[key].resumeItems) analysisData.scoreBreakdown[key].resumeItems = [];
+                    if (!analysisData.scoreBreakdown[key].jobItems) analysisData.scoreBreakdown[key].jobItems = [];
+                } else {
+                    // Old format - just a number
+                    analysisData.scoreBreakdown[key] = Math.max(0, Math.min(100, parseInt(analysisData.scoreBreakdown[key] || 0)));
+                }
             });
         }
 
@@ -212,6 +255,9 @@ IMPORTANT INSTRUCTIONS:
         analysisData.strengths = analysisData.strengths.slice(0, 5);
         analysisData.gaps = analysisData.gaps.slice(0, 5);
         analysisData.recommendations = analysisData.recommendations.slice(0, 5);
+        if (analysisData.atsOptimization) {
+            analysisData.atsOptimization = analysisData.atsOptimization.slice(0, 5);
+        }
 
         // Add fit level if not provided
         if (!analysisData.fitLevel) {
@@ -224,6 +270,36 @@ IMPORTANT INSTRUCTIONS:
         // Add scoring rationale if not provided
         if (!analysisData.scoringRationale) {
             analysisData.scoringRationale = `Based on the analysis, the candidate achieved a fit score of ${analysisData.fitScore}/100, indicating a ${analysisData.fitLevel.toLowerCase()}.`;
+        }
+
+        // Save to MongoDB for admin stats
+        try {
+            const collection = await getCollection('job_fit_analyses');
+            
+            // Get user info from headers (sent by client)
+            const userId = request.headers.get('x-user-id') || null;
+            const userEmail = request.headers.get('x-user-email') || 'Guest User';
+            const isAuthenticated = !!userId;
+            
+            await collection.insertOne({
+                ...analysisData,
+                jobDescription: jobDescription.substring(0, 500), // Store first 500 chars for reference
+                resumeFileName: resumeFile.name,
+                resumeFileSize: resumeFile.size,
+                resumeFileType: resumeFile.type,
+                resumeFileData: resumeFileBuffer, // Store actual file for later download
+                userId,
+                userEmail,
+                isAuthenticated,
+                userType: isAuthenticated ? 'Registered' : 'Guest',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            
+            console.log('✅ Job fit analysis saved to database');
+        } catch (dbError) {
+            console.error('❌ Error saving to database:', dbError);
+            // Don't fail the request if database save fails
         }
 
         return NextResponse.json({
