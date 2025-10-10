@@ -14,6 +14,7 @@ export default function JobFitHistory({ embedded = false }) {
         if (user) {
             fetchHistory();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const fetchHistory = async () => {
@@ -173,7 +174,7 @@ export default function JobFitHistory({ embedded = false }) {
                 <span style={{ fontSize: '48px' }}>📊</span>
                 <h3 style={{ color: 'var(--color-heading-1)', margin: '16px 0 8px 0' }}>No Analysis History</h3>
                 <p style={{ color: 'var(--color-body)', margin: 0 }}>
-                    You haven't performed any job fit analyses yet. Try analyzing a job description above to get started!
+                    You haven&apos;t performed any job fit analyses yet. Try analyzing a job description above to get started!
                 </p>
             </div>
         );
