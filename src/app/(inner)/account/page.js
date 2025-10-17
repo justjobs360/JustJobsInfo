@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import JobFitHistory from "@/components/job-fit/JobFitHistory";
@@ -50,6 +51,7 @@ export default function AccountPage() {
     return (
         <DynamicMetaTags pageName="My Account">
             <HeaderOne />
+            <Breadcrumb />
             <div className="account-page">
                 <div className="container">
                     {/* Page Header */}

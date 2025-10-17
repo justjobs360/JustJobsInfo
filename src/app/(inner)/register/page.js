@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import './register.css';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ReCaptcha from "@/components/security/ReCaptcha";
@@ -316,6 +317,7 @@ export default function RegisterPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             <div className="register-page-wrapper">
                 <div className="container-fluid p-0">
                     <div className="row g-0">

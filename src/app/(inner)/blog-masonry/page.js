@@ -1,5 +1,6 @@
 "use client";
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import React from "react";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
@@ -12,6 +13,7 @@ function page() {
     return (
         <>
             <HeaderTwo />
+            <Breadcrumb />
             <>
                 <div className="career-single-banner-area ptb--70 blog-page">
                     <div className="container">

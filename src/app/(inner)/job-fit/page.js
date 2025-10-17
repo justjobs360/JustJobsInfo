@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import JobFitUpload from "@/components/job-fit/JobFitUpload";
@@ -66,6 +67,7 @@ export default function JobFitPage() {
     return (
         <DynamicMetaTags pageName="Job Fit Analysis">
             <HeaderOne />
+            <Breadcrumb />
             <div className="job-fit-page">
                 <div className="container">
                    

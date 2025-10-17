@@ -2,6 +2,7 @@
 "use client";
 import AboutBanner from "@/components/banner/AboutBanner";
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import Wedo from "@/components/whatwe-do/Wedo";
@@ -19,6 +20,7 @@ export default function About() {
         <DynamicMetaTags pageName="About Us">
             <div className='#'>
             <HeaderOne />
+            <Breadcrumb />
             <AboutBanner />
             <Wedo />
             <FeatureOne />

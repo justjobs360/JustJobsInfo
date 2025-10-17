@@ -1,5 +1,6 @@
 
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import FeatureTwo from "@/components/feature/FeatureTwo";
@@ -14,6 +15,7 @@ export default function Home() {
     return (
         <div className='#'>
             <HeaderOne />
+            <Breadcrumb />
             <ServiceSingle />
             <div>
 

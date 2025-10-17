@@ -1,6 +1,7 @@
 
 import ServiceBanner from "@/components/banner/ServiceBanner";
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import ServiceSeven from "@/components/services/ServiceSeven";
@@ -16,6 +17,7 @@ export default function Home() {
     return (
         <div className='#'>
             <HeaderOne />
+            <Breadcrumb />
             <ServiceBanner />
             <ServiceSeven />
             <ServiceList />

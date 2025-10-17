@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import Link from 'next/link';
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from '@/components/footer/FooterOneDynamic';
 
@@ -8,6 +9,7 @@ function page() {
     return (
         <div>
             <HeaderOne />
+            <Breadcrumb />
             <div style={{
                 minHeight: '100vh',
                 backgroundColor: '#ffffff',

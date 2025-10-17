@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react';
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import BackToTop from "@/components/common/BackToTop";
@@ -92,6 +93,7 @@ export default function AskGenie() {
     return (
         <div className='#'>
             <HeaderOne />
+            <Breadcrumb />
             
             {/* Chat Interface */}
             <div className="ask-genie-container">

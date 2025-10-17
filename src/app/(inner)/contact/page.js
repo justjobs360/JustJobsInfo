@@ -1,5 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import React, { useRef, useState } from "react";
@@ -125,6 +126,7 @@ export default function Home() {
         <DynamicMetaTags pageName="Contact">
             <div className='#'>
             <HeaderOne />
+            <Breadcrumb />
 
             <>
                 {/* contact banner areas start */}

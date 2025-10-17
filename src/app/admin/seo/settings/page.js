@@ -31,29 +31,41 @@ export default function SEOSettingsPage() {
     const loadSettings = async () => {
         try {
             setLoading(true);
-            // Try to load from localStorage first
-            const savedSettings = localStorage.getItem('seo_settings');
-            if (savedSettings) {
-                setSettings(JSON.parse(savedSettings));
+            console.log('📋 Loading SEO settings from database...');
+            
+            const response = await fetch('/api/admin/seo-settings', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                setSettings(result.data);
+                console.log('✅ SEO settings loaded successfully');
             } else {
-                // Set default values
-                setSettings({
-                    siteTitle: 'JustJobsInfo - Professional Resume and Career Services',
-                    siteDescription: 'Professional resume writing services, career guidance, and job search resources',
-                    siteLogo: '/images/logo/justjobslogo.png',
-                    siteUrl: 'https://justjobsinfo.com',
-                    googleAnalyticsId: '',
-                    googleSearchConsole: '',
-                    socialMedia: {
-                        facebook: '',
-                        twitter: '',
-                        linkedin: ''
-                    }
-                });
+                throw new Error(result.error || 'Failed to load SEO settings');
             }
         } catch (error) {
-            console.error('Error loading settings:', error);
+            console.error('❌ Error loading settings:', error);
             toast.error('Failed to load SEO settings');
+            
+            // Set default values on error
+            setSettings({
+                siteTitle: 'JustJobsInfo - Professional Resume and Career Services',
+                siteDescription: 'Professional resume writing services, career guidance, and job search resources',
+                siteLogo: '/images/logo/justjobslogo.png',
+                siteUrl: 'https://justjobs.info',
+                googleAnalyticsId: '',
+                googleSearchConsole: '',
+                socialMedia: {
+                    facebook: '',
+                    twitter: '',
+                    linkedin: ''
+                }
+            });
         } finally {
             setLoading(false);
         }
@@ -77,13 +89,27 @@ export default function SEOSettingsPage() {
                 return;
             }
 
-            // Save to localStorage (in a real app, this would be an API call)
-            localStorage.setItem('seo_settings', JSON.stringify(settings));
+            console.log('💾 Saving SEO settings to database...');
             
-            toast.success('SEO settings saved successfully');
+            const response = await fetch('/api/admin/seo-settings', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(settings),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success('SEO settings saved successfully');
+                console.log('✅ SEO settings saved');
+            } else {
+                throw new Error(result.error || 'Failed to save SEO settings');
+            }
         } catch (error) {
-            console.error('Error saving settings:', error);
-            toast.error('Failed to save SEO settings');
+            console.error('❌ Error saving settings:', error);
+            toast.error('Failed to save SEO settings: ' + error.message);
         } finally {
             setSaving(false);
         }

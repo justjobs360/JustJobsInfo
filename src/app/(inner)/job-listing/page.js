@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, Fragment } from 'react';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ShareJobModal from "@/components/modals/ShareJobModal";
@@ -362,6 +363,7 @@ export default function JobListingPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             {showLocationPrompt && (
                 <div 
                     className="location-prompt-modal" 

@@ -1,5 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import CtaSeven from "@/components/cta/CtaPartner";
@@ -9,6 +10,7 @@ function page() {
 
         <>
             <HeaderTwo />
+            <Breadcrumb />
 
             {/* career single banner area start */}
             <div className="career-single-banner-area rts-section-gap bg-light">

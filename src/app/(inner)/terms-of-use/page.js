@@ -1,5 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderOne from "@/components/header/HeaderOne";
 import { ReactSVG } from 'react-svg';
@@ -8,6 +9,7 @@ export default function Home() {
     return (
         <div className='#'>
             <HeaderOne />
+            <Breadcrumb />
 
             <>
                 <div className="container-large">

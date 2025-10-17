@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import HeaderTwo from "@/components/header/HeaderTwo";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import CtaOne from "@/components/cta/CtaOne";
@@ -10,6 +11,7 @@ function page() {
         <>
 
             <HeaderTwo />
+            <Breadcrumb />
             {/* why choose us banner area  */}
             <div className="banner-why-choose-us">
                 <div className="container">

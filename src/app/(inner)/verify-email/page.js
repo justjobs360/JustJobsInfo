@@ -5,6 +5,7 @@ import { auth } from '@/config/firebase';
 import { applyActionCode, checkActionCode } from 'firebase/auth';
 import toast from 'react-hot-toast';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
@@ -231,6 +232,7 @@ export default function VerifyEmailPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             <div className="verify-email-page-wrapper">
                 <div className="container-fluid p-0">
                     <div className="row g-0">

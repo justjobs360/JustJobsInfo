@@ -1,5 +1,6 @@
 "use client";
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import React from "react";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
@@ -12,6 +13,7 @@ function page() {
     return (
         <>
             <HeaderTwo />
+            <Breadcrumb />
             {/* case studies area start */}
             <div className="single-large-case-studies-area-details">
                 <div className="container">

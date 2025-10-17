@@ -91,18 +91,35 @@ export const updateDocumentMeta = (metaTags) => {
             document.title = metaTags.title;
         }
         
-        // Update or create meta tags
+        // Get current URL for canonical and og:url
+        const currentUrl = metaTags.canonicalUrl || window.location.href;
+        const fullImageUrl = metaTags.ogImage?.startsWith('http') 
+            ? metaTags.ogImage 
+            : `https://justjobs.info${metaTags.ogImage}`;
+        
+        // Update or create meta tags with enhanced Open Graph
         const metaUpdates = [
             { name: 'description', content: metaTags.description },
             { name: 'keywords', content: metaTags.keywords },
+            
+            // Open Graph tags
             { property: 'og:title', content: metaTags.title },
             { property: 'og:description', content: metaTags.description },
-            { property: 'og:image', content: metaTags.ogImage },
-            { property: 'og:type', content: 'website' },
+            { property: 'og:image', content: fullImageUrl },
+            { property: 'og:image:width', content: '1200' },
+            { property: 'og:image:height', content: '630' },
+            { property: 'og:image:alt', content: metaTags.title },
+            { property: 'og:url', content: currentUrl },
+            { property: 'og:type', content: metaTags.ogType || 'website' },
+            { property: 'og:site_name', content: 'JustJobsInfo' },
+            
+            // Twitter Card tags
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'twitter:title', content: metaTags.title },
             { name: 'twitter:description', content: metaTags.description },
-            { name: 'twitter:image', content: metaTags.ogImage }
+            { name: 'twitter:image', content: fullImageUrl },
+            { name: 'twitter:image:alt', content: metaTags.title },
+            { name: 'twitter:site', content: '@justjobsinfo' },
         ];
         
         metaUpdates.forEach(({ name, property, content }) => {
@@ -121,6 +138,17 @@ export const updateDocumentMeta = (metaTags) => {
                 document.head.appendChild(metaElement);
             }
         });
+        
+        // Add canonical link tag
+        let canonicalElement = document.querySelector('link[rel="canonical"]');
+        if (canonicalElement) {
+            canonicalElement.setAttribute('href', currentUrl);
+        } else {
+            canonicalElement = document.createElement('link');
+            canonicalElement.setAttribute('rel', 'canonical');
+            canonicalElement.setAttribute('href', currentUrl);
+            document.head.appendChild(canonicalElement);
+        }
         
         console.log('✅ Meta tags updated successfully for:', metaTags.title);
     } catch (error) {

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import './downloadable-resources.css';
@@ -95,6 +96,7 @@ export default function DownloadableResourcesPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             <div className="downloadable-resources-page rts-section-gap">
                 <div className="container">
                     <div className="page-header text-center mb--50">

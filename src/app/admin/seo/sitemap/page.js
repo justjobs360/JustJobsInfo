@@ -24,23 +24,40 @@ export default function SitemapPage() {
     const loadSitemapData = async () => {
         try {
             setLoading(true);
-            // Load from localStorage
-            const savedData = localStorage.getItem('sitemap_data');
-            if (savedData) {
-                setSitemapData(JSON.parse(savedData));
+            console.log('📋 Loading sitemap configuration from database...');
+            
+            const response = await fetch('/api/admin/sitemap-config', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                const data = result.data;
+                setSitemapData({
+                    lastGenerated: data.lastGenerated ? new Date(data.lastGenerated).toLocaleString() : '',
+                    totalPages: data.totalPages || 0,
+                    status: data.totalPages > 0 ? 'active' : 'inactive',
+                    urls: data.urls || []
+                });
+                console.log('✅ Sitemap configuration loaded successfully');
             } else {
-                // Initialize with default data
-                const defaultData = {
-                    lastGenerated: '',
-                    totalPages: 0,
-                    status: 'inactive',
-                    urls: []
-                };
-                setSitemapData(defaultData);
+                throw new Error(result.error || 'Failed to load sitemap configuration');
             }
         } catch (error) {
-            console.error('Error loading sitemap data:', error);
+            console.error('❌ Error loading sitemap data:', error);
             toast.error('Failed to load sitemap data');
+            
+            // Initialize with default data on error
+            setSitemapData({
+                lastGenerated: '',
+                totalPages: 0,
+                status: 'inactive',
+                urls: []
+            });
         } finally {
             setLoading(false);
         }
@@ -49,43 +66,95 @@ export default function SitemapPage() {
     const generateSitemap = async () => {
         try {
             setGenerating(true);
+            console.log('🗺️ Generating sitemap configuration...');
             
-            // Simulate sitemap generation with predefined pages
-            const staticPages = [
-                { url: '/', priority: '1.0', changefreq: 'weekly' },
-                { url: '/about', priority: '0.8', changefreq: 'monthly' },
-                { url: '/contact', priority: '0.8', changefreq: 'monthly' },
-                { url: '/resume-audit', priority: '0.9', changefreq: 'weekly' },
-                { url: '/resume-builder', priority: '0.9', changefreq: 'weekly' },
-                { url: '/job-listing', priority: '0.8', changefreq: 'daily' },
-                { url: '/blogs', priority: '0.7', changefreq: 'daily' },
-                { url: '/downloadable-resources', priority: '0.6', changefreq: 'weekly' },
-                { url: '/important-links', priority: '0.6', changefreq: 'weekly' },
-                { url: '/privacy-policy', priority: '0.5', changefreq: 'yearly' },
-                { url: '/terms-of-use', priority: '0.5', changefreq: 'yearly' },
-                { url: '/faq', priority: '0.6', changefreq: 'monthly' },
-                { url: '/career', priority: '0.7', changefreq: 'weekly' },
-                { url: '/service', priority: '0.8', changefreq: 'monthly' },
-                { url: '/case-studies', priority: '0.7', changefreq: 'monthly' }
-            ];
-
-            // Simulate processing delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            const newSitemapData = {
-                lastGenerated: new Date().toLocaleString(),
-                totalPages: staticPages.length,
-                status: 'active',
-                urls: staticPages
-            };
-
-            setSitemapData(newSitemapData);
-            localStorage.setItem('sitemap_data', JSON.stringify(newSitemapData));
+            // Load meta tags from database to build comprehensive sitemap
+            const metaTagsResponse = await fetch('/api/admin/meta-tags');
+            const metaTagsResult = await metaTagsResponse.json();
             
-            toast.success('Sitemap generated successfully');
+            let staticPages = [];
+            
+            if (metaTagsResult.success && metaTagsResult.data.length > 0) {
+                // Use meta tags data to build sitemap
+                staticPages = metaTagsResult.data
+                    .filter(tag => tag.status === 'active')
+                    .map(tag => {
+                        // Determine priority based on page type
+                        let priority = '0.5';
+                        let changefreq = 'monthly';
+                        
+                        if (tag.page === '/') {
+                            priority = '1.0';
+                            changefreq = 'weekly';
+                        } else if (tag.page.includes('resume') || tag.page.includes('job')) {
+                            priority = '0.9';
+                            changefreq = 'weekly';
+                        } else if (tag.page.includes('blog')) {
+                            priority = '0.7';
+                            changefreq = 'daily';
+                        } else if (tag.page.includes('service')) {
+                            priority = '0.8';
+                            changefreq = 'monthly';
+                        } else if (tag.page.includes('policy') || tag.page.includes('terms')) {
+                            priority = '0.5';
+                            changefreq = 'yearly';
+                        }
+                        
+                        return {
+                            url: tag.page,
+                            priority: priority,
+                            changefreq: changefreq,
+                            lastmod: new Date().toISOString().split('T')[0]
+                        };
+                    });
+            } else {
+                // Fallback to predefined pages
+                staticPages = [
+                    { url: '/', priority: '1.0', changefreq: 'weekly' },
+                    { url: '/about', priority: '0.8', changefreq: 'monthly' },
+                    { url: '/contact', priority: '0.8', changefreq: 'monthly' },
+                    { url: '/resume-audit', priority: '0.9', changefreq: 'weekly' },
+                    { url: '/resume-builder', priority: '0.9', changefreq: 'weekly' },
+                    { url: '/job-listing', priority: '0.8', changefreq: 'daily' },
+                    { url: '/blogs', priority: '0.7', changefreq: 'daily' },
+                    { url: '/service', priority: '0.8', changefreq: 'monthly' }
+                ].map(page => ({
+                    ...page,
+                    lastmod: new Date().toISOString().split('T')[0]
+                }));
+            }
+
+            // Save to database
+            const response = await fetch('/api/admin/sitemap-config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    urls: staticPages,
+                    mode: 'replace'
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const newSitemapData = {
+                    lastGenerated: new Date().toLocaleString(),
+                    totalPages: staticPages.length,
+                    status: 'active',
+                    urls: staticPages
+                };
+
+                setSitemapData(newSitemapData);
+                toast.success(`Sitemap generated successfully with ${staticPages.length} URLs`);
+                console.log('✅ Sitemap generated and saved to database');
+            } else {
+                throw new Error(result.error || 'Failed to generate sitemap');
+            }
         } catch (error) {
-            console.error('Error generating sitemap:', error);
-            toast.error('Failed to generate sitemap');
+            console.error('❌ Error generating sitemap:', error);
+            toast.error('Failed to generate sitemap: ' + error.message);
         } finally {
             setGenerating(false);
         }
@@ -98,7 +167,7 @@ export default function SitemapPage() {
         }
 
         // Generate XML sitemap content
-        const siteUrl = 'https://justjobsinfo.com';
+        const siteUrl = 'https://justjobs.info';
         const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapData.urls.map(page => `  <url>
@@ -123,7 +192,7 @@ ${sitemapData.urls.map(page => `  <url>
         }
 
         // Generate XML sitemap content
-        const siteUrl = 'https://justjobsinfo.com';
+        const siteUrl = 'https://justjobs.info';
         const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapData.urls.map(page => `  <url>

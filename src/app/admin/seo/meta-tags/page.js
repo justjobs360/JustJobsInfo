@@ -21,10 +21,54 @@ export default function MetaTagsPage() {
         status: 'active'
     });
     const [saving, setSaving] = useState(false);
+    const [validation, setValidation] = useState({
+        titleLength: 0,
+        descriptionLength: 0,
+        isDuplicate: false,
+        duplicatePage: null
+    });
 
     useEffect(() => {
         loadMetaTags();
     }, []);
+
+    // Real-time validation effect
+    useEffect(() => {
+        const titleLength = formData.title.length;
+        const descriptionLength = formData.description.length;
+        
+        // Check for duplicates
+        const duplicate = metaTags.find(tag => 
+            tag.page.toLowerCase() === formData.page.toLowerCase().trim() &&
+            (!editingTag || tag.id !== editingTag.id)
+        );
+        
+        setValidation({
+            titleLength,
+            descriptionLength,
+            isDuplicate: !!duplicate,
+            duplicatePage: duplicate?.page || null
+        });
+    }, [formData.title, formData.description, formData.page, metaTags, editingTag]);
+
+    // Validation helper functions
+    const getTitleStatus = () => {
+        const len = validation.titleLength;
+        if (len === 0) return { color: '#666', text: 'Enter a title', status: 'empty' };
+        if (len < 50) return { color: '#dc3545', text: 'Too short (min 50 chars)', status: 'error' };
+        if (len >= 50 && len <= 60) return { color: '#28a745', text: 'Perfect length!', status: 'success' };
+        if (len > 60 && len <= 70) return { color: '#ffc107', text: 'Acceptable but a bit long', status: 'warning' };
+        return { color: '#dc3545', text: 'Too long (max 70 chars)', status: 'error' };
+    };
+
+    const getDescriptionStatus = () => {
+        const len = validation.descriptionLength;
+        if (len === 0) return { color: '#666', text: 'Enter a description', status: 'empty' };
+        if (len < 120) return { color: '#dc3545', text: 'Too short (min 120 chars)', status: 'error' };
+        if (len >= 120 && len <= 160) return { color: '#28a745', text: 'Perfect length!', status: 'success' };
+        if (len > 160 && len <= 180) return { color: '#ffc107', text: 'Acceptable but a bit long', status: 'warning' };
+        return { color: '#dc3545', text: 'Too long (max 180 chars)', status: 'error' };
+    };
 
     const loadMetaTags = async () => {
         try {
@@ -310,12 +354,20 @@ export default function MetaTagsPage() {
                                         style={{
                                             width: '100%',
                                             padding: '8px 12px',
-                                            border: '1px solid #ddd',
+                                            border: `2px solid ${getTitleStatus().status === 'success' ? '#28a745' : getTitleStatus().status === 'error' ? '#dc3545' : getTitleStatus().status === 'warning' ? '#ffc107' : '#ddd'}`,
                                             borderRadius: '4px',
                                             fontSize: '14px'
                                         }}
                                         placeholder="Page title for SEO"
                                     />
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '12px' }}>
+                                        <span style={{ color: getTitleStatus().color, fontWeight: '500' }}>
+                                            {getTitleStatus().text}
+                                        </span>
+                                        <span style={{ color: getTitleStatus().color }}>
+                                            {validation.titleLength} / 60 chars {getTitleStatus().status === 'success' && '✓'}
+                                        </span>
+                                    </div>
                                 </div>
                                 
                                 <div>
@@ -327,13 +379,21 @@ export default function MetaTagsPage() {
                                         style={{
                                             width: '100%',
                                             padding: '8px 12px',
-                                            border: '1px solid #ddd',
+                                            border: `2px solid ${getDescriptionStatus().status === 'success' ? '#28a745' : getDescriptionStatus().status === 'error' ? '#dc3545' : getDescriptionStatus().status === 'warning' ? '#ffc107' : '#ddd'}`,
                                             borderRadius: '4px',
                                             fontSize: '14px',
                                             resize: 'vertical'
                                         }}
                                         placeholder="Meta description for SEO"
                                     />
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '12px' }}>
+                                        <span style={{ color: getDescriptionStatus().color, fontWeight: '500' }}>
+                                            {getDescriptionStatus().text}
+                                        </span>
+                                        <span style={{ color: getDescriptionStatus().color }}>
+                                            {validation.descriptionLength} / 160 chars {getDescriptionStatus().status === 'success' && '✓'}
+                                        </span>
+                                    </div>
                                 </div>
                                 
                                 <div>
@@ -387,6 +447,33 @@ export default function MetaTagsPage() {
                                         <option value="inactive">Inactive</option>
                                     </select>
                                 </div>
+
+                                {/* Validation Warnings */}
+                                {validation.isDuplicate && (
+                                    <div style={{ 
+                                        padding: '12px', 
+                                        backgroundColor: '#fff3cd', 
+                                        border: '1px solid #ffc107', 
+                                        borderRadius: '4px',
+                                        color: '#856404',
+                                        fontSize: '14px'
+                                    }}>
+                                        ⚠️ <strong>Duplicate Page:</strong> A meta tag for "{validation.duplicatePage}" already exists. {!editingTag && 'This will create a duplicate entry.'}
+                                    </div>
+                                )}
+
+                                {!formData.ogImage && (
+                                    <div style={{ 
+                                        padding: '12px', 
+                                        backgroundColor: '#d1ecf1', 
+                                        border: '1px solid #bee5eb', 
+                                        borderRadius: '4px',
+                                        color: '#0c5460',
+                                        fontSize: '14px'
+                                    }}>
+                                        ℹ️ <strong>Missing OG Image:</strong> Adding an Open Graph image (1200x630px) improves social media sharing appearance.
+                                    </div>
+                                )}
                                 
                                 <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                                     <button

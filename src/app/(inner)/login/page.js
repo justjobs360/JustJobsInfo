@@ -5,6 +5,7 @@ import { auth } from '@/config/firebase';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
@@ -132,6 +133,7 @@ export default function LoginPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             <div className="login-page-wrapper">
                 <div className="container-fluid p-0">
                     <div className="row g-0">

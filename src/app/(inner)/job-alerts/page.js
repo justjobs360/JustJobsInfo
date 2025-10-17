@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import './job-alerts.css';
@@ -199,6 +200,7 @@ export default function JobAlertsPage() {
   return (
     <>
       <HeaderOne />
+      <Breadcrumb />
       
       <div className="job-alerts-page">
         {/* Hero Section */}

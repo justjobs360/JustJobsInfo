@@ -1,5 +1,6 @@
 "use client"
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderOne";
 import "../legal-pages.css";
@@ -8,6 +9,7 @@ export default function Home() {
     return (
         <div>
             <HeaderTwo />
+            <Breadcrumb />
 
             <div className="container-large">
                 {/* banner area for consistent spacing with site styles */}

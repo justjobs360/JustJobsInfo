@@ -1,6 +1,7 @@
 
 "use client"
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import Testimonials from "@/components/testimonials/Testimonials";
@@ -10,6 +11,7 @@ export default function Home() {
     return (
         <div className='#'>
             <HeaderTwo />
+            <Breadcrumb />
 
             <>
                 {/* banner content partner */}

@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import HeaderOne from "@/components/header/HeaderOne";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeBuilderForm from "@/components/resume/ResumeBuilderForm";
@@ -1341,6 +1342,7 @@ export default function ResumeEditorPage({ params }) {
   return (
     <>
       <HeaderOne />
+      <Breadcrumb />
       <div style={{ background: "#F5F7FA", minHeight: "100vh", padding: 0, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <style>{`
           /* Responsive layout - always show both columns but stack on mobile */

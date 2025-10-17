@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeTemplateGrid from '@/components/resume/ResumeTemplateGrid';
@@ -589,6 +590,7 @@ export default function ResumeBuilderPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             <div className="resume-builder-page rts-section-gap" style={{ background: 'var(--color-white)' }}>
                 <div className="container">
                     {/* HERO SECTION */}

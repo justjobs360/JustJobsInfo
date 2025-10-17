@@ -1,7 +1,7 @@
 class BrevoService {
   constructor() {
     this.apiKey = process.env.BREVO_API_KEY;
-    this.fromEmail = process.env.JOB_ALERTS_FROM_EMAIL || 'noreply@justjobsinfo.com';
+    this.fromEmail = process.env.JOB_ALERTS_FROM_EMAIL || 'noreply@justjobs.info';
     this.fromName = process.env.JOB_ALERTS_FROM_NAME || 'JustJobsInfo';
     this.appUrl = process.env.APP_URL || 'http://localhost:3000';
     

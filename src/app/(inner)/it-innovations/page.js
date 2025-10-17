@@ -1,6 +1,7 @@
 "use client"
 import { ReactSVG } from 'react-svg';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import FeatureTwo from "@/components/feature/FeatureTwo";
@@ -11,6 +12,7 @@ export default function Home() {
     return (
         <div className='#'>
             <HeaderTwo />
+            <Breadcrumb />
             <div>
                 <div className="container-large">
                     {/* service area start */}

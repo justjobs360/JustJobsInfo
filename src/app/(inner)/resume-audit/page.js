@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeUpload from "@/components/resume-audit/ResumeUpload";
@@ -64,6 +65,7 @@ export default function ResumeAuditPage() {
     return (
         <DynamicMetaTags pageName="Resume Audit">
             <HeaderOne />
+            <Breadcrumb />
             <div className="resume-audit-page">
                 <div className="container">
                    

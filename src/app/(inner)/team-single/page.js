@@ -1,5 +1,6 @@
 
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import TestimonialsThree from "@/components/testimonials/TestimonialsThree";
@@ -8,6 +9,7 @@ export default function Home() {
     return (
         <div className='#'>
             <HeaderTwo />
+            <Breadcrumb />
 
 
 

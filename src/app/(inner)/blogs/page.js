@@ -1,5 +1,6 @@
 "use client";
 import BackToTop from "@/components/common/BackToTop";
+import Breadcrumb from "@/components/common/Breadcrumb";
 import React, { useState, useEffect } from "react";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
@@ -141,6 +142,7 @@ function BlogsPage() {
     return (
         <>
             <HeaderOne />
+            <Breadcrumb />
             <>
                 <div className="career-single-banner-area ptb--70 blog-page">
                     <div className="container">

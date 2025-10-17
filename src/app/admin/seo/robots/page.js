@@ -19,13 +19,29 @@ export default function RobotsPage() {
     const loadRobotsContent = async () => {
         try {
             setLoading(true);
-            // Try to load from localStorage first
-            const savedContent = localStorage.getItem('robots_txt_content');
-            if (savedContent) {
-                setRobotsContent(savedContent);
+            console.log('📋 Loading robots.txt from database...');
+            
+            const response = await fetch('/api/admin/robots-txt', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                setRobotsContent(result.data.content);
+                console.log('✅ Robots.txt loaded successfully');
             } else {
-                // Set default content
-                const defaultContent = `User-agent: *
+                throw new Error(result.error || 'Failed to load robots.txt');
+            }
+        } catch (error) {
+            console.error('❌ Error loading robots.txt content:', error);
+            toast.error('Failed to load robots.txt content');
+            
+            // Set default content on error
+            const defaultContent = `User-agent: *
 Allow: /
 
 # Disallow admin areas
@@ -37,15 +53,11 @@ Allow: /api/blogs/
 Allow: /api/jobs/
 
 # Sitemap
-Sitemap: https://justjobsinfo.com/sitemap.xml
+Sitemap: https://justjobs.info/sitemap.xml
 
 # Crawl delay (optional)
 Crawl-delay: 1`;
-                setRobotsContent(defaultContent);
-            }
-        } catch (error) {
-            console.error('Error loading robots.txt content:', error);
-            toast.error('Failed to load robots.txt content');
+            setRobotsContent(defaultContent);
         } finally {
             setLoading(false);
         }
@@ -61,13 +73,27 @@ Crawl-delay: 1`;
                 return;
             }
 
-            // Save to localStorage (in a real app, this would be an API call)
-            localStorage.setItem('robots_txt_content', robotsContent);
+            console.log('💾 Saving robots.txt to database...');
             
-            toast.success('Robots.txt saved successfully');
+            const response = await fetch('/api/admin/robots-txt', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: robotsContent }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success('Robots.txt saved successfully');
+                console.log('✅ Robots.txt saved');
+            } else {
+                throw new Error(result.error || 'Failed to save robots.txt');
+            }
         } catch (error) {
-            console.error('Error saving robots.txt:', error);
-            toast.error('Failed to save robots.txt');
+            console.error('❌ Error saving robots.txt:', error);
+            toast.error('Failed to save robots.txt: ' + error.message);
         } finally {
             setSaving(false);
         }
@@ -95,7 +121,7 @@ Allow: /api/blogs/
 Allow: /api/jobs/
 
 # Sitemap
-Sitemap: https://justjobsinfo.com/sitemap.xml
+Sitemap: https://justjobs.info/sitemap.xml
 
 # Crawl delay (optional)
 Crawl-delay: 1`;
