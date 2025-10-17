@@ -11,13 +11,12 @@ import { generateBreadcrumbSchema, injectStructuredData } from '@/utils/structur
 export default function Breadcrumb({ customNames = {}, className = '' }) {
     const pathname = usePathname();
     
-    // Don't show breadcrumbs on homepage
-    if (!pathname || pathname === '/') {
-        return null;
-    }
-    
     // Generate breadcrumb items from pathname
     const generateBreadcrumbs = () => {
+        if (!pathname || pathname === '/') {
+            return [];
+        }
+        
         const paths = pathname.split('/').filter(Boolean);
         const breadcrumbs = [
             { name: 'Home', url: 'https://justjobs.info/' }
@@ -63,6 +62,7 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
     
     // Inject BreadcrumbList structured data
     useEffect(() => {
+        if (breadcrumbs.length === 0) return;
         const breadcrumbSchema = generateBreadcrumbSchema(
             breadcrumbs.map(({ name, url }) => ({ name, url }))
         );
@@ -70,7 +70,12 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
         if (breadcrumbSchema) {
             injectStructuredData(breadcrumbSchema);
         }
-    }, [pathname]);
+    }, [pathname, breadcrumbs]);
+    
+    // Don't render if no breadcrumbs
+    if (breadcrumbs.length === 0) {
+        return null;
+    }
     
     return (
         <nav aria-label="Breadcrumb" className={`breadcrumb-nav ${className}`}>

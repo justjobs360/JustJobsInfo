@@ -29,9 +29,9 @@ function GoogleAnalytics({ gaId }) {
 
 // Search Console Verification Component
 function SearchConsoleVerification({ verificationCode }) {
-  if (!verificationCode) return null;
-  
   useEffect(() => {
+    if (!verificationCode) return;
+    
     // Add Google Search Console verification meta tag
     const metaTag = document.createElement('meta');
     metaTag.name = 'google-site-verification';

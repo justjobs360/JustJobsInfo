@@ -458,7 +458,7 @@ export default function MetaTagsPage() {
                                         color: '#856404',
                                         fontSize: '14px'
                                     }}>
-                                        ⚠️ <strong>Duplicate Page:</strong> A meta tag for "{validation.duplicatePage}" already exists. {!editingTag && 'This will create a duplicate entry.'}
+                                        ⚠️ <strong>Duplicate Page:</strong> A meta tag for &quot;{validation.duplicatePage}&quot; already exists. {!editingTag && 'This will create a duplicate entry.'}
                                     </div>
                                 )}
 
