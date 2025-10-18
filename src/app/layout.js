@@ -39,6 +39,8 @@ export const metadata = {
         alt: 'JustJobsInfo - Professional Resume and Career Services',
       }
     ],
+    publishedTime: '2024-01-01T00:00:00.000Z',
+    modifiedTime: new Date().toISOString(),
   },
   twitter: {
     card: 'summary_large_image',

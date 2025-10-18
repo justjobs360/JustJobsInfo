@@ -167,6 +167,11 @@ export const updateDocumentMeta = (metaTags) => {
             { property: 'article:author', content: metaTags.author || 'JustJobsInfo Team' },
             { property: 'article:published_time', content: metaTags.publishDate || new Date().toISOString() },
             { property: 'article:modified_time', content: metaTags.modifiedDate || new Date().toISOString() },
+            { property: 'og:updated_time', content: metaTags.modifiedDate || new Date().toISOString() },
+            
+            // Additional date meta tags
+            { name: 'publish_date', content: metaTags.publishDate || new Date().toISOString() },
+            { name: 'date', content: metaTags.publishDate || new Date().toISOString() },
             
             // Twitter Card tags
             { name: 'twitter:card', content: 'summary_large_image' },
