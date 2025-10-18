@@ -18,6 +18,9 @@ export default function MetaTagsPage() {
         description: '',
         keywords: '',
         ogImage: '',
+        author: 'JustJobsInfo Team',
+        publishDate: new Date().toISOString().split('T')[0],
+        ogType: 'website',
         status: 'active'
     });
     const [saving, setSaving] = useState(false);
@@ -139,6 +142,9 @@ export default function MetaTagsPage() {
                     description: '',
                     keywords: '',
                     ogImage: '',
+                    author: 'JustJobsInfo Team',
+                    publishDate: new Date().toISOString().split('T')[0],
+                    ogType: 'website',
                     status: 'active'
                 });
                 setShowForm(false);
@@ -162,6 +168,9 @@ export default function MetaTagsPage() {
             description: tag.description,
             keywords: tag.keywords,
             ogImage: tag.ogImage,
+            author: tag.author || 'JustJobsInfo Team',
+            publishDate: tag.publishDate ? new Date(tag.publishDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            ogType: tag.ogType || 'website',
             status: tag.status
         });
         setShowForm(true);
@@ -204,6 +213,9 @@ export default function MetaTagsPage() {
             description: '',
             keywords: '',
             ogImage: '',
+            author: 'JustJobsInfo Team',
+            publishDate: new Date().toISOString().split('T')[0],
+            ogType: 'website',
             status: 'active'
         });
     };
@@ -416,7 +428,7 @@ export default function MetaTagsPage() {
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>OG Image URL:</label>
                                     <input
-                                        type="url"
+                                        type="text"
                                         value={formData.ogImage}
                                         onChange={(e) => setFormData({...formData, ogImage: e.target.value})}
                                         style={{
@@ -426,8 +438,72 @@ export default function MetaTagsPage() {
                                             borderRadius: '4px',
                                             fontSize: '14px'
                                         }}
-                                        placeholder="/images/og-image.jpg"
+                                        placeholder="/assets/images/og-images/og-home.webp"
                                     />
+                                    <small style={{ color: '#666', fontSize: '12px', display: 'block', marginTop: '4px' }}>
+                                        💡 Recommended: 1200x630px image. Available OG images: og-home.webp, og-about.webp, og-contact.webp, og-blog.webp, og-services.webp, etc.
+                                    </small>
+                                </div>
+                                
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Author:</label>
+                                    <input
+                                        type="text"
+                                        value={formData.author}
+                                        onChange={(e) => setFormData({...formData, author: e.target.value})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px 12px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px'
+                                        }}
+                                        placeholder="Author name"
+                                    />
+                                    <small style={{ color: '#666', fontSize: '12px' }}>
+                                        💡 For blog posts, use the actual author name. For pages, use &quot;JustJobsInfo Team&quot;
+                                    </small>
+                                </div>
+                                
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Publish Date:</label>
+                                    <input
+                                        type="date"
+                                        value={formData.publishDate}
+                                        onChange={(e) => setFormData({...formData, publishDate: e.target.value})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px 12px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px'
+                                        }}
+                                    />
+                                    <small style={{ color: '#666', fontSize: '12px' }}>
+                                        💡 Used for social media and article meta tags
+                                    </small>
+                                </div>
+                                
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Open Graph Type:</label>
+                                    <select
+                                        value={formData.ogType}
+                                        onChange={(e) => setFormData({...formData, ogType: e.target.value})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px 12px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px',
+                                            fontSize: '14px'
+                                        }}
+                                    >
+                                        <option value="website">Website</option>
+                                        <option value="article">Article</option>
+                                        <option value="blog">Blog</option>
+                                    </select>
+                                    <small style={{ color: '#666', fontSize: '12px' }}>
+                                        💡 Use &quot;article&quot; for blog posts, &quot;website&quot; for regular pages
+                                    </small>
                                 </div>
                                 
                                 <div>

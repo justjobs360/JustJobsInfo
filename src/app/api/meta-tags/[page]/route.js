@@ -59,7 +59,10 @@ export async function GET(request, { params }) {
                     title: 'JustJobsInfo - Professional Resume and Career Services',
                     description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',
                     keywords: 'resume writing, career services, job search, professional development',
-                    ogImage: '/assets/images/logo/logo-dark.png',
+                    ogImage: 'https://justjobs.info/assets/images/og-images/og-home.webp',
+                    author: 'JustJobsInfo Team',
+                    publishDate: new Date().toISOString(),
+                    ogType: 'website',
                     isDefault: true
                 }
             });
@@ -72,7 +75,13 @@ export async function GET(request, { params }) {
             title: metaTag.title,
             description: metaTag.description,
             keywords: metaTag.keywords || '',
-            ogImage: metaTag.ogImage || '/assets/images/logo/logo-dark.png',
+            ogImage: metaTag.ogImage?.startsWith('http') 
+                ? metaTag.ogImage 
+                : `https://justjobs.info${metaTag.ogImage || '/assets/images/og-images/og-home.webp'}`,
+            author: metaTag.author || 'JustJobsInfo Team',
+            publishDate: metaTag.publishDate || metaTag.createdAt || new Date().toISOString(),
+            modifiedDate: metaTag.updatedAt || new Date().toISOString(),
+            ogType: metaTag.ogType || 'website',
             status: metaTag.status,
             isDefault: false,
             lastUpdated: metaTag.updatedAt
@@ -97,7 +106,10 @@ export async function GET(request, { params }) {
                 title: 'JustJobsInfo - Professional Resume and Career Services',
                 description: 'Professional resume writing services, career guidance, and job search resources.',
                 keywords: 'resume writing, career services, job search',
-                ogImage: '/assets/images/logo/logo-dark.png',
+                ogImage: 'https://justjobs.info/assets/images/og-images/og-home.webp',
+                author: 'JustJobsInfo Team',
+                publishDate: new Date().toISOString(),
+                ogType: 'website',
                 isDefault: true,
                 error: 'Failed to fetch custom meta tags'
             }

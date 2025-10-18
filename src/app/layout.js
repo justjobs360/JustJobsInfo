@@ -11,10 +11,53 @@ import "../../public/assets/css/style.css";
 import ClientLayout from '@/components/layout/ClientLayout';
 
 export const metadata = {
-  title: "JustJobsInfo - Professional Resume and Career Services",
+  metadataBase: new URL('https://justjobs.info'),
+  title: {
+    default: "JustJobsInfo - Professional Resume and Career Services",
+    template: "%s | JustJobsInfo"
+  },
   description: "Professional resume writing services, career guidance, and job search resources to help you land your dream job.",
+  keywords: ["resume writing", "career services", "job search", "professional development", "career guidance", "CV writing", "job application help"],
+  authors: [{ name: "JustJobsInfo Team" }],
+  creator: "JustJobsInfo",
+  publisher: "JustJobsInfo",
   icons: {
     icon: "/assets/images/logo/favicon.png",
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://justjobs.info/',
+    siteName: 'JustJobsInfo',
+    title: 'JustJobsInfo - Professional Resume and Career Services',
+    description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',
+    images: [
+      {
+        url: '/assets/images/og-images/og-home.webp',
+        width: 1200,
+        height: 630,
+        alt: 'JustJobsInfo - Professional Resume and Career Services',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@justjobsinfo',
+    creator: '@justjobsinfo',
+    title: 'JustJobsInfo - Professional Resume and Career Services',
+    description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',
+    images: ['/assets/images/og-images/og-home.webp'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 

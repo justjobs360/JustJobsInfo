@@ -38,6 +38,9 @@ export async function GET(request) {
             description: tag.description,
             keywords: tag.keywords,
             ogImage: tag.ogImage,
+            author: tag.author || 'JustJobsInfo Team',
+            publishDate: tag.publishDate || tag.createdAt,
+            ogType: tag.ogType || 'website',
             status: tag.status,
             createdAt: tag.createdAt,
             updatedAt: tag.updatedAt
@@ -65,7 +68,7 @@ export async function POST(request) {
         console.log('📝 Creating new meta tag...');
         
         const body = await request.json();
-        const { page, title, description, keywords, ogImage, status } = body;
+        const { page, title, description, keywords, ogImage, author, publishDate, ogType, status } = body;
         
         // Validate required fields
         if (!page || !title || !description) {
@@ -96,6 +99,9 @@ export async function POST(request) {
             description: description.trim(),
             keywords: keywords?.trim() || '',
             ogImage: ogImage?.trim() || '',
+            author: author?.trim() || 'JustJobsInfo Team',
+            publishDate: publishDate || new Date().toISOString(),
+            ogType: ogType || 'website',
             status: status || 'active',
             createdAt: new Date(),
             updatedAt: new Date()
@@ -137,7 +143,7 @@ export async function PUT(request) {
         console.log('🔄 Updating meta tag...');
         
         const body = await request.json();
-        const { id, page, title, description, keywords, ogImage, status } = body;
+        const { id, page, title, description, keywords, ogImage, author, publishDate, ogType, status } = body;
         
         // Validate required fields
         if (!id || !page || !title || !description) {
@@ -177,6 +183,9 @@ export async function PUT(request) {
             description: description.trim(),
             keywords: keywords?.trim() || '',
             ogImage: ogImage?.trim() || '',
+            author: author?.trim() || 'JustJobsInfo Team',
+            publishDate: publishDate || new Date().toISOString(),
+            ogType: ogType || 'website',
             status: status || 'active',
             updatedAt: new Date()
         };
@@ -199,6 +208,9 @@ export async function PUT(request) {
                 description: updatedTag.description,
                 keywords: updatedTag.keywords,
                 ogImage: updatedTag.ogImage,
+                author: updatedTag.author || 'JustJobsInfo Team',
+                publishDate: updatedTag.publishDate || updatedTag.createdAt,
+                ogType: updatedTag.ogType || 'website',
                 status: updatedTag.status,
                 createdAt: updatedTag.createdAt,
                 updatedAt: updatedTag.updatedAt
