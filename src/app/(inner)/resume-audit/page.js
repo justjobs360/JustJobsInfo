@@ -11,6 +11,8 @@ import CtaOne from "@/components/cta/CtaOne";
 import { CVAuditService } from '@/utils/cvAuditService';
 import { useAuth } from '@/contexts/AuthContext';
 import DynamicMetaTags from "@/components/common/DynamicMetaTags";
+import StructuredData from "@/components/common/StructuredData";
+import { generateServiceSchema } from "@/utils/structuredDataService";
 import './resume-audit.css';
 
 export default function ResumeAuditPage() {
@@ -64,6 +66,21 @@ export default function ResumeAuditPage() {
 
     return (
         <DynamicMetaTags pageName="Resume Audit">
+            <StructuredData 
+                type="service"
+                pageData={{
+                    title: 'Free Resume Audit - Professional Resume Review | JustJobsInfo',
+                    description: 'Get a free professional resume audit and improve your chances of landing your dream job. Expert analysis and recommendations.',
+                    image: 'https://justjobs.info/assets/images/og-images/og-resume-audit.webp'
+                }}
+                customSchema={generateServiceSchema({
+                    name: 'Resume Audit Service',
+                    description: 'AI-powered resume analysis and professional feedback to enhance your job applications. Get detailed insights, formatting suggestions, and industry-specific recommendations.',
+                    url: 'https://justjobs.info/resume-audit',
+                    image: 'https://justjobs.info/assets/images/og-images/og-resume-audit.webp',
+                    serviceType: 'Professional Resume Review and Analysis'
+                })}
+            />
             <HeaderOne />
             <Breadcrumb />
             <div className="resume-audit-page">

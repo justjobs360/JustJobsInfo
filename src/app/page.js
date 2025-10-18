@@ -5,6 +5,7 @@ import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import DynamicMetaTags from "@/components/common/DynamicMetaTags";
+import StructuredData from "@/components/common/StructuredData";
 
 // Dynamic imports for below-the-fold components
 const LargeVideo = dynamic(() => import("@/components/large-video/LargeVideo"), {
@@ -56,6 +57,14 @@ const CaseStudies = dynamic(() => import("@/components/casestudies/CaseStudies")
 export default function Home() {
   return (
     <DynamicMetaTags pageName="Home">
+      <StructuredData 
+        type="home"
+        pageData={{
+          title: 'JustJobsInfo - Professional Resume and Career Services',
+          description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',
+          image: 'https://justjobs.info/assets/images/og-images/og-home.webp'
+        }}
+      />
       <div className='#'>
         <HeaderOne />
         <BannerOne />

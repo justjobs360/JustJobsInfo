@@ -9,6 +9,8 @@ import BackToTop from "@/components/common/BackToTop";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ReCaptcha from "@/components/security/ReCaptcha";
 import toast from 'react-hot-toast';
+import StructuredData from "@/components/common/StructuredData";
+import { generateBlogPostingSchema } from "@/utils/structuredDataService";
 
 // Skeleton components for blog detail page
 const BlogDetailSkeleton = () => (
@@ -492,7 +494,30 @@ export default function BlogDetails() {
 
   return (
     <div className="">
-
+      {blogPost && (
+        <StructuredData 
+          type="blog"
+          pageData={{
+            title: blogPost.title,
+            description: blogPost.metaDescription || blogPost.description || blogPost.title,
+            image: blogPost.bannerImg ? (blogPost.bannerImg.startsWith('http') ? blogPost.bannerImg : `https://justjobs.info${getImageUrl(blogPost.bannerImg)}`) : 'https://justjobs.info/assets/images/og-images/og-blog.webp',
+            datePublished: blogPost.publishedDate,
+            dateModified: blogPost.updatedAt || blogPost.publishedDate
+          }}
+          customSchema={generateBlogPostingSchema({
+            title: blogPost.title,
+            description: blogPost.metaDescription || blogPost.description || blogPost.title,
+            url: `https://justjobs.info/blogs/${slug}`,
+            image: blogPost.bannerImg ? (blogPost.bannerImg.startsWith('http') ? blogPost.bannerImg : `https://justjobs.info${getImageUrl(blogPost.bannerImg)}`) : 'https://justjobs.info/assets/images/og-images/og-blog.webp',
+            datePublished: blogPost.publishedDate,
+            dateModified: blogPost.updatedAt || blogPost.publishedDate,
+            author: {
+              name: blogPost.author || 'JustJobsInfo Team',
+              url: blogPost.authorUrl || 'https://justjobs.info/about'
+            }
+          })}
+        />
+      )}
       <HeaderOne />
 
       <>
