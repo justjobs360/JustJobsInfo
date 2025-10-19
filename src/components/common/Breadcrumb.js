@@ -6,7 +6,8 @@ import { generateBreadcrumbSchema, injectStructuredData } from '@/utils/structur
 
 /**
  * Breadcrumb Component
- * Displays navigation breadcrumbs and injects BreadcrumbList structured data
+ * Hidden breadcrumbs for SEO purposes only (visually hidden but accessible to search engines)
+ * Injects BreadcrumbList structured data and maintains HTML structure for crawlers
  */
 export default function Breadcrumb({ customNames = {}, className = '' }) {
     const pathname = usePathname();
@@ -118,9 +119,15 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
             
             <style jsx>{`
                 .breadcrumb-nav {
-                    margin: 20px 0;
-                    padding: 15px 0;
-                    border-bottom: 1px solid #e5e7eb;
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    margin: -1px;
+                    padding: 0;
+                    overflow: hidden;
+                    clip: rect(0, 0, 0, 0);
+                    white-space: nowrap;
+                    border: 0;
                 }
                 
                 .breadcrumb-list {
@@ -216,7 +223,7 @@ export function BreadcrumbCustom({
     });
     
     return (
-        <nav aria-label="Breadcrumb" className={className}>
+        <nav aria-label="Breadcrumb" className={className} style={{ position: 'absolute', width: '1px', height: '1px', margin: '-1px', padding: '0', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: '0' }}>
             <ol style={{ display: 'flex', gap: '8px', listStyle: 'none', padding: 0, margin: 0 }}>
                 {breadcrumbs.map((crumb, index) => (
                     <li key={crumb.url} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

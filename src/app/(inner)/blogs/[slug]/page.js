@@ -521,12 +521,12 @@ export default function BlogDetails() {
       <HeaderOne />
 
       <>
-        <div className="career-single-banner-area ptb--70 blog-page">
-          <div className="container">
+        <div className="career-single-banner-area pt--70 blog-page"  style={{paddingBottom: 0}}>
+          <div className="container ">
             <div className="row">
               <div className="col-lg-12">
-                <div className="career-page-single-banner blog-page">
-                  <h1 className="title">{blogPost.title || 'Blog Post'}</h1>
+                <div className="career-page-single-banner blog-page" style={{ textAlign: 'left', paddingBottom: 0, marginLeft: 0, marginRight: 0 , maxWidth: '100%' }}>
+                  <h1 className="title" style={{ textAlign: 'left', paddingBottom: 0, marginLeft: 0, marginRight: 0 }}>{blogPost.title || 'Blog Post'}</h1>
                 </div>
               </div>
             </div>

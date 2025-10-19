@@ -100,7 +100,7 @@ const BlogMain = (props) => {
                         display: 'inline-block',
                         background: 'transparent',
                         color: 'var(--color-primary)',
-                        padding: '4px 8px',
+                        padding: '4px 4px',
                         borderRadius: '12px',
                         fontSize: '10px',
                         fontWeight: '500',
@@ -119,6 +119,7 @@ const BlogMain = (props) => {
                             color: 'var(--color-heading-1)',
                             lineHeight: '1.4',
                             marginBottom: '24px',
+                            padding: '0px 4px',
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: 'vertical',
@@ -130,11 +131,11 @@ const BlogMain = (props) => {
                             {blogTitle ? blogTitle : 'How to growing your business'}
                         </h3>
                     </a>
-                    <p className="disc" style={{
+                    <p className="disc blog-card-description" style={{
                         fontSize: '14px',
                         color: '#666',
                         lineHeight: '1.6',
-                        marginBottom: '28px',
+                        padding: '0px 4px',
                         flex: 1,
                         display: '-webkit-box',
                         WebkitLineClamp: 4,
@@ -221,6 +222,11 @@ const BlogMain = (props) => {
                     )}
                 </div>
             </div>
+            <style jsx>{`
+                :global(.blog-card-description) {
+                    margin-bottom: 0px !important;
+                }
+            `}</style>
         </div>
     )
 }
