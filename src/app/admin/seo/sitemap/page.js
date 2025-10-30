@@ -147,8 +147,25 @@ export default function SitemapPage() {
                 };
 
                 setSitemapData(newSitemapData);
-                toast.success(`Sitemap generated successfully with ${staticPages.length} URLs`);
-                console.log('✅ Sitemap generated and saved to database');
+                toast.success(`Sitemap config saved with ${staticPages.length} URLs`);
+                console.log('✅ Sitemap configuration saved to database');
+
+                // Also generate and write the static sitemap.xml to /public so /sitemap.xml serves it
+                try {
+                    const writeResp = await fetch('/api/admin/generate-sitemap', { method: 'POST' });
+                    const writeJson = await writeResp.json();
+                    if (writeJson.success) {
+                        toast.success('Static sitemap.xml updated');
+                        console.log('🗺️ Static sitemap.xml written:', writeJson.path, 'count:', writeJson.count);
+                    } else {
+                        // If disk write failed (e.g. read-only), inform admin and provide fallback info
+                        console.warn('⚠️ Static sitemap write failed:', writeJson);
+                        toast.error('Could not write sitemap.xml to disk.');
+                    }
+                } catch (e) {
+                    console.error('❌ Error writing static sitemap:', e);
+                    toast.error('Error generating static sitemap');
+                }
             } else {
                 throw new Error(result.error || 'Failed to generate sitemap');
             }
@@ -161,60 +178,29 @@ export default function SitemapPage() {
     };
 
     const viewSitemap = () => {
-        if (sitemapData.urls.length === 0) {
-            toast.error('No sitemap data available. Please generate sitemap first.');
-            return;
-        }
-
-        // Generate XML sitemap content
-        const siteUrl = 'https://justjobs.info';
-        const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapData.urls.map(page => `  <url>
-    <loc>${siteUrl}${page.url}</loc>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </url>`).join('\n')}
-</urlset>`;
-
-        // Open in new window
-        const blob = new Blob([xmlContent], { type: 'application/xml' });
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        URL.revokeObjectURL(url);
+        // Always open the static sitemap.xml served from public
+        window.open('/sitemap.xml', '_blank');
     };
 
-    const downloadSitemap = () => {
-        if (sitemapData.urls.length === 0) {
-            toast.error('No sitemap data available. Please generate sitemap first.');
-            return;
+    const downloadSitemap = async () => {
+        try {
+            // Fetch the static sitemap.xml and force a download
+            const res = await fetch('/sitemap.xml', { cache: 'no-store' });
+            if (!res.ok) throw new Error('Failed to fetch sitemap.xml');
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'sitemap.xml';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            toast.success('Sitemap downloaded successfully');
+        } catch (e) {
+            console.error('❌ Download sitemap error:', e);
+            toast.error('Could not download sitemap.xml');
         }
-
-        // Generate XML sitemap content
-        const siteUrl = 'https://justjobs.info';
-        const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapData.urls.map(page => `  <url>
-    <loc>${siteUrl}${page.url}</loc>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </url>`).join('\n')}
-</urlset>`;
-
-        // Download the file
-        const blob = new Blob([xmlContent], { type: 'application/xml' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'sitemap.xml';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        toast.success('Sitemap downloaded successfully');
     };
 
     if (!hasPermission(ADMIN_PERMISSIONS.MANAGE_SITEMAP)) {

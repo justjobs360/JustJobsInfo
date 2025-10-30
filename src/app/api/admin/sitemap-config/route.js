@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCollection } from '@/utils/mongodb';
+import { generateStaticSitemap } from '@/utils/generateSitemap';
 
 export async function GET(request) {
     try {
@@ -92,6 +93,13 @@ export async function POST(request) {
         
         if (result.acknowledged) {
             console.log('✅ Sitemap configuration updated successfully');
+            // Attempt to regenerate static sitemap after sitemap config update
+            try {
+                await generateStaticSitemap({ writeToDisk: true });
+                console.log('✅ Static sitemap regenerated after sitemap-config POST');
+            } catch (e) {
+                console.warn('⚠️ Failed to regenerate static sitemap after sitemap-config POST', e);
+            }
             
             return NextResponse.json({
                 success: true,
@@ -159,6 +167,13 @@ export async function PUT(request) {
             const updatedUrl = await collection.findOne({ _id: new ObjectId(id) });
             
             console.log('✅ Sitemap URL updated successfully');
+            // Attempt to regenerate static sitemap after single URL update
+            try {
+                await generateStaticSitemap({ writeToDisk: true });
+                console.log('✅ Static sitemap regenerated after sitemap-config PUT');
+            } catch (e) {
+                console.warn('⚠️ Failed to regenerate static sitemap after sitemap-config PUT', e);
+            }
             
             return NextResponse.json({
                 success: true,
