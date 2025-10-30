@@ -491,8 +491,11 @@ export const updateDocumentMeta = (metaTags) => {
             document.title = metaTags.title;
         }
         
-        // Get current URL for canonical and og:url
-        const currentUrl = metaTags.canonicalUrl || window.location.href;
+        // Get current URL for canonical and og:url (force https non-www, drop query/hash)
+        const parsed = new URL(metaTags.canonicalUrl || window.location.href);
+        const hostname = parsed.hostname === 'www.justjobs.info' ? 'justjobs.info' : parsed.hostname;
+        const origin = `https://${hostname}`;
+        const currentUrl = `${origin}${parsed.pathname}`;
         const fullImageUrl = metaTags.ogImage?.startsWith('http') 
             ? metaTags.ogImage 
             : `https://justjobs.info${metaTags.ogImage}`;
@@ -552,7 +555,7 @@ export const updateDocumentMeta = (metaTags) => {
             }
         });
         
-        // Add canonical link tag
+        // Add canonical link tag (no query/hash)
         let canonicalElement = document.querySelector('link[rel="canonical"]');
         if (canonicalElement) {
             canonicalElement.setAttribute('href', currentUrl);
