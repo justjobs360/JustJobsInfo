@@ -219,7 +219,7 @@ function BlogsPage() {
         // Skip if this change was triggered by a URL change
         if (isFromUrlChange.current) return;
         fetchBlogs(1, debouncedSearchTerm, selectedCategory);
-    }, [debouncedSearchTerm]);
+    }, [debouncedSearchTerm, selectedCategory]);
 
     return (
         <>
@@ -239,7 +239,7 @@ function BlogsPage() {
                                 </h1>
                                 <p className="blog-hero-description">
                                     Discover proven strategies for job searching, career development, and professional success. 
-                                    From resume writing to interview tips, we've got you covered.
+                                    From resume writing to interview tips, we&apos;ve got you covered.
                                 </p>
                             </div>
                         </div>
