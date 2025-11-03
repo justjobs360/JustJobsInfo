@@ -156,6 +156,7 @@ export default function BlogDetails() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [galleryPosts, setGalleryPosts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [popularTags, setPopularTags] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
 
   // Declare hooks unconditionally at the top
@@ -253,6 +254,20 @@ export default function BlogDetails() {
     }
   };
 
+  // Fetch popular tags
+  const fetchPopularTags = async () => {
+    try {
+      const response = await fetch('/api/blogs/tags');
+      const result = await response.json();
+
+      if (result.success) {
+        setPopularTags(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching popular tags:', error);
+    }
+  };
+
   // Fetch existing comments for the blog
   const fetchComments = async () => {
     try {
@@ -306,6 +321,7 @@ export default function BlogDetails() {
     fetchRecentPosts();
     fetchGalleryPosts();
     fetchCategories();
+    fetchPopularTags();
   }, [slug]);
 
   // Fetch comments when blog post is loaded
@@ -1068,15 +1084,15 @@ export default function BlogDetails() {
                   </div>
                   <div className="wized-body">
                     <div className="tags-wrapper">
-                      <a href="#">Services</a>
-                      <a href="#">Business</a>
-                      <a href="#">Growth</a>
-                      <a href="#">Finance</a>
-                      <a href="#">UI/UX Design</a>
-                      <a href="#">Solution</a>
-                      <a href="#">Speed</a>
-                      <a href="#">Strategy</a>
-                      <a href="#">Technology</a>
+                      {popularTags && popularTags.length > 0 ? (
+                        popularTags.map((tag, index) => (
+                          <a key={index} href={`/blogs?search=${encodeURIComponent(tag)}`}>
+                            {tag}
+                          </a>
+                        ))
+                      ) : (
+                        <span style={{ color: '#999', fontSize: '14px' }}>No tags available</span>
+                      )}
                     </div>
                   </div>
                 </div>

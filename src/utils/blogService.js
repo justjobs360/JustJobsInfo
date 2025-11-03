@@ -70,9 +70,9 @@ async function createBlog(blogData) {
 }
 
 // Get all blog posts with pagination and search
-async function getBlogs(page = 1, limit = 6, search = '', category = '', status = 'published') {
+async function getBlogs(page = 1, limit = 6, search = '', category = '', status = 'published', featured) {
   try {
-    console.log('🔍 Getting blogs with filters:', { page, limit, search, category, status });
+    console.log('🔍 Getting blogs with filters:', { page, limit, search, category, status, featured });
     
     const collection = await getBlogCollection();
     console.log('✅ Collection obtained successfully');
@@ -91,6 +91,9 @@ async function getBlogs(page = 1, limit = 6, search = '', category = '', status 
     }
     if (status && status !== '' && status !== 'all') {
       filter.status = status;
+    }
+    if (featured !== undefined && featured !== null && featured !== '') {
+      filter.featured = featured === 'true' || featured === true;
     }
     
     console.log('🔍 Applied filter:', filter);
@@ -287,6 +290,44 @@ async function getBlogCategories() {
     
   } catch (error) {
     console.error('❌ Error fetching blog categories:', error);
+    throw error;
+  }
+}
+
+// Get popular blog tags
+async function getBlogTags() {
+  try {
+    const collection = await getBlogCollection();
+    
+    // Get all blogs
+    const blogs = await collection
+      .find({ status: 'published' })
+      .toArray();
+    
+    // Count tag frequency
+    const tagCounts = {};
+    blogs.forEach(blog => {
+      if (blog.tags && Array.isArray(blog.tags)) {
+        blog.tags.forEach(tag => {
+          if (tag && tag.trim() !== '') {
+            const normalizedTag = tag.trim();
+            tagCounts[normalizedTag] = (tagCounts[normalizedTag] || 0) + 1;
+          }
+        });
+      }
+    });
+    
+    // Convert to array and sort by frequency (descending)
+    const tagsArray = Object.entries(tagCounts)
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count)
+      .map(item => item.tag);
+    
+    // Return top 15 most popular tags
+    return tagsArray.slice(0, 15);
+    
+  } catch (error) {
+    console.error('❌ Error fetching blog tags:', error);
     throw error;
   }
 }
@@ -579,6 +620,7 @@ export {
   updateBlog,
   deleteBlog,
   getBlogCategories,
+  getBlogTags,
   getRecentBlogs,
   addComment,
   getBlogComments,

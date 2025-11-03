@@ -10,10 +10,11 @@ export async function GET(request) {
     const search = searchParams.get('search') || '';
     const category = searchParams.get('category') || '';
     const status = searchParams.get('status') || 'published';
+    const featured = searchParams.get('featured');
 
-    console.log('📝 Fetching blogs with params:', { page, limit, search, category, status });
+    console.log('📝 Fetching blogs with params:', { page, limit, search, category, status, featured });
 
-    const result = await getBlogs(page, limit, search, category, status);
+    const result = await getBlogs(page, limit, search, category, status, featured);
 
     console.log('✅ Blogs fetched successfully:', { 
       count: result.blogs.length, 

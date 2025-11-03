@@ -1,7 +1,7 @@
 "use client"
 
 const BlogMain = (props) => {
-    const { Slug, blogImage, blogTitle, blogDescription, blogAuthor, blogPublishedDate, authorImg, blogCategory } = props;
+    const { Slug, blogImage, blogTitle, blogDescription, blogAuthor, blogPublishedDate, authorImg, blogCategory, isFeatured = false } = props;
     
     // Helper function to get the correct image URL
     const getImageUrl = (imagePath) => {
@@ -35,6 +35,112 @@ const BlogMain = (props) => {
         return `/assets/images/testimonials/${authorImagePath}`;
     };
     
+    // Featured article with overlay style
+    if (isFeatured) {
+        return (
+            <a href={`/blogs/${Slug}`} style={{ textDecoration: 'none' }}>
+                <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    aspectRatio: '16/10',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.4)';
+                    const img = e.currentTarget.querySelector('.featured-img');
+                    if (img) img.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+                    const img = e.currentTarget.querySelector('.featured-img');
+                    if (img) img.style.transform = 'scale(1)';
+                }}>
+                    {/* Image */}
+                    <img 
+                        src={getImageUrl(blogImage)} 
+                        alt="blog_image" 
+                        className="featured-img"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            transition: 'transform 0.3s ease'
+                        }}
+                        onError={(e) => {
+                            console.log('❌ Image failed to load:', e.target.src);
+                            e.target.src = '/assets/images/blog/01.webp';
+                        }}
+                    />
+                    
+                    {/* Dark Overlay */}
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.7) 100%)'
+                    }}></div>
+                    
+                    {/* Content Overlay */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        padding: '24px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px'
+                    }}>
+                        {/* Category Tag */}
+                        <span style={{
+                            display: 'inline-block',
+                            background: 'rgba(255, 255, 255, 0.25)',
+                            backdropFilter: 'blur(10px)',
+                            color: 'white',
+                            padding: '5px 12px',
+                            borderRadius: '20px',
+                            fontSize: '10px',
+                            fontWeight: '700',
+                            width: 'fit-content',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px',
+                            border: '1px solid rgba(255, 255, 255, 0.3)'
+                        }}>
+                            {blogCategory || 'Uncategorized'}
+                        </span>
+                        
+                        {/* Title */}
+                        <h3 style={{
+                            fontSize: '22px',
+                            fontWeight: '800',
+                            color: 'white',
+                            lineHeight: '1.3',
+                            margin: 0,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
+                        }}>
+                            {blogTitle ? blogTitle : 'How to growing your business'}
+                        </h3>
+                    </div>
+                </div>
+            </a>
+        );
+    }
+
+    // Regular article style
     return (
         <div style={{
             display: 'flex',
@@ -88,7 +194,7 @@ const BlogMain = (props) => {
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                padding: '20px 0 28px 0',
+                padding: '24px 0 28px 0',
                 minHeight: '300px'
             }}>
                 <div className="top-area" style={{
@@ -98,16 +204,16 @@ const BlogMain = (props) => {
                 }}>
                     <span style={{
                         display: 'inline-block',
-                        background: 'transparent',
+                        background: 'linear-gradient(135deg, rgba(9, 99, 211, 0.1) 0%, rgba(0, 86, 179, 0.1) 100%)',
                         color: 'var(--color-primary)',
-                        padding: '4px 4px',
-                        borderRadius: '12px',
-                        fontSize: '10px',
-                        fontWeight: '500',
+                        padding: '6px 20px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '600',
                         marginBottom: '20px',
                         width: 'fit-content',
                         textTransform: 'uppercase',
-                        letterSpacing: '0.3px',
+                        letterSpacing: '0.5px',
                         border: 'none'
                     }}>
                         {blogCategory || 'Uncategorized'}
@@ -119,14 +225,21 @@ const BlogMain = (props) => {
                             color: 'var(--color-heading-1)',
                             lineHeight: '1.4',
                             marginBottom: '24px',
-                            padding: '0px 4px',
+                            padding: '0px 20px',
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             minHeight: '56px',
-                            maxHeight: '56px'
+                            maxHeight: '56px',
+                            transition: 'color 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.target.style.color = 'var(--color-primary)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.color = 'var(--color-heading-1)';
                         }}>
                             {blogTitle ? blogTitle : 'How to growing your business'}
                         </h3>
@@ -134,16 +247,16 @@ const BlogMain = (props) => {
                     <p className="disc blog-card-description" style={{
                         fontSize: '14px',
                         color: '#666',
-                        lineHeight: '1.6',
-                        padding: '0px 4px',
+                        lineHeight: '1.7',
+                        padding: '0px 20px',
                         flex: 1,
                         display: '-webkit-box',
                         WebkitLineClamp: 4,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        minHeight: '90px',
-                        maxHeight: '90px'
+                        minHeight: '95px',
+                        maxHeight: '95px'
                     }}>
                         {blogDescription ? blogDescription : 'How do you create compelling presentations that wow your colleagues and impress your managers? This comprehensive guide will help you master the art of professional presentations.'}
                     </p>
@@ -154,6 +267,8 @@ const BlogMain = (props) => {
                             gap: '15px',
                             marginTop: 'auto',
                             paddingTop: '20px',
+                            paddingLeft: '20px',
+                            paddingRight: '20px',
                             borderTop: '1px solid #f0f0f0'
                         }}>
                             <div style={{
@@ -165,8 +280,8 @@ const BlogMain = (props) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                background: '#f8f9fa',
-                                border: '2px solid #e9ecef'
+                                background: 'linear-gradient(135deg, rgba(9, 99, 211, 0.1) 0%, rgba(0, 86, 179, 0.1) 100%)',
+                                border: '2px solid rgba(9, 99, 211, 0.2)'
                             }}>
                                 <img 
                                     src={getAuthorImageUrl(authorImg)} 
@@ -198,10 +313,15 @@ const BlogMain = (props) => {
                                 }}>{blogAuthor}</h6>
                                 <span style={{
                                     fontSize: '12px',
-                                    color: '#666',
-                                    marginTop: '1px',
-                                    display: 'block'
-                                }}>{blogPublishedDate ? new Date(blogPublishedDate).toLocaleDateString() : "No date"}</span>
+                                    color: '#888',
+                                    marginTop: '2px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px'
+                                }}>
+                                    <i className="far fa-clock" style={{ fontSize: '11px' }}></i>
+                                    {blogPublishedDate ? new Date(blogPublishedDate).toLocaleDateString() : "No date"}
+                                </span>
                             </div>
                         </div>
                     ) : (
@@ -209,14 +329,22 @@ const BlogMain = (props) => {
                             <div className="bottom-date-area" style={{
                                 marginTop: 'auto',
                                 paddingTop: '20px',
+                                paddingLeft: '20px',
+                                paddingRight: '20px',
                                 borderTop: '1px solid #f0f0f0',
                                 textAlign: 'center'
                             }}>
                                 <span style={{
                                     fontSize: '12px',
-                                    color: '#666',
-                                    display: 'block'
-                                }}>{new Date(blogPublishedDate).toLocaleDateString()}</span>
+                                    color: '#888',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px'
+                                }}>
+                                    <i className="far fa-clock" style={{ fontSize: '11px' }}></i>
+                                    {new Date(blogPublishedDate).toLocaleDateString()}
+                                </span>
                             </div>
                         )
                     )}

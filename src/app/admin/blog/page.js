@@ -15,6 +15,7 @@ export default function BlogManagementPage() {
   const [editingBlog, setEditingBlog] = useState(null);
   const [showComments, setShowComments] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all'); // Add status filter state
+  const [categoryFilter, setCategoryFilter] = useState('all'); // Add category filter state
   
   // Form states
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ export default function BlogManagementPage() {
     category: '',
     tags: [],
     status: 'published',
+    featured: false,
     author: '',
     authorId: '',
     authorBio: '',
@@ -38,6 +40,9 @@ export default function BlogManagementPage() {
   const [imageUploadType, setImageUploadType] = useState('url'); // 'url' or 'upload'
   const [bannerUploadType, setBannerUploadType] = useState('url');
   const [uploadingImage, setUploadingImage] = useState(false);
+  
+  // Tags input state (raw string for input field)
+  const [tagsInput, setTagsInput] = useState('');
 
   // Editor states
   const [editorMode, setEditorMode] = useState('visual'); // 'visual', 'html', or 'template'
@@ -316,6 +321,10 @@ export default function BlogManagementPage() {
           replacement = `\n## ${selectedText}`;
         } else if (value === '<h3>') {
           replacement = `\n### ${selectedText}`;
+        } else if (value === '<h4>') {
+          replacement = `\n#### ${selectedText}`;
+        } else if (value === '<h5>') {
+          replacement = `\n##### ${selectedText}`;
         } else if (value === '<p>') {
           replacement = `\n${selectedText}`;
         }
@@ -556,10 +565,10 @@ export default function BlogManagementPage() {
 
   // Handle form input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -577,9 +586,12 @@ export default function BlogManagementPage() {
     }));
   };
 
-  // Handle tags input
+  // Handle tags input (keep raw input for editing)
   const handleTagsChange = (e) => {
-    const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+    const value = e.target.value;
+    setTagsInput(value);
+    // Also update formData immediately for real-time sync
+    const tags = value.split(',').map(tag => tag.trim()).filter(tag => tag);
     setFormData(prev => ({
       ...prev,
       tags
@@ -727,6 +739,7 @@ export default function BlogManagementPage() {
       category: blog.category,
       tags: blog.tags || [],
       status: blog.status,
+      featured: blog.featured || false,
       author: blog.author,
       authorId: blog.authorId || '',
       authorBio: blog.authorBio || '',
@@ -735,6 +748,7 @@ export default function BlogManagementPage() {
       bannerImg: blog.bannerImg,
       publishedDate: formattedDate
     });
+    setTagsInput((blog.tags || []).join(', ')); // Set tags input for editing
     setEditorContent(blog.content); // Set editor content for editing
     setEditorMode('visual'); // Set editor to visual mode for editing
     setShowPreview(false); // Reset preview mode when editing
@@ -760,6 +774,7 @@ export default function BlogManagementPage() {
       category: '',
       tags: [],
       status: 'published',
+      featured: false,
       author: '',
       authorId: '',
       authorBio: '',
@@ -773,6 +788,7 @@ export default function BlogManagementPage() {
     setShowPreview(false); // Reset preview mode
     setImageUploadType('url');
     setBannerUploadType('url');
+    setTagsInput(''); // Reset tags input
     // Reset template data
     setTemplateData({
       mainTitle: '',
@@ -799,10 +815,13 @@ export default function BlogManagementPage() {
 
   // Filter blogs based on status
   const getFilteredBlogs = () => {
-    if (statusFilter === 'all') {
-      return blogs;
-    }
-    return blogs.filter(blog => blog.status === statusFilter);
+    return blogs.filter(blog => {
+      // Filter by status
+      const matchesStatus = statusFilter === 'all' || blog.status === statusFilter;
+      // Filter by category
+      const matchesCategory = categoryFilter === 'all' || blog.category === categoryFilter;
+      return matchesStatus && matchesCategory;
+    });
   };
 
   // Get status counts
@@ -814,6 +833,14 @@ export default function BlogManagementPage() {
       archived: blogs.filter(blog => blog.status === 'archived').length
     };
     return counts;
+  };
+
+  // Get unique categories from blogs
+  const getUniqueCategories = () => {
+    const categories = blogs
+      .map(blog => blog.category)
+      .filter(category => category && category.trim() !== '');
+    return [...new Set(categories)].sort();
   };
 
      // Initialize data
@@ -971,6 +998,26 @@ export default function BlogManagementPage() {
                       <option value="draft">Draft</option>
                       <option value="archived">Archived</option>
                     </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        name="featured"
+                        checked={formData.featured}
+                        onChange={handleInputChange}
+                        style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                      />
+                      <span>⭐ Featured Article</span>
+                    </label>
+                    <small className="text-muted">
+                      Featured articles will be prominently displayed on the blog page
+                    </small>
                   </div>
                 </div>
               </div>
@@ -1160,7 +1207,7 @@ export default function BlogManagementPage() {
                 <input
                   type="text"
                   name="tags"
-                  value={formData.tags.join(', ')}
+                  value={tagsInput}
                   onChange={handleTagsChange}
                   className="form-control"
                   placeholder="Technology, Business, Innovation"
@@ -1268,6 +1315,22 @@ export default function BlogManagementPage() {
                             title="Heading 3"
                           >
                             H3
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('formatBlock', '<h4>')}
+                            className="rts-btn btn-border"
+                            title="Heading 4"
+                          >
+                            H4
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => execCommand('formatBlock', '<h5>')}
+                            className="rts-btn btn-border"
+                            title="Heading 5"
+                          >
+                            H5
                           </button>
                           <button
                             type="button"
@@ -1581,6 +1644,7 @@ export default function BlogManagementPage() {
                         }}>
                           <h5 style={{ marginBottom: '15px', color: '#333' }}>Preview:</h5>
                           <div 
+                            className="editor-preview"
                             dangerouslySetInnerHTML={{ 
                               __html: editorContent
                                 .replace(/\[([^\]]+)\]\(([^)]+)\)\{target="_blank"\}/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>') // Links with target="_blank"
@@ -1592,6 +1656,8 @@ export default function BlogManagementPage() {
                                 .replace(/^# (.*$)/gm, '<h1>$1</h1>') // H1
                                 .replace(/^## (.*$)/gm, '<h2>$1</h2>') // H2
                                 .replace(/^### (.*$)/gm, '<h3>$1</h3>') // H3
+                                .replace(/^#### (.*$)/gm, '<h4>$1</h4>') // H4
+                                .replace(/^##### (.*$)/gm, '<h5>$1</h5>') // H5
                                 .replace(/^• (.*$)/gm, '<li>$1</li>') // Bullet list
                                 .replace(/^1\. (.*$)/gm, '<li>$1</li>') // Numbered list
                                 .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>') // Blockquote
@@ -1884,6 +1950,7 @@ export default function BlogManagementPage() {
                           }}>
                             <h5 style={{ marginBottom: '15px', color: '#333' }}>Template Preview:</h5>
                             <div 
+                              className="editor-preview"
                               dangerouslySetInnerHTML={{ 
                                 __html: generateTemplateHTML()
                               }}
@@ -1929,24 +1996,48 @@ export default function BlogManagementPage() {
               <h3>All Blogs ({getFilteredBlogs().length} of {blogs.length} total)</h3>
               
               {/* Status Filter */}
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter by Status:</span>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  style={{
-                    padding: '6px 12px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="all">All ({getStatusCounts().all})</option>
-                  <option value="published">Published ({getStatusCounts().published})</option>
-                  <option value="draft">Draft ({getStatusCounts().draft})</option>
-                  <option value="archived">Archived ({getStatusCounts().archived})</option>
-                </select>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '500' }}>Status:</span>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    style={{
+                      padding: '6px 12px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '14px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="all">All ({getStatusCounts().all})</option>
+                    <option value="published">Published ({getStatusCounts().published})</option>
+                    <option value="draft">Draft ({getStatusCounts().draft})</option>
+                    <option value="archived">Archived ({getStatusCounts().archived})</option>
+                  </select>
+                </div>
+                
+                {/* Category Filter */}
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '500' }}>Category:</span>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    style={{
+                      padding: '6px 12px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      minWidth: '150px'
+                    }}
+                  >
+                    <option value="all">All Categories</option>
+                    {getUniqueCategories().map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
             
@@ -2020,6 +2111,7 @@ export default function BlogManagementPage() {
                     <th>Title</th>
                     <th>Category</th>
                     <th>Status</th>
+                    <th>Featured</th>
                     <th>Author</th>
                     <th>Views</th>
                     <th>Comments</th>
@@ -2044,6 +2136,15 @@ export default function BlogManagementPage() {
                            <span className={`badge badge-${blog.status === 'published' ? 'success' : blog.status === 'draft' ? 'warning' : 'danger'}`}>
                              {blog.status}
                            </span>
+                         </td>
+                         <td>
+                           {blog.featured ? (
+                             <span className="badge" style={{ background: '#ffc107', color: '#000', fontWeight: '700' }}>
+                               ⭐ Featured
+                             </span>
+                           ) : (
+                             <span style={{ color: '#999' }}>—</span>
+                           )}
                          </td>
                          <td>{blog.author}</td>
                          <td>{blog.views || 0}</td>
@@ -2078,7 +2179,7 @@ export default function BlogManagementPage() {
                      ))
                    ) : (
                      <tr>
-                       <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                       <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
                          <div style={{ fontSize: '16px', marginBottom: '8px' }}>
                            {statusFilter === 'all' ? '📝' : statusFilter === 'published' ? '📰' : statusFilter === 'draft' ? '📝' : '📁'}
                          </div>
@@ -2287,7 +2388,7 @@ export default function BlogManagementPage() {
         }
         
         .badge {
-          padding: 4px 8px;
+          padding: 6px 20px;
           border-radius: 4px;
           font-size: 12px;
           font-weight: 600;
@@ -2563,9 +2664,9 @@ export default function BlogManagementPage() {
            text-justify: auto !important;
          }
 
-        /* Use your existing typography classes */
+        /* Typography classes matching public blog styles */
         .editor-content h1 {
-          font-size: var(--h1); /* Same size as blog title - use sparingly */
+          font-size: var(--h1);
           font-weight: var(--p-bold);
           margin: 30px 0 15px 0;
           color: var(--color-heading-1);
@@ -2573,7 +2674,7 @@ export default function BlogManagementPage() {
         }
 
         .editor-content h2 {
-          font-size: 32px; /* Reduced from 48px to work better with blog title */
+          font-size: var(--h2);
           font-weight: var(--p-bold);
           margin: 25px 0 12px 0;
           color: var(--color-heading-1);
@@ -2584,6 +2685,30 @@ export default function BlogManagementPage() {
           font-size: var(--h3);
           font-weight: var(--p-bold);
           margin: 20px 0 10px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-content h4 {
+          font-size: var(--h4);
+          font-weight: var(--p-bold);
+          margin: 18px 0 8px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-content h5 {
+          font-size: var(--h5);
+          font-weight: var(--p-bold);
+          margin: 16px 0 8px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-content h6 {
+          font-size: var(--h6);
+          font-weight: var(--p-bold);
+          margin: 14px 0 8px 0;
           color: var(--color-heading-1);
           line-height: 1.2;
         }
@@ -2619,13 +2744,90 @@ export default function BlogManagementPage() {
           line-height: var(--line-height-b1);
         }
 
-                 .editor-content hr {
-           margin: 25px 0;
-           border: none;
-           border-top: 2px solid var(--color-border);
-         }
-         
-         /* Layout Options */
+        .editor-content hr {
+          margin: 25px 0;
+          border: none;
+          border-top: 2px solid var(--color-border);
+        }
+
+        /* Editor Preview Styles (for template preview) */
+        .editor-preview h1 {
+          font-size: var(--h1);
+          font-weight: var(--p-bold);
+          margin: 30px 0 15px 0;
+          color: var(--color-heading-1);
+          line-height: 1.3;
+        }
+
+        .editor-preview h2 {
+          font-size: var(--h2);
+          font-weight: var(--p-bold);
+          margin: 25px 0 12px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-preview h3 {
+          font-size: var(--h3);
+          font-weight: var(--p-bold);
+          margin: 20px 0 10px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-preview h4 {
+          font-size: var(--h4);
+          font-weight: var(--p-bold);
+          margin: 18px 0 8px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-preview h5 {
+          font-size: var(--h5);
+          font-weight: var(--p-bold);
+          margin: 16px 0 8px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-preview h6 {
+          font-size: var(--h6);
+          font-weight: var(--p-bold);
+          margin: 14px 0 8px 0;
+          color: var(--color-heading-1);
+          line-height: 1.2;
+        }
+
+        .editor-preview p {
+          font-size: var(--font-size-b1);
+          line-height: var(--line-height-b1);
+          margin: 15px 0;
+          color: var(--color-body);
+        }
+
+        .editor-preview ul, .editor-preview ol {
+          margin: 15px 0;
+          padding-left: 30px;
+        }
+
+        .editor-preview li {
+          font-size: var(--font-size-b1);
+          line-height: var(--line-height-b1);
+          margin: 8px 0;
+          color: var(--color-body);
+        }
+
+        .editor-preview blockquote {
+          margin: 20px 0;
+          padding: 15px 25px;
+          border-left: 4px solid var(--color-primary);
+          background: #f8f9fa;
+          font-style: italic;
+          color: var(--color-body);
+        }
+        
+        /* Layout Options */
          .editor-content .two-column-layout {
            display: grid;
            grid-template-columns: 1fr 1fr;
@@ -2732,13 +2934,25 @@ export default function BlogManagementPage() {
            }
            
            .editor-content h2 {
-             font-size: 26px; /* Reduced proportionally for mobile */
+             font-size: 28px;
            }
            
-                       .editor-content h3 {
-              font-size: 24px;
-            }
-            
+           .editor-content h3 {
+             font-size: 24px;
+           }
+           
+           .editor-content h4 {
+             font-size: 20px;
+           }
+           
+           .editor-content h5 {
+             font-size: 20px;
+           }
+           
+           .editor-content h6 {
+             font-size: 18px;
+           }
+           
             /* Mobile Layout Adjustments */
             .editor-content .two-column-layout,
             .editor-content .three-column-layout {
