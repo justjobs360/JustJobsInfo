@@ -16,7 +16,7 @@ const BackToTop = dynamic(() => import("@/components/common/BackToTop"), {
   ssr: false
 });
 
-// Dynamic imports for below-the-fold components - optimized loading
+// Dynamic imports for below-the-fold components - optimized loading with intersection observer
 const LargeVideo = dynamic(() => import("@/components/large-video/LargeVideo"), {
   loading: () => <CenteredLoader minHeight="400px" />,
   ssr: false
@@ -27,6 +27,7 @@ const ServiceOne = dynamic(() => import("@/components/services/ServiceOne"), {
   ssr: true
 });
 
+// Load CounterUp only when visible on mobile
 const CounterUp = dynamic(() => import("@/components/counterup/CounterUp"), {
   loading: () => <CenteredLoader minHeight="200px" />,
   ssr: false

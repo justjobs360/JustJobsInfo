@@ -9,6 +9,8 @@ const cabin = Cabin({
   weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-cabin',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 
 export const metadata = {

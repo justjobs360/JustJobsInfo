@@ -26,7 +26,8 @@ function HeaderOne() {
             }
         };
 
-        window.addEventListener('scroll', handleScroll);
+        // Use passive listener for better mobile performance
+        window.addEventListener('scroll', handleScroll, { passive: true });
 
         // Clean up the event listener on component unmount
         return () => {

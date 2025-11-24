@@ -10,11 +10,31 @@ function BannerOne() {
     
     useEffect(() => {
         let instance;
+        // Defer Rellax loading on mobile for better performance
         const loadRellax = async () => {
             if (typeof window === "undefined") return;
-            const rellaxModule = await import('rellax');
-            const Rellax = rellaxModule.default ?? rellaxModule;
-            instance = new Rellax(".rellax", { speed: -1 });
+            // Check if mobile and defer loading
+            const isMobile = window.innerWidth < 768;
+            if (isMobile) {
+                // Use requestIdleCallback on mobile
+                if (typeof requestIdleCallback !== 'undefined') {
+                    requestIdleCallback(async () => {
+                        const rellaxModule = await import('rellax');
+                        const Rellax = rellaxModule.default ?? rellaxModule;
+                        instance = new Rellax(".rellax", { speed: -1 });
+                    }, { timeout: 2000 });
+                } else {
+                    setTimeout(async () => {
+                        const rellaxModule = await import('rellax');
+                        const Rellax = rellaxModule.default ?? rellaxModule;
+                        instance = new Rellax(".rellax", { speed: -1 });
+                    }, 100);
+                }
+            } else {
+                const rellaxModule = await import('rellax');
+                const Rellax = rellaxModule.default ?? rellaxModule;
+                instance = new Rellax(".rellax", { speed: -1 });
+            }
         };
 
         loadRellax();

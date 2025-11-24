@@ -64,11 +64,11 @@ export default function ClientLayout({ children }) {
       try {
         // Use requestIdleCallback for better performance
         const fetchData = async () => {
-          const response = await fetch('/api/admin/seo-settings');
-          const result = await response.json();
-          
-          if (result.success) {
-            setSeoSettings(result.data);
+        const response = await fetch('/api/admin/seo-settings');
+        const result = await response.json();
+        
+        if (result.success) {
+          setSeoSettings(result.data);
           }
         };
 

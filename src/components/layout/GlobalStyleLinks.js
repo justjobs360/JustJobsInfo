@@ -20,13 +20,14 @@ export default function GlobalStyleLinks() {
       {/* Preconnect to same origin for faster CSS loading */}
       <link rel="preconnect" href="/" />
       
-      {/* Preload critical CSS */}
+      {/* Preload critical CSS - inline on mobile for faster FCP */}
       {criticalStyles.map((href) => (
         <Fragment key={href}>
           <link rel="preload" as="style" href={href} />
           <link
             rel="stylesheet"
             href={href}
+            media="all"
           />
         </Fragment>
       ))}
@@ -67,11 +68,15 @@ export default function GlobalStyleLinks() {
               });
             };
 
+            // On mobile, defer loading even more for better performance
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            const delay = isMobile ? 1500 : 500;
+
             // Use requestIdleCallback for better performance, fallback to setTimeout
             if (typeof requestIdleCallback !== 'undefined') {
-              requestIdleCallback(hydrateAsyncStyles, { timeout: 2000 });
+              requestIdleCallback(hydrateAsyncStyles, { timeout: delay });
             } else {
-              setTimeout(hydrateAsyncStyles, 1);
+              setTimeout(hydrateAsyncStyles, isMobile ? 1000 : 100);
             }
           })();
         `}

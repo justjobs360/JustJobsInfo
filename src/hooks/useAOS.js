@@ -30,11 +30,24 @@ export default function useAOS(options = {}) {
   useEffect(() => {
     let isCancelled = false;
 
-    loadAOS().then((AOS) => {
-      if (isCancelled || !AOS) return;
+    // On mobile, defer AOS loading for better performance
+    const initAOS = () => {
+      loadAOS().then((AOS) => {
+        if (isCancelled || !AOS) return;
+        AOS.init(mergedOptions);
+      });
+    };
 
-      AOS.init(mergedOptions);
-    });
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      // Defer on mobile using requestIdleCallback
+      if (typeof requestIdleCallback !== 'undefined') {
+        requestIdleCallback(initAOS, { timeout: 1000 });
+      } else {
+        setTimeout(initAOS, 200);
+      }
+    } else {
+      initAOS();
+    }
 
     return () => {
       isCancelled = true;
