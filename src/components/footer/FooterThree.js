@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import Link from 'next/link';
+import Image from 'next/image';
 function FooterThree() {
   return (
     <div>
@@ -13,7 +14,13 @@ function FooterThree() {
                 <div className="col-lg-5">
                     <div className="logo-area">
                     <Link href="#" className="logo">
-                        <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="JustJobs logo" />
+                        <Image
+                            src="/assets/images/logo/justjobslogo.png"
+                            className="header-logo"
+                            alt="JustJobs logo"
+                            width={160}
+                            height={50}
+                        />
                     </Link>
                     <p className="disc">
                         JustJobs is a leading career platform that helps job seekers find their dream jobs 

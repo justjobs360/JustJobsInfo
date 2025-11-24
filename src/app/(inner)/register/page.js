@@ -1,5 +1,6 @@
-"use client";
+\"use client\";
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { useRouter } from 'next/navigation';
@@ -334,7 +335,13 @@ export default function RegisterPage() {
                             <div className="register-form-wrapper">
                                 <div className="register-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
+                                        <Image
+                                            className="header-logo"
+                                            src="/assets/images/logo/justjobslogo.png"
+                                            alt="logo"
+                                            width={160}
+                                            height={50}
+                                        />
                                     </Link>
                                     <h2 className="title">Create Account</h2>
                                     <p className="subtitle">Please fill in the details to register</p>

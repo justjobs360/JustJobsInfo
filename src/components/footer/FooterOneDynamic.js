@@ -153,7 +153,13 @@ function FooterOneDynamic() {
                         <div className="col-lg-5 col-md-12">
                             <div className="logo-area">
                                 <Link href="/#" className="logo">
-                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="JustJobs logo" />
+                                    <Image
+                                        src="/assets/images/logo/justjobslogo.png"
+                                        className="header-logo"
+                                        alt="JustJobs logo"
+                                        width={160}
+                                        height={50}
+                                    />
                                 </Link>
                                 <p className="disc" dangerouslySetInnerHTML={{ __html: footerData.description }} />
                             </div>
