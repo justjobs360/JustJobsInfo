@@ -20,39 +20,50 @@ export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(null);
 
     useEffect(() => {
-        // Only initialize Firebase on the client side
+        // Only initialize Firebase on the client side - defer for better mobile performance
         if (typeof window !== 'undefined') {
-            import('@/config/firebase').then(({ auth: firebaseAuth }) => {
-                setAuth(firebaseAuth);
-                
-                const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
-                    console.log('AuthStateChanged:', user?.email);
-                    setUser(user);
+            // Use requestIdleCallback to defer Firebase initialization on mobile
+            const initFirebase = () => {
+                import('@/config/firebase').then(({ auth: firebaseAuth }) => {
+                    setAuth(firebaseAuth);
                     
-                    // Get user role if authenticated
-                    if (user) {
-                        try {
-                            console.log('Fetching user role for:', user.uid);
-                            const roleData = await UserRoleService.getUserRole(user.uid);
-                            console.log('User role data:', roleData);
-                            setUserRole(roleData);
-                        } catch (error) {
-                            console.error('Error getting user role:', error);
-                            setUserRole({ role: USER_ROLES.USER, permissions: [] });
+                    const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+                        console.log('AuthStateChanged:', user?.email);
+                        setUser(user);
+                        
+                        // Get user role if authenticated
+                        if (user) {
+                            try {
+                                console.log('Fetching user role for:', user.uid);
+                                const roleData = await UserRoleService.getUserRole(user.uid);
+                                console.log('User role data:', roleData);
+                                setUserRole(roleData);
+                            } catch (error) {
+                                console.error('Error getting user role:', error);
+                                setUserRole({ role: USER_ROLES.USER, permissions: [] });
+                            }
+                        } else {
+                            console.log('No user, setting userRole to null');
+                            setUserRole(null);
                         }
-                    } else {
-                        console.log('No user, setting userRole to null');
-                        setUserRole(null);
-                    }
-                    
+                        
+                        setLoading(false);
+                    });
+
+                    return () => unsubscribe();
+                }).catch((error) => {
+                    console.error('Firebase initialization error:', error);
                     setLoading(false);
                 });
+            };
 
-                return () => unsubscribe();
-            }).catch((error) => {
-                console.error('Firebase initialization error:', error);
-                setLoading(false);
-            });
+            // Defer Firebase initialization to improve initial page load
+            if (typeof requestIdleCallback !== 'undefined') {
+                requestIdleCallback(initFirebase, { timeout: 3000 });
+            } else {
+                // Fallback: delay by 500ms to let critical resources load first
+                setTimeout(initFirebase, 500);
+            }
         } else {
             setLoading(false);
         }
@@ -106,7 +117,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 }; 
