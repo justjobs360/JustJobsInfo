@@ -1,9 +1,14 @@
 "use client";
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/contexts/AuthContext';
-import GDPRConsent from '@/components/common/GDPRConsent';
+
+// Lazy load GDPR consent - not critical for initial render
+const GDPRConsent = dynamic(() => import('@/components/common/GDPRConsent'), {
+  ssr: false
+});
 
 // Google Analytics Component
 function GoogleAnalytics({ gaId }) {
@@ -54,14 +59,23 @@ export default function ClientLayout({ children }) {
   const [seoSettings, setSeoSettings] = useState(null);
   
   useEffect(() => {
-    // Fetch SEO settings for Google Analytics and Search Console
+    // Fetch SEO settings for Google Analytics and Search Console - defer to avoid blocking
     const fetchSeoSettings = async () => {
       try {
-        const response = await fetch('/api/admin/seo-settings');
-        const result = await response.json();
-        
-        if (result.success) {
-          setSeoSettings(result.data);
+        // Use requestIdleCallback for better performance
+        const fetchData = async () => {
+          const response = await fetch('/api/admin/seo-settings');
+          const result = await response.json();
+          
+          if (result.success) {
+            setSeoSettings(result.data);
+          }
+        };
+
+        if (typeof requestIdleCallback !== 'undefined') {
+          requestIdleCallback(fetchData, { timeout: 2000 });
+        } else {
+          setTimeout(fetchData, 100);
         }
       } catch (error) {
         console.error('Failed to load SEO settings:', error);
@@ -112,7 +126,7 @@ export default function ClientLayout({ children }) {
 
       <Script
         src="/assets/js/plugins/smooth-scroll.js"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
 
       <GDPRConsent />

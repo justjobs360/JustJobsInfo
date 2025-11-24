@@ -2,14 +2,8 @@ import { Fragment } from 'react';
 import Script from 'next/script';
 
 const criticalStyles = [
-  {
-    href: '/assets/css/vendor/bootstrap.min.css',
-    fetchPriority: 'high',
-  },
-  {
-    href: '/assets/css/style.css',
-    fetchPriority: 'high',
-  },
+  '/assets/css/vendor/bootstrap.min.css',
+  '/assets/css/style.css',
 ];
 
 const asyncStyles = [
@@ -23,13 +17,18 @@ const asyncStyles = [
 export default function GlobalStyleLinks() {
   return (
     <>
-      {criticalStyles.map(({ href, fetchPriority }) => (
-        <link
-          key={href}
-          rel="stylesheet"
-          href={href}
-          fetchPriority={fetchPriority}
-        />
+      {/* Preconnect to same origin for faster CSS loading */}
+      <link rel="preconnect" href="/" />
+      
+      {/* Preload critical CSS */}
+      {criticalStyles.map((href) => (
+        <Fragment key={href}>
+          <link rel="preload" as="style" href={href} />
+          <link
+            rel="stylesheet"
+            href={href}
+          />
+        </Fragment>
       ))}
 
       {asyncStyles.map((href) => (
@@ -68,10 +67,11 @@ export default function GlobalStyleLinks() {
               });
             };
 
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', hydrateAsyncStyles, { once: true });
+            // Use requestIdleCallback for better performance, fallback to setTimeout
+            if (typeof requestIdleCallback !== 'undefined') {
+              requestIdleCallback(hydrateAsyncStyles, { timeout: 2000 });
             } else {
-              hydrateAsyncStyles();
+              setTimeout(hydrateAsyncStyles, 1);
             }
           })();
         `}

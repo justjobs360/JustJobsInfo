@@ -1,46 +1,46 @@
 "use client";
 import dynamic from 'next/dynamic';
 import BannerOne from "@/components/banner/BannerOne";
-import BackToTop from "@/components/common/BackToTop";
 import HeaderOne from "@/components/header/HeaderOne";
-import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import DynamicMetaTags from "@/components/common/DynamicMetaTags";
 import StructuredData from "@/components/common/StructuredData";
 
-// Dynamic imports for below-the-fold components
-const LargeVideo = dynamic(() => import("@/components/large-video/LargeVideo"), {
-  loading: () => <div style={{ minHeight: '400px' }}>Loading...</div>,
+// Lazy load below-the-fold components
+const FooterOneDynamic = dynamic(() => import("@/components/footer/FooterOneDynamic"), {
   ssr: true
 });
 
+const BackToTop = dynamic(() => import("@/components/common/BackToTop"), {
+  ssr: false
+});
+
+// Dynamic imports for below-the-fold components - optimized loading
+const LargeVideo = dynamic(() => import("@/components/large-video/LargeVideo"), {
+  ssr: false
+});
+
 const ServiceOne = dynamic(() => import("@/components/services/ServiceOne"), {
-  loading: () => <div style={{ minHeight: '300px' }}>Loading...</div>,
   ssr: true
 });
 
 const CounterUp = dynamic(() => import("@/components/counterup/CounterUp"), {
-  loading: () => <div style={{ minHeight: '200px' }}>Loading...</div>,
-  ssr: true
+  ssr: false
 });
 
 const Pricing = dynamic(() => import("@/components/pricing/Pricing"), {
-  loading: () => <div style={{ minHeight: '400px' }}>Loading...</div>,
-  ssr: true
+  ssr: false
 });
 
 const FaqOne = dynamic(() => import("@/components/faq/FaqOne"), {
-  loading: () => <div style={{ minHeight: '300px' }}>Loading...</div>,
-  ssr: true
+  ssr: false
 });
 
 const Testimonials = dynamic(() => import("@/components/testimonials/Testimonials"), {
-  loading: () => <div style={{ minHeight: '300px' }}>Loading...</div>,
-  ssr: true
+  ssr: false
 });
 
 const CtaOne = dynamic(() => import("@/components/cta/CtaOne"), {
-  loading: () => <div style={{ minHeight: '200px' }}>Loading...</div>,
-  ssr: true
+  ssr: false
 });
 
 // Optional components (commented out) - ready when needed
