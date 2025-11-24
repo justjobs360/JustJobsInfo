@@ -1,9 +1,8 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
 // import { jarallax } from "jarallax";
 import { ReactSVG } from 'react-svg';
-import AOS from "aos";
-import "aos/dist/aos.css";
+import useAOS from '@/hooks/useAOS';
 function BannerTwo() {
     // useEffect(() => {
     //     // Initialize Jarallax when the component mounts
@@ -11,12 +10,7 @@ function BannerTwo() {
     //         speed: 0.5,
     //     });
     // }, []);
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <div>
             {/* rts banner area start */}

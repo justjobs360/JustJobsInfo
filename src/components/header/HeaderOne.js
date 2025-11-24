@@ -9,6 +9,7 @@ import { auth } from '@/config/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 function HeaderOne() {
     const [isSticky, setIsSticky] = useState(false);
@@ -113,7 +114,15 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <img className='header-logo' src="/assets/images/logo/justjobslogo.png"  alt="JustJobs logo" />
+                                    <Image
+                                        className='header-logo'
+                                        src="/assets/images/logo/justjobslogo.png"
+                                        alt="JustJobs logo"
+                                        width={599}
+                                        height={188}
+                                        priority
+                                        sizes="(max-width: 768px) 150px, 210px"
+                                    />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">
@@ -174,7 +183,14 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="JustJobs logo" />
+                                    <Image
+                                        className='header-logo'
+                                        src="/assets/images/logo/justjobslogo.png"
+                                        alt="JustJobs logo"
+                                        width={599}
+                                        height={188}
+                                        sizes="(max-width: 768px) 150px, 210px"
+                                    />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">
@@ -202,13 +218,12 @@ function HeaderOne() {
                                         </div>
                                     ) : (
                                         <a href="/login" className="rts-btn btn-border">
-                                        Login
-                                        <img
-                                            className="injectable"
-                                            src="/assets/images/service/icons/13.svg"
-                                            alt="arrow"
-                                        />
-                                    </a>
+                                            Login
+                                            <ReactSVG
+                                                src="/assets/images/service/icons/13.svg"
+                                                alt="arrow"
+                                            />
+                                        </a>
                                     )}
                                     <div id="menu-btn" className="menu-btn-toggle" onClick={toggleSidebar}>
                                         <svg

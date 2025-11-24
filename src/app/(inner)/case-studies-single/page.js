@@ -6,10 +6,9 @@ import HeaderTwo from "@/components/header/HeaderTwo";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-import AOS from "aos";
-import "aos/dist/aos.css";
-function page() {
-
+import useAOS from '@/hooks/useAOS';
+function CaseStudiesSinglePage() {
+    useAOS();
     return (
         <>
             <HeaderTwo />
@@ -348,4 +347,4 @@ function page() {
     )
 }
 
-export default page
+export default CaseStudiesSinglePage

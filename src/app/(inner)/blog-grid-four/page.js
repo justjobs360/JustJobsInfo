@@ -6,8 +6,6 @@ import HeaderTwo from "@/components/header/HeaderTwo";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import Link from 'next/link';
 function page() {
 

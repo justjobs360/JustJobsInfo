@@ -1,16 +1,10 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import AOS from "aos";
-import "aos/dist/aos.css";
+import useAOS from '@/hooks/useAOS';
 function ServiceSix() {
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <>
             {/* service area start */}

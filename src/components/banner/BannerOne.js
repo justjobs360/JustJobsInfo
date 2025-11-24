@@ -1,28 +1,32 @@
 "use client";
-import React from "react";
-import { useEffect } from "react";
-import Rellax from "rellax";
-import AOS from "aos";
+import React, { useEffect } from "react";
 import { ReactSVG } from 'react-svg';
 import { useAuth } from '@/contexts/AuthContext';
-import "aos/dist/aos.css";
 import "./banner.css";
+import useAOS from '@/hooks/useAOS';
 
 function BannerOne() {
     const { isAuthenticated } = useAuth();
     
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            new Rellax(".rellax", { speed: -1 });
-        }
+        let instance;
+        const loadRellax = async () => {
+            if (typeof window === "undefined") return;
+            const rellaxModule = await import('rellax');
+            const Rellax = rellaxModule.default ?? rellaxModule;
+            instance = new Rellax(".rellax", { speed: -1 });
+        };
+
+        loadRellax();
+
+        return () => {
+            if (instance?.destroy) {
+                instance.destroy();
+            }
+        };
     }, []);
     
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     
     return (
         <div>

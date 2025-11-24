@@ -1,17 +1,10 @@
 "use client"
 import React from 'react'
-import { useEffect } from "react";
-import AOS from "aos";
 import { ReactSVG } from 'react-svg';
-import "aos/dist/aos.css";
+import useAOS from '@/hooks/useAOS';
 import Link from 'next/link';
 function BlogTwo() {
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <div>
             <div className="rts-blog-area rts-section-gap position-relative">

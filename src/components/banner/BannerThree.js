@@ -1,16 +1,9 @@
 "use client"
 import React from 'react'
 import { ReactSVG } from 'react-svg';
-import AOS from "aos";
-import { useEffect } from "react";
-import "aos/dist/aos.css";
+import useAOS from '@/hooks/useAOS';
 function BannerThree() {
-  useEffect(() => {
-    AOS.init({
-      disableMutationObserver: true,
-      once: true,
-    });
-  }, []);
+  useAOS();
   return (
     <div>
       {/* banner area start */}

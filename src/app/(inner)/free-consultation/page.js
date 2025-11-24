@@ -4,12 +4,11 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import Testimonials from "@/components/testimonials/Testimonials";
-import { useEffect, useState } from "react";
-import AOS from "aos";
-import "aos/dist/aos.css";
+import { useState } from "react";
 import HeaderOne from "@/components/header/HeaderOne";
 import ReCaptcha from "@/components/security/ReCaptcha";
 import toast from 'react-hot-toast';
+import useAOS from '@/hooks/useAOS';
 
 export default function Home() {
     const [recaptchaToken, setRecaptchaToken] = useState(null);
@@ -24,12 +23,7 @@ export default function Home() {
         message: ''
     });
 
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
 
     const handleChange = (e) => {
         const { name, value } = e.target;

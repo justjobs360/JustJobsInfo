@@ -1,5 +1,6 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
+import Image from 'next/image';
 import BackToTop from "@/components/common/BackToTop";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
@@ -7,16 +8,10 @@ import HeaderOne from "@/components/header/HeaderOne";
 import CtaOne from "@/components/cta/CtaOne";
 import FaqOne from "@/components/faq/FaqOne";
 import Testimonials from "@/components/testimonials/Testimonials";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import CtaSix from '@/components/cta/CtaTeam';
+import useAOS from '@/hooks/useAOS';
 export default function Home() {
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <div className='#'>
             <HeaderOne />
@@ -42,7 +37,14 @@ export default function Home() {
                                     data-wow-delay=".1s"
                                     data-wow-duration=".5s"
                                 >
-                                    <img src="assets/images/team/01.webp" alt="career" />
+                                    <Image
+                                        src="/assets/images/team/01.webp"
+                                        alt="career"
+                                        width={1480}
+                                        height={720}
+                                        priority
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 700px"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -66,7 +68,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/02.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/02.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -81,7 +90,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/03.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/03.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -96,7 +112,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/04.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/04.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -111,7 +134,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/05.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/05.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -144,7 +174,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one" >
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/02.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/02.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -159,7 +196,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/03.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/03.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -174,7 +218,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/04.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/04.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -189,7 +240,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/05.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/05.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -204,7 +262,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/04.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/04.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
@@ -219,7 +284,14 @@ export default function Home() {
                             >
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
-                                        <img src="assets/images/team/05.webp" alt="team" />
+                                        <Image
+                                            src="/assets/images/team/05.webp"
+                                            alt="team"
+                                            width={900}
+                                            height={990}
+                                            loading="lazy"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                                        />
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">

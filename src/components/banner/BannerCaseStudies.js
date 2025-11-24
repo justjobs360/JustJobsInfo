@@ -1,16 +1,9 @@
 "use client";
-import { useEffect } from "react";
 import React from 'react'
 import { ReactSVG } from 'react-svg';
-import AOS from "aos";
-import "aos/dist/aos.css";
+import useAOS from '@/hooks/useAOS';
 function BannerCaseStudies() {
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <div>
             {/* rts case studies banner area start */}

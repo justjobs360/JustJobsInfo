@@ -4,11 +4,11 @@ import Script from 'next/script';
 const criticalStyles = [
   {
     href: '/assets/css/vendor/bootstrap.min.css',
-    fetchpriority: 'high',
+    fetchPriority: 'high',
   },
   {
     href: '/assets/css/style.css',
-    fetchpriority: 'high',
+    fetchPriority: 'high',
   },
 ];
 
@@ -23,12 +23,12 @@ const asyncStyles = [
 export default function GlobalStyleLinks() {
   return (
     <>
-      {criticalStyles.map(({ href, fetchpriority }) => (
+      {criticalStyles.map(({ href, fetchPriority }) => (
         <link
           key={href}
           rel="stylesheet"
           href={href}
-          fetchpriority={fetchpriority}
+          fetchPriority={fetchPriority}
         />
       ))}
 
@@ -44,7 +44,7 @@ export default function GlobalStyleLinks() {
         </Fragment>
       ))}
 
-      <Script id="async-style-loader" strategy="beforeInteractive">
+      <Script id="async-style-loader" strategy="afterInteractive">
         {`
           (function () {
             const hydrateAsyncStyles = () => {

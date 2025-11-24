@@ -1,14 +1,9 @@
 "use client"
 import { ReactSVG } from 'react-svg';
-import React, { useEffect } from 'react';
-import AOS from "aos";
+import React from 'react';
+import useAOS from '@/hooks/useAOS';
 function ServiceTwo() {
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <div>
 

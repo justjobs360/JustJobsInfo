@@ -1,16 +1,9 @@
 "use client";
 import React from 'react'
-import { useEffect } from "react";
-import AOS from "aos";
 import { ReactSVG } from 'react-svg';
-import "aos/dist/aos.css";
+import useAOS from '@/hooks/useAOS';
 function CtaFour() {
-  useEffect(() => {
-    AOS.init({
-        disableMutationObserver: true,
-        once: true,
-    });
-}, []);
+  useAOS();
   return (
     <div>
       <>

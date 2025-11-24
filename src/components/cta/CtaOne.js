@@ -1,22 +1,16 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
 // import SVGInject from 'svg-injector';
-import AOS from "aos";
-import "aos/dist/aos.css";
 import { ReactSVG } from 'react-svg';
 import './CtaOne.css';
+import useAOS from '@/hooks/useAOS';
 
 function CtaOne() {
     // useEffect(() => {
     //     // SVGInject will inject SVGs in images with the class 'injectable'
     //     SVGInject(document.querySelectorAll("img.injectable"));
     // }, []); // Empty dependency array means it runs once when the component mounts
-    useEffect(() => {
-        AOS.init({
-            disableMutationObserver: true,
-            once: true,
-        });
-    }, []);
+    useAOS();
     return (
         <div>
 
