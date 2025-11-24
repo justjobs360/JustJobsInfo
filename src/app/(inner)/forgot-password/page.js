@@ -1,6 +1,5 @@
-\"use client\";
+"use client";
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { useRouter } from 'next/navigation';
@@ -72,13 +71,7 @@ export default function ForgotPasswordPage() {
                             <div className="forgot-password-form-wrapper">
                                 <div className="forgot-password-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <Image
-                                            className="header-logo"
-                                            src="/assets/images/logo/justjobslogo.png"
-                                            alt="logo"
-                                            width={160}
-                                            height={50}
-                                        />
+                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
                                     </Link>
                                     <h2 className="title">Reset Your Password</h2>
                                     <p className="subtitle">Enter your email address and we&apos;ll send you a link to reset your password</p>

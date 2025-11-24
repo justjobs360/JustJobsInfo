@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Nav from './Nav';
 import Link from 'next/link';
 
@@ -50,13 +49,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <Image
-                                        src="/assets/images/logo/justjobslogo.png"
-                                        className="header-logo"
-                                        alt="logo"
-                                        width={160}
-                                        height={50}
-                                    />
+                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="logo" />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">
@@ -93,13 +86,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <Image
-                                        src="/assets/images/logo/justjobslogo.png"
-                                        className="header-logo"
-                                        alt="logo"
-                                        width={160}
-                                        height={50}
-                                    />
+                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="logo" />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">

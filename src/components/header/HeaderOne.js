@@ -1,6 +1,5 @@
-\"use client\"
+"use client"
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Nav from './Nav';
 import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
@@ -114,14 +113,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <Image
-                                        className="header-logo"
-                                        src="/assets/images/logo/justjobslogo.png"
-                                        alt="JustJobs logo"
-                                        width={160}
-                                        height={50}
-                                        priority
-                                    />
+                                    <img className='header-logo' src="/assets/images/logo/justjobslogo.png"  alt="JustJobs logo" />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">
@@ -182,13 +174,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <Image
-                                        className="header-logo"
-                                        src="/assets/images/logo/justjobslogo.png"
-                                        alt="JustJobs logo"
-                                        width={160}
-                                        height={50}
-                                    />
+                                    <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="JustJobs logo" />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">

@@ -1,6 +1,5 @@
-\"use client\";
+"use client";
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { auth } from '@/config/firebase';
 import { applyActionCode, checkActionCode } from 'firebase/auth';
@@ -240,14 +239,8 @@ export default function VerifyEmailPage() {
                         <div className="col-lg-12">
                             <div className="verify-form-wrapper">
                                 <div className="verify-header text-center">
-                                <Link href="/" className="logo-area">
-                                        <Image
-                                            className="header-logo"
-                                            src="/assets/images/logo/justjobslogo.png"
-                                            alt="logo"
-                                            width={160}
-                                            height={50}
-                                        />
+                                    <Link href="/" className="logo-area">
+                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
                                     </Link>
                                     <h2 className="title">Email Verification</h2>
                                     <p className="subtitle">Complete your account verification</p>

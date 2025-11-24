@@ -1,6 +1,5 @@
-\"use client\";
+"use client";
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { useRouter } from 'next/navigation';
@@ -142,13 +141,7 @@ export default function LoginPage() {
                             <div className="login-form-wrapper">
                                 <div className="login-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <Image
-                                            className="header-logo"
-                                            src="/assets/images/logo/justjobslogo.png"
-                                            alt="logo"
-                                            width={160}
-                                            height={50}
-                                        />
+                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
                                     </Link>
                                     <h2 className="title">Welcome Back</h2>
                                     <p className="subtitle">Please enter your credentials to login</p>

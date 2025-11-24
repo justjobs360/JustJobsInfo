@@ -1,6 +1,5 @@
 "use client"
 import React from 'react'
-import Image from 'next/image';
 import { ReactSVG } from 'react-svg';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -12,13 +11,11 @@ function Pricing() {
             {/* pricing area start */}
             <div className="rts-pricing-area rts-section-gapTop bg-gradient-pricing">
                 <div className="bg-shape-area">
-                    <Image
-                        src="/assets/images/pricing/01.png"
+                    <img
+                        loading="lazy"
+                        rel="preload"
+                        src="assets/images/pricing/01.png"
                         alt="shape"
-                        width={935}
-                        height={397}
-                        className="header-logo"
-                        priority={false}
                     />
                 </div>
                 <div className="container">
