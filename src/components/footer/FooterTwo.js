@@ -2,7 +2,6 @@
 import React from 'react'
 import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
-import BrandLogo from '@/components/common/BrandLogo';
 function FooterTwo() {
     return (
         <div>
@@ -54,7 +53,7 @@ function FooterTwo() {
                         <div className="col-lg-5 col-md-12">
                             <div className="logo-area">
                                 <Link href="#" className="logo">
-                                    <BrandLogo />
+                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="JustJobs logo" />
                                 </Link>
                                 <p className="disc">
                                     JustJobs is a leading career platform that helps job seekers find their dream jobs 

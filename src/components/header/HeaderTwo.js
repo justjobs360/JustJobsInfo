@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import { ReactSVG } from 'react-svg';
 import SideBar from './SideBar';
-import BrandLogo from '@/components/common/BrandLogo';
 function HeaderOne() {
     // sticky start
     const [isSticky, setIsSticky] = useState(false);
@@ -50,7 +49,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <BrandLogo priority />
+                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="logo" />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">
@@ -87,7 +86,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <BrandLogo />
+                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="logo" />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">

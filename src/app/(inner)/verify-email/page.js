@@ -9,7 +9,6 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
-import BrandLogo from "@/components/common/BrandLogo";
 
 export default function VerifyEmailPage() {
     const router = useRouter();
@@ -241,7 +240,7 @@ export default function VerifyEmailPage() {
                             <div className="verify-form-wrapper">
                                 <div className="verify-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <BrandLogo />
+                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
                                     </Link>
                                     <h2 className="title">Email Verification</h2>
                                     <p className="subtitle">Complete your account verification</p>

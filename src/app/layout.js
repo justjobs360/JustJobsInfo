@@ -1,16 +1,14 @@
-import "../../public/assets/css/plugins/fontawesome.css";
-import "../../public/assets/css/plugins/metismenu.css";
-import "../../public/assets/css/vendor/bootstrap.min.css";
-import "../../public/assets/css/style.css";
+import './globals.css';
+import { Cabin } from 'next/font/google';
 
-import { Cabin } from "next/font/google";
 import ClientLayout from '@/components/layout/ClientLayout';
+import GlobalStyleLinks from '@/components/layout/GlobalStyleLinks';
 
 const cabin = Cabin({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-cabin",
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-cabin',
 });
 
 export const metadata = {
@@ -68,8 +66,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`index-one ${cabin.variable}`}>
+    <html lang="en" className={cabin.variable}>
+      <head>
+        <GlobalStyleLinks />
+      </head>
+      <body className={`${cabin.className} index-one`}>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

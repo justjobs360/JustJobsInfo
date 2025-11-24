@@ -10,7 +10,6 @@ import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
 import './forgot-password.css';
-import BrandLogo from "@/components/common/BrandLogo";
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -72,7 +71,7 @@ export default function ForgotPasswordPage() {
                             <div className="forgot-password-form-wrapper">
                                 <div className="forgot-password-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <BrandLogo />
+                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
                                     </Link>
                                     <h2 className="title">Reset Your Password</h2>
                                     <p className="subtitle">Enter your email address and we&apos;ll send you a link to reset your password</p>

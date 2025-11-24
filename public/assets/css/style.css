@@ -35,9 +35,9 @@
   --s-extra-bold: 400;
   --s-black: 400;
   --transition: 0.3s;
-  --font-primary: var(--font-cabin), "Cabin", sans-serif;
-  --font-medium: var(--font-cabin), "Cabin", sans-serif;
-  --font-secondary: var(--font-cabin), "Cabin", sans-serif;
+  --font-primary: var(--font-cabin, "Cabin"), sans-serif;
+  --font-medium: var(--font-cabin, "Cabin"), sans-serif;
+  --font-secondary: var(--font-cabin, "Cabin"), sans-serif;
   --font-3: "fontawesome";
   --font-size-b1: 16px;
   --font-size-b2: 16px;

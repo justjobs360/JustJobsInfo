@@ -7,7 +7,6 @@ import BackToTop from "@/components/common/BackToTop";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeBuilderForm from "@/components/resume/ResumeBuilderForm";
 
-import html2pdf from 'html2pdf.js';
 import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, TabStopType } from 'docx';
 
 export default function ResumeEditorPage({ params }) {
@@ -1518,3 +1517,4 @@ export default function ResumeEditorPage({ params }) {
     </>
   );
 } 
+

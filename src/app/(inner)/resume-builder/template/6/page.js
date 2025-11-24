@@ -7,7 +7,6 @@ import BackToTop from "@/components/common/BackToTop";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeBuilderForm from "@/components/resume/ResumeBuilderForm";
 
-import html2pdf from 'html2pdf.js';
 import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, TabStopType } from 'docx';
 
 export default function ResumeEditorPage({ params }) {
@@ -252,6 +251,9 @@ export default function ResumeEditorPage({ params }) {
 
   // Function to split content into pages - Working implementation
   const splitContentIntoPages = (content) => {
+    if (typeof document === 'undefined') {
+      return [content];
+    }
     // Create a temporary container to measure content
     const tempContainer = document.createElement('div');
     tempContainer.innerHTML = content;
@@ -1512,3 +1514,5 @@ export default function ResumeEditorPage({ params }) {
     </>
   );
 } 
+
+

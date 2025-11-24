@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import ModalVideo from 'react-modal-video';
-import 'react-modal-video/css/modal-video.min.css';
 import { ReactSVG } from 'react-svg';
 function LargeVideo() {
 

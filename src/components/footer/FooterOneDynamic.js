@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './FooterOne.module.css';
-import BrandLogo from '@/components/common/BrandLogo';
 
 function FooterOneDynamic() {
     const pathname = usePathname();
@@ -154,7 +153,7 @@ function FooterOneDynamic() {
                         <div className="col-lg-5 col-md-12">
                             <div className="logo-area">
                                 <Link href="/#" className="logo">
-                                    <BrandLogo />
+                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="JustJobs logo" />
                                 </Link>
                                 <p className="disc" dangerouslySetInnerHTML={{ __html: footerData.description }} />
                             </div>

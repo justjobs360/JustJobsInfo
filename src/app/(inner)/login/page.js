@@ -11,7 +11,6 @@ import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import './login.css';
-import BrandLogo from "@/components/common/BrandLogo";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -142,7 +141,7 @@ export default function LoginPage() {
                             <div className="login-form-wrapper">
                                 <div className="login-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <BrandLogo />
+                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
                                     </Link>
                                     <h2 className="title">Welcome Back</h2>
                                     <p className="subtitle">Please enter your credentials to login</p>
