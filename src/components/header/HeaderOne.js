@@ -121,8 +121,7 @@ function HeaderOne() {
                                         width={599}
                                         height={188}
                                         priority
-                                        sizes="(max-width: 640px) 150px, (max-width: 768px) 180px, 210px"
-                                        quality={85}
+                                        sizes="(max-width: 768px) 150px, 210px"
                                     />
                                 </Link>
                                 <Nav />
@@ -190,8 +189,7 @@ function HeaderOne() {
                                         alt="JustJobs logo"
                                         width={599}
                                         height={188}
-                                        sizes="(max-width: 640px) 150px, (max-width: 768px) 180px, 210px"
-                                        quality={85}
+                                        sizes="(max-width: 768px) 150px, 210px"
                                     />
                                 </Link>
                                 <Nav />

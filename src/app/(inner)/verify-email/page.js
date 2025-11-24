@@ -10,10 +10,6 @@ import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import Link from 'next/link';
 
-// Skip static generation - this page requires client-side Firebase auth
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export default function VerifyEmailPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -25,12 +21,6 @@ export default function VerifyEmailPage() {
 
     useEffect(() => {
         const handleEmailVerification = async () => {
-            // Ensure auth is available before proceeding
-            if (!auth) {
-                console.warn('Firebase auth not initialized yet');
-                return;
-            }
-
             // Check if user is unverified (redirected from login or just registered)
             const isUnverified = searchParams.get('unverified');
             if (isUnverified) {
@@ -47,7 +37,7 @@ export default function VerifyEmailPage() {
                 if (!oobCode) {
                     setVerificationStatus('error');
                     setErrorMessage('Invalid verification link. Please check your email for the correct link.');
-                    console.error('No oobCode found in URL parameters:', typeof window !== 'undefined' ? window.location.search : '');
+                    console.error('No oobCode found in URL parameters:', window.location.search);
                     return;
                 }
 

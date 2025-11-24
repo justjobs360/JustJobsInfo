@@ -19,9 +19,6 @@ export default function GlobalStyleLinks() {
     <>
       {/* Preconnect to same origin for faster CSS loading */}
       <link rel="preconnect" href="/" />
-      {/* Preconnect to Firebase for faster auth loading - critical for mobile */}
-      <link rel="preconnect" href="https://jobsfair-939f6.firebaseapp.com" crossOrigin="anonymous" />
-      <link rel="dns-prefetch" href="https://jobsfair-939f6.firebaseapp.com" />
       
       {/* Preload critical CSS */}
       {criticalStyles.map((href) => (

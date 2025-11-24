@@ -18,23 +18,6 @@ const nextConfig = {
   compress: true,
   // Power optimizations
   poweredByHeader: false,
-  // Optimize package imports to reduce bundle size
-  experimental: {
-    optimizePackageImports: ['react-bootstrap', 'swiper', 'aos'],
-  },
-  // Configure webpack to reduce polyfills for modern browsers
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Reduce polyfills by targeting modern browsers
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
-    return config;
-  },
   async headers() {
     return [
       {
