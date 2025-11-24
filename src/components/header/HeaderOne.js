@@ -218,12 +218,12 @@ function HeaderOne() {
                                         </div>
                                     ) : (
                                         <a href="/login" className="rts-btn btn-border">
-                                            Login
+                                        Login
                                             <ReactSVG
-                                                src="/assets/images/service/icons/13.svg"
-                                                alt="arrow"
-                                            />
-                                        </a>
+                                            src="/assets/images/service/icons/13.svg"
+                                            alt="arrow"
+                                        />
+                                    </a>
                                     )}
                                     <div id="menu-btn" className="menu-btn-toggle" onClick={toggleSidebar}>
                                         <svg

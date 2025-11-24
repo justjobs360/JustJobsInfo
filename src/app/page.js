@@ -74,7 +74,7 @@ export default function Home() {
           image: 'https://justjobs.info/assets/images/og-images/og-home.webp'
         }}
       />
-      <div className='#'>
+      <main>
         <HeaderOne />
         <BannerOne />
         <LargeVideo />
@@ -88,7 +88,7 @@ export default function Home() {
         <CtaOne />
         <FooterOneDynamic />
         <BackToTop />
-      </div>
+      </main>
     </DynamicMetaTags>
   );
 }

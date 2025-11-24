@@ -98,7 +98,8 @@ function FaqTwo() {
                                 Still have a question?{" "}
                                 <a
                                     href="/free-consultation"
-                                    style={{ color: "var(--color-primary)" }}
+                                    style={{ color: "var(--color-primary)", textDecoration: "underline" }}
+                                    aria-label="Feel free to ask a question about our services"
                                 >
                                     Feel free to ask
                                 </a>

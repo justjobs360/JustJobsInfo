@@ -132,7 +132,7 @@ const GDPRConsent = () => {
                     <strong style={{ display: 'block', marginBottom: 4 }}>Your Privacy</strong>
                     <span>
                         By clicking &#39;Accept All Cookies&#39; you agree to the storing of cookies on your device to enhance site navigation, analyze site usage, and assist in our marketing efforts.
-                        <a href="/privacy-policy" style={{ color: '#0056b3', textDecoration: 'underline', marginLeft: 6 }}>Learn More</a>
+                        <a href="/privacy-policy" style={{ color: '#0056b3', textDecoration: 'underline', marginLeft: 6 }} aria-label="Learn more about our Privacy Policy">Learn More About Privacy Policy</a>
                     </span>
                 </div>
                 <div style={{ 

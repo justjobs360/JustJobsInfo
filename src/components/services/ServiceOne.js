@@ -48,8 +48,8 @@ function ServiceOne() {
                                 <p className="disc">
                                 Upload your CV and get instant analysis on grammar, structure, and content. Receive a CV score and suggestions for improvement.
                                 </p>
-                                <Link href="/resume-audit" className="btn-arrow">
-                                    Learn More
+                                <Link href="/resume-audit" className="btn-arrow" aria-label="Learn more about CV Audit and Enhancement">
+                                    Learn More About CV Audit
                                     <img
                                         className="injectable"
                                         src="assets/images/icons/arrow-right.svg"
@@ -80,8 +80,8 @@ function ServiceOne() {
                                 <p className="disc">
                                 Find the best jobs filtered by type, location, industry, and salary. Apply externally or bookmark jobs to revisit later.
                                 </p>
-                                <Link href="/job-listing" className="btn-arrow">
-                                    Learn More
+                                <Link href="/job-listing" className="btn-arrow" aria-label="Learn more about Tailored Job Listings">
+                                    Learn More About Job Listings
                                     <img
                                         className="injectable"
                                         src="assets/images/icons/arrow-right.svg"
@@ -112,8 +112,8 @@ function ServiceOne() {
                                 <p className="disc">
                                 Stay ahead with email notifications for job openings that match your liking and preferences all year around.
                                 </p>
-                                <Link href="/job-alerts" className="btn-arrow">
-                                    Learn More
+                                <Link href="/job-alerts" className="btn-arrow" aria-label="Learn more about Job Alerts">
+                                    Learn More About Job Alerts
                                     <img
                                         className="injectable"
                                         src="assets/images/icons/arrow-right.svg"
@@ -144,8 +144,8 @@ function ServiceOne() {
                                 <p className="disc">
                                 Enter your info once, choose from sleek templates, and download a polished resume instantly.
                                 </p>
-                                <Link href="/resume-builder" className="btn-arrow">
-                                    Learn More
+                                <Link href="/resume-builder" className="btn-arrow" aria-label="Learn more about Smart Resume Templates">
+                                    Learn More About Resume Builder
                                     <img
                                         className="injectable"
                                         src="assets/images/icons/arrow-right.svg"
@@ -176,8 +176,8 @@ function ServiceOne() {
                                 <p className="disc">
                                 Access downloadable guides, templates, and tips to help you land your dream job.
                                 </p>
-                                <Link href="/downloadable-resources" className="btn-arrow">
-                                    Learn More
+                                <Link href="/downloadable-resources" className="btn-arrow" aria-label="Learn more about Free Resources">
+                                    Learn More About Free Resources
                                     <img
                                         className="injectable"
                                         src="assets/images/icons/arrow-right.svg"
@@ -208,8 +208,8 @@ function ServiceOne() {
                                 <p className="disc">
                                 Stay informed with updates, job market trends, and application strategies from hiring experts.
                                 </p>
-                                <Link href="/blogs" className="btn-arrow">
-                                    Learn More
+                                <Link href="/blogs" className="btn-arrow" aria-label="Learn more about our Career Blog">
+                                    Learn More About Our Blog
                                     <img
                                         className="injectable"
                                         src="assets/images/icons/arrow-right.svg"
