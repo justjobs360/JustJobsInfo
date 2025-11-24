@@ -112,7 +112,7 @@ export default function ClientLayout({ children }) {
 
       <Script
         src="/assets/js/plugins/smooth-scroll.js"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
 
       <GDPRConsent />

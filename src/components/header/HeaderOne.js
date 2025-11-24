@@ -9,6 +9,7 @@ import { auth } from '@/config/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import BrandLogo from '@/components/common/BrandLogo';
 
 function HeaderOne() {
     const [isSticky, setIsSticky] = useState(false);
@@ -113,7 +114,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <img className='header-logo' src="/assets/images/logo/justjobslogo.png"  alt="JustJobs logo" />
+                                    <BrandLogo priority />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">
@@ -174,7 +175,7 @@ function HeaderOne() {
                         <div className="col-lg-12">
                             <div className="header-wrapper-1">
                                 <Link href="/#" className="logo-area">
-                                    <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="JustJobs logo" />
+                                    <BrandLogo />
                                 </Link>
                                 <Nav />
                                 <div className="button-area-right-header">

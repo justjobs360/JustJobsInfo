@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './FooterOneDynamic.module.css';
+import BrandLogo from '@/components/common/BrandLogo';
 
 function FooterOneDynamic() {
     const pathname = usePathname();
@@ -33,7 +34,7 @@ function FooterOneDynamic() {
                         <div className="col-lg-5 col-md-12">
                             <div className="logo-area">
                                 <Link href="/#" className="logo">
-                                    <img src="/assets/images/logo/justjobslogo.png" className='header-logo' alt="JustJobs logo" />
+                                    <BrandLogo />
                                 </Link>
                                 <p className="disc">
                                 Justjobs Info is a platform for resume building, job search, and career resources, helping professionals advance and stand out.

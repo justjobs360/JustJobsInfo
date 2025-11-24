@@ -11,6 +11,7 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ReCaptcha from "@/components/security/ReCaptcha";
+import BrandLogo from "@/components/common/BrandLogo";
 
 
 export default function RegisterPage() {
@@ -334,7 +335,7 @@ export default function RegisterPage() {
                             <div className="register-form-wrapper">
                                 <div className="register-header text-center">
                                     <Link href="/" className="logo-area">
-                                        <img className='header-logo' src="/assets/images/logo/justjobslogo.png" alt="logo" />
+                                        <BrandLogo />
                                     </Link>
                                     <h2 className="title">Create Account</h2>
                                     <p className="subtitle">Please fill in the details to register</p>

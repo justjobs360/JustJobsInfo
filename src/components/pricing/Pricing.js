@@ -2,6 +2,7 @@
 import React from 'react'
 import { ReactSVG } from 'react-svg';
 import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
 
 function Pricing() {
     const { isAuthenticated } = useAuth();
@@ -11,11 +12,14 @@ function Pricing() {
             {/* pricing area start */}
             <div className="rts-pricing-area rts-section-gapTop bg-gradient-pricing">
                 <div className="bg-shape-area">
-                    <img
+                    <Image
                         loading="lazy"
-                        rel="preload"
-                        src="assets/images/pricing/01.png"
-                        alt="shape"
+                        src="/assets/images/pricing/01.webp"
+                        alt="Abstract pricing background shape"
+                        width={935}
+                        height={397}
+                        sizes="(max-width: 1024px) 80vw, 935px"
+                        className="pricing-bg-shape"
                     />
                 </div>
                 <div className="container">
