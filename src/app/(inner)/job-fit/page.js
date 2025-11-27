@@ -12,7 +12,12 @@ import CtaOne from "@/components/cta/CtaOne";
 import { JobFitService } from '@/utils/jobFitService';
 import { useAuth } from '@/contexts/AuthContext';
 import DynamicMetaTags from "@/components/common/DynamicMetaTags";
+import dynamic from 'next/dynamic';
 import './job-fit.css';
+
+const MinimizedVideoPopup = dynamic(() => import("@/components/video-popup/MinimizedVideoPopup"), {
+  ssr: false
+});
 
 export default function JobFitPage() {
     const { user } = useAuth();
@@ -118,6 +123,12 @@ export default function JobFitPage() {
             <CtaOne />
             <BackToTop />
             <FooterOneDynamic />
+            <MinimizedVideoPopup 
+                videoTitle="Learn More About Job Fit Analysis"
+                videoSource="/justjobsinfo.mp4"
+                autoShow={true}
+                delay={3000}
+            />
         </DynamicMetaTags>
     );
 }

@@ -69,7 +69,7 @@ export default function Home() {
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
                                         <Image
-                                            src="/assets/images/team/02.webp"
+                                            src="/assets/images/team/1sttm.png"
                                             alt="team"
                                             width={900}
                                             height={990}
@@ -79,9 +79,9 @@ export default function Home() {
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
-                                            <h3 className="title">Daniel Brown</h3>
+                                            <h3 className="title">Casey Jordan</h3>
                                         </a>
-                                        <span className="deg">Chief Executive Officer</span>
+                                        <span className="deg">Content Writer</span>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@ export default function Home() {
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
                                         <Image
-                                            src="/assets/images/team/03.webp"
+                                            src="/assets/images/team/2ndtm.jpg"
                                             alt="team"
                                             width={900}
                                             height={990}
@@ -101,9 +101,9 @@ export default function Home() {
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
-                                            <h3 className="title">Christopher Henry</h3>
+                                            <h3 className="title">Emmanuel Sanni</h3>
                                         </a>
-                                        <span className="deg">Marketing Director</span>
+                                        <span className="deg">Freelance Contributor</span>
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@ export default function Home() {
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
                                         <Image
-                                            src="/assets/images/team/04.webp"
+                                            src="/assets/images/team/3rdtm.jpeg"
                                             alt="team"
                                             width={900}
                                             height={990}
@@ -122,10 +122,10 @@ export default function Home() {
                                         />
                                     </a>
                                     <div className="inner-content">
-                                        <a href="#">
-                                            <h3 className="title">John Smith</h3>
+                                        <a  href="https://sillylittletools.com" target="_blank" rel="noopener noreferrer">
+                                            <h3 className="title">Saoud Ahmed</h3>
                                         </a>
-                                        <span className="deg">Senior Developer</span>
+                                        <span className="deg">IT Specialist</span>
                                     </div>
                                 </div>
                             </div>
@@ -135,7 +135,7 @@ export default function Home() {
                                 <div className="single-team-style-one">
                                     <a href="#" className="thumbnail">
                                         <Image
-                                            src="/assets/images/team/05.webp"
+                                            src="/assets/images/team/4thtm.png"
                                             alt="team"
                                             width={900}
                                             height={990}
@@ -144,10 +144,10 @@ export default function Home() {
                                         />
                                     </a>
                                     <div className="inner-content">
-                                        <a href="#">
-                                            <h3 className="title">Gabriel Benjamin</h3>
+                                        <a href="https://sillylittletools.com" target="_blank" rel="noopener noreferrer">
+                                            <h3 className="title">SillyLittleTools</h3>
                                         </a>
-                                        <span className="deg">IT Specialist</span>
+                                        <span className="deg">Technical Consultant</span>
                                     </div>
                                 </div>
                             </div>

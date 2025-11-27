@@ -64,6 +64,10 @@ const CaseStudies = dynamic(() => import("@/components/casestudies/CaseStudies")
   ssr: false
 });
 
+const MinimizedVideoPopup = dynamic(() => import("@/components/video-popup/MinimizedVideoPopup"), {
+  ssr: false
+});
+
 export default function Home() {
   return (
     <DynamicMetaTags pageName="Home">
@@ -89,6 +93,12 @@ export default function Home() {
         <CtaOne />
         <FooterOneDynamic />
         <BackToTop />
+        <MinimizedVideoPopup 
+          videoTitle="Learn More About JustJobsInfo"
+          videoSource="/justjobinfo2.mp4"
+          autoShow={true}
+          delay={3000}
+        />
       </main>
     </DynamicMetaTags>
   );
