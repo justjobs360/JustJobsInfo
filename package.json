@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "next lint",
-  "generate-sitemap": "node ./scripts/generate-static-sitemap.mjs"
+    "dev": "next dev",
+    "prebuild": "node scripts/generate-sitemap-build.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "generate-sitemap": "node ./scripts/generate-static-sitemap.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
