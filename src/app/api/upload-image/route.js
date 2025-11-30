@@ -46,11 +46,11 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Generate unique ID
+    // Generate unique ID with extension
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
-    const imageId = `${type}_${timestamp}_${randomString}`;
-    const extension = file.name.split('.').pop();
+    const extension = file.name.split('.').pop().toLowerCase();
+    const imageId = `${type}_${timestamp}_${randomString}.${extension}`;
 
     // Store image in MongoDB
     const collection = await getCollection('uploaded_images');
@@ -71,7 +71,7 @@ export async function POST(request) {
 
     await collection.insertOne(imageDocument);
 
-    // Return the API URL to serve the image
+    // Return the API URL to serve the image (with extension for better compatibility)
     const publicUrl = `/api/image/${imageId}`;
 
     console.log(`✅ Image uploaded successfully to MongoDB: ${imageId}`);

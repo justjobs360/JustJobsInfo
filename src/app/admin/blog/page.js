@@ -98,8 +98,19 @@ export default function BlogManagementPage() {
     setEditorContent(htmlContent);
   };
 
-     // Set editor mode
+     // Set editor mode and sync content appropriately
    const setEditorModeDirect = (mode) => {
+     if (mode === 'html') {
+       // When switching to HTML mode, sync formData.content to editorContent
+       setEditorContent(formData.content || '');
+     } else if (mode === 'template') {
+       // When switching to template mode, generate HTML from template data
+       const generatedHTML = generateTemplateHTML();
+       setEditorContent(generatedHTML);
+     } else if (mode === 'visual') {
+       // When switching to visual mode, sync formData.content to editorContent
+       setEditorContent(formData.content || '');
+     }
      setEditorMode(mode);
    };
 
@@ -293,11 +304,11 @@ export default function BlogManagementPage() {
 </div>`;
   };
 
-  // Update form data when template changes
+  // Update editor content when template data changes (for preview only)
+  // Don't update formData automatically - only update on manual save
   useEffect(() => {
     if (editorMode === 'template') {
       const generatedHTML = generateTemplateHTML();
-      setFormData(prev => ({ ...prev, content: generatedHTML }));
       setEditorContent(generatedHTML);
     }
   }, [templateData, editorMode]);
@@ -665,6 +676,16 @@ export default function BlogManagementPage() {
     e.preventDefault();
     
     try {
+      // Sync editorContent to formData before saving (for HTML and Template modes)
+      const contentToSave = editorMode === 'template' || editorMode === 'html' 
+        ? editorContent 
+        : formData.content;
+      
+      const dataToSave = {
+        ...formData,
+        content: contentToSave
+      };
+      
       const url = editingBlog 
         ? `/api/blogs/${editingBlog.slug}` 
         : '/api/blogs';
@@ -676,7 +697,7 @@ export default function BlogManagementPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSave),
       });
 
       const result = await response.json();
@@ -1235,8 +1256,12 @@ export default function BlogManagementPage() {
                     borderBottom: '1px solid #e0e0e0'
                   }}>
                     <button 
+                      type="button"
                       className={`editor-tab ${editorMode === 'visual' ? 'active' : ''}`}
-                      onClick={() => setEditorModeDirect('visual')}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setEditorModeDirect('visual');
+                      }}
                       style={{
                         padding: '8px 16px',
                         border: 'none',
@@ -1252,8 +1277,12 @@ export default function BlogManagementPage() {
                       🖊️ Visual
                     </button>
                     <button 
+                      type="button"
                       className={`editor-tab ${editorMode === 'html' ? 'active' : ''}`}
-                      onClick={() => setEditorModeDirect('html')}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setEditorModeDirect('html');
+                      }}
                       style={{
                         padding: '8px 16px',
                         border: 'none',
@@ -1269,8 +1298,12 @@ export default function BlogManagementPage() {
                       📝 HTML
                     </button>
                     <button 
+                      type="button"
                       className={`editor-tab ${editorMode === 'template' ? 'active' : ''}`}
-                      onClick={() => setEditorModeDirect('template')}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setEditorModeDirect('template');
+                      }}
                       style={{
                         padding: '8px 16px',
                         border: 'none',
