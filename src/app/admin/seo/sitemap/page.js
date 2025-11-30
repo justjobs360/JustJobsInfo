@@ -153,18 +153,43 @@ export default function SitemapPage() {
                 // Also generate and write the static sitemap.xml to /public so /sitemap.xml serves it
                 try {
                     const writeResp = await fetch('/api/admin/generate-sitemap', { method: 'POST' });
-                    const writeJson = await writeResp.json();
+                    
+                    // Check if response is OK
+                    if (!writeResp.ok) {
+                        const errorText = await writeResp.text();
+                        console.warn('⚠️ Static sitemap generation failed:', writeResp.status, errorText);
+                        toast.warning('Sitemap config saved, but static file generation failed. Sitemap will be generated on next deployment.');
+                        return;
+                    }
+                    
+                    // Try to parse JSON
+                    let writeJson;
+                    try {
+                        writeJson = await writeResp.json();
+                    } catch (jsonError) {
+                        console.error('❌ Failed to parse JSON response:', jsonError);
+                        const textResponse = await writeResp.text();
+                        console.error('Response text:', textResponse);
+                        toast.warning('Sitemap config saved, but could not parse generation response.');
+                        return;
+                    }
+                    
                     if (writeJson.success) {
-                        toast.success('Static sitemap.xml updated');
-                        console.log('🗺️ Static sitemap.xml written:', writeJson.path, 'count:', writeJson.count);
+                        if (writeJson.warning) {
+                            toast.warning(`Sitemap generated with warning: ${writeJson.warning}`);
+                            console.log('⚠️ Sitemap generated with warning:', writeJson.warning);
+                        } else {
+                            toast.success('Static sitemap.xml updated');
+                            console.log('🗺️ Static sitemap.xml written:', writeJson.path, 'count:', writeJson.count);
+                        }
                     } else {
                         // If disk write failed (e.g. read-only), inform admin and provide fallback info
                         console.warn('⚠️ Static sitemap write failed:', writeJson);
-                        toast.error('Could not write sitemap.xml to disk.');
+                        toast.warning(writeJson.message || 'Could not write sitemap.xml to disk. Sitemap will be generated on next deployment.');
                     }
                 } catch (e) {
                     console.error('❌ Error writing static sitemap:', e);
-                    toast.error('Error generating static sitemap');
+                    toast.warning('Sitemap config saved, but static file generation encountered an error. Sitemap will be generated on next deployment.');
                 }
             } else {
                 throw new Error(result.error || 'Failed to generate sitemap');

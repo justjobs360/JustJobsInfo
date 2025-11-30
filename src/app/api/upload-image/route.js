@@ -3,9 +3,25 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
+// Check if we're in a serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY;
+
 // POST /api/upload-image - Upload image file
 export async function POST(request) {
   try {
+    // Check if we're in a serverless environment
+    if (isServerless) {
+      console.warn('⚠️ Image upload attempted in serverless environment');
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Image uploads are not supported in serverless environments. Please use a cloud storage service like Vercel Blob, AWS S3, or Cloudinary.',
+          serverless: true
+        },
+        { status: 503 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get('image');
     const type = formData.get('type') || 'blog'; // 'blog', 'banner', or 'author'
@@ -54,15 +70,39 @@ export async function POST(request) {
     const uploadDir = join(process.cwd(), 'public', 'uploads', type);
     
     // Ensure directory exists
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    try {
+      if (!existsSync(uploadDir)) {
+        await mkdir(uploadDir, { recursive: true });
+      }
+    } catch (dirError) {
+      console.error('❌ Directory creation error:', dirError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Cannot create upload directory. Check file system permissions.',
+          details: dirError.message
+        },
+        { status: 500 }
+      );
     }
 
     // Save file to disk
     const filePath = join(uploadDir, filename);
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    try {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      await writeFile(filePath, buffer);
+    } catch (writeError) {
+      console.error('❌ File write error:', writeError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to save file to disk. Check file system permissions.',
+          details: writeError.message
+        },
+        { status: 500 }
+      );
+    }
 
     // Return the public URL
     const publicUrl = `/uploads/${type}/${filename}`;
@@ -82,11 +122,13 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('❌ Error uploading image:', error);
+    console.error('Error stack:', error.stack);
     return NextResponse.json(
       { 
         success: false, 
         error: 'Failed to upload image',
-        details: error.message 
+        details: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     );
