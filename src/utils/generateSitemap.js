@@ -76,14 +76,31 @@ export async function generateStaticSitemap({ writeToDisk = true } = {}) {
     const xml = lines.join('\n');
 
     if (writeToDisk) {
+      // Check if we're in a serverless/read-only environment
+      const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY;
+      
+      if (isServerless) {
+        // In serverless, we can't write to disk during runtime
+        // Return XML for API response instead
+        console.log('⚠️ Serverless environment detected - cannot write to disk at runtime');
+        return { 
+          success: true, 
+          xml, 
+          count: entries.length, 
+          warning: 'Serverless environment - sitemap must be generated at build time'
+        };
+      }
+      
       const outPath = path.join(process.cwd(), 'public', 'sitemap.xml');
       try {
         await fs.mkdir(path.dirname(outPath), { recursive: true });
         await fs.writeFile(outPath, xml, 'utf8');
+        console.log('✅ Sitemap written to disk:', outPath);
         return { success: true, path: outPath, count: entries.length };
       } catch (writeErr) {
         // Writing may fail in some hosts (e.g., serverless readonly). Return XML instead.
-        return { success: false, error: 'write_failed', message: writeErr.message, xml, count: entries.length };
+        console.warn('⚠️ Failed to write sitemap to disk:', writeErr.message);
+        return { success: true, xml, count: entries.length, warning: writeErr.message };
       }
     }
 

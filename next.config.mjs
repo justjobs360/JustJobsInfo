@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Optimize output for serverless
+  output: 'standalone',
+  
   // Strip console statements in production builds
   compiler: {
     removeConsole: {
@@ -7,6 +10,7 @@ const nextConfig = {
       exclude: ['error', 'warn']
     }
   },
+  
   // Optimize images - mobile-first sizes
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -17,10 +21,32 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  
   // Enable compression
   compress: true,
+  
   // Power optimizations
   poweredByHeader: false,
+  
+  // Exclude large files from serverless functions
+  experimental: {
+    outputFileTracingExcludes: {
+      '*': [
+        'public/assets/images/**',
+        'public/justjobinfo2.mp4',
+        'public/justjobsinfo.mp4',
+        'public/assets/fonts/**',
+        'public/uploads/**',
+        'public/assets/css/**',
+        'public/assets/js/**',
+        'public/assets/resumes/**',
+        'node_modules/@swc/core-linux-x64-gnu',
+        'node_modules/@swc/core-linux-x64-musl',
+        'node_modules/@esbuild/linux-x64',
+      ],
+    },
+  },
+  
   async headers() {
     return [
       {

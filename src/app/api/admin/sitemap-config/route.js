@@ -93,10 +93,18 @@ export async function POST(request) {
         
         if (result.acknowledged) {
             console.log('✅ Sitemap configuration updated successfully');
+            
             // Attempt to regenerate static sitemap after sitemap config update
+            let sitemapResult = null;
             try {
-                await generateStaticSitemap({ writeToDisk: true });
-                console.log('✅ Static sitemap regenerated after sitemap-config POST');
+                sitemapResult = await generateStaticSitemap({ writeToDisk: true });
+                if (sitemapResult.success) {
+                    if (sitemapResult.warning) {
+                        console.log('⚠️ Sitemap generated with warning:', sitemapResult.warning);
+                    } else {
+                        console.log('✅ Static sitemap regenerated after sitemap-config POST');
+                    }
+                }
             } catch (e) {
                 console.warn('⚠️ Failed to regenerate static sitemap after sitemap-config POST', e);
             }
@@ -107,6 +115,12 @@ export async function POST(request) {
                     totalInserted: result.insertedCount,
                     urls: urlDocuments
                 },
+                sitemap: sitemapResult ? {
+                    generated: sitemapResult.success,
+                    count: sitemapResult.count,
+                    warning: sitemapResult.warning,
+                    xml: sitemapResult.xml ? `${sitemapResult.xml.substring(0, 100)}...` : null
+                } : null,
                 message: `Sitemap configuration updated with ${result.insertedCount} URLs`
             });
         }
@@ -167,10 +181,18 @@ export async function PUT(request) {
             const updatedUrl = await collection.findOne({ _id: new ObjectId(id) });
             
             console.log('✅ Sitemap URL updated successfully');
+            
             // Attempt to regenerate static sitemap after single URL update
+            let sitemapResult = null;
             try {
-                await generateStaticSitemap({ writeToDisk: true });
-                console.log('✅ Static sitemap regenerated after sitemap-config PUT');
+                sitemapResult = await generateStaticSitemap({ writeToDisk: true });
+                if (sitemapResult.success) {
+                    if (sitemapResult.warning) {
+                        console.log('⚠️ Sitemap generated with warning:', sitemapResult.warning);
+                    } else {
+                        console.log('✅ Static sitemap regenerated after sitemap-config PUT');
+                    }
+                }
             } catch (e) {
                 console.warn('⚠️ Failed to regenerate static sitemap after sitemap-config PUT', e);
             }
@@ -185,6 +207,11 @@ export async function PUT(request) {
                     lastmod: updatedUrl.lastmod,
                     updatedAt: updatedUrl.updatedAt
                 },
+                sitemap: sitemapResult ? {
+                    generated: sitemapResult.success,
+                    count: sitemapResult.count,
+                    warning: sitemapResult.warning
+                } : null,
                 message: 'Sitemap URL updated successfully'
             });
         } else {
