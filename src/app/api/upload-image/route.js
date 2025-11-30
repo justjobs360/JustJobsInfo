@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCollection } from '@/utils/mongodb';
+import { Binary } from 'mongodb';
 
 // POST /api/upload-image - Upload image file to MongoDB
 export async function POST(request) {
@@ -55,6 +56,7 @@ export async function POST(request) {
     // Store image in MongoDB
     const collection = await getCollection('uploaded_images');
     
+    // Store as Binary type for better MongoDB compatibility
     const imageDocument = {
       _id: imageId,
       filename: file.name,
@@ -63,11 +65,13 @@ export async function POST(request) {
       size: file.size,
       category: type, // 'blog', 'banner', 'author', etc.
       extension: extension,
-      data: buffer, // Store binary data
+      data: new Binary(buffer), // Store as MongoDB Binary type
       uploadedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date()
     };
+    
+    console.log(`📤 Storing image: ${imageId}, Size: ${buffer.length} bytes, Type: ${file.type}`);
 
     await collection.insertOne(imageDocument);
 
