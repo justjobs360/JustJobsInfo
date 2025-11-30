@@ -10,8 +10,8 @@ const BlogMain = (props) => {
             return '/assets/images/blog/01.webp';
         }
         
-        // If it's already a full URL (starts with /uploads/ or http), use it as is
-        if (imagePath.startsWith('/uploads/') || imagePath.startsWith('http')) {
+        // If it's already a full URL (starts with /uploads/, /api/image/, or http), use it as is
+        if (imagePath.startsWith('/uploads/') || imagePath.startsWith('/api/image/') || imagePath.startsWith('http')) {
             console.log('📸 Using uploaded image:', imagePath);
             return imagePath;
         }
@@ -26,8 +26,8 @@ const BlogMain = (props) => {
     const getAuthorImageUrl = (authorImagePath) => {
         if (!authorImagePath) return '/assets/images/testimonials/01.png';
         
-        // If it's already a full URL (starts with /uploads/ or http), use it as is
-        if (authorImagePath.startsWith('/uploads/') || authorImagePath.startsWith('http')) {
+        // If it's already a full URL (starts with /uploads/, /api/image/, or http), use it as is
+        if (authorImagePath.startsWith('/uploads/') || authorImagePath.startsWith('/api/image/') || authorImagePath.startsWith('http')) {
             return authorImagePath;
         }
         

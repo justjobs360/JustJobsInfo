@@ -1,27 +1,9 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { getCollection } from '@/utils/mongodb';
 
-// Check if we're in a serverless environment
-const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY;
-
-// POST /api/upload-image - Upload image file
+// POST /api/upload-image - Upload image file to MongoDB
 export async function POST(request) {
   try {
-    // Check if we're in a serverless environment
-    if (isServerless) {
-      console.warn('⚠️ Image upload attempted in serverless environment');
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Image uploads are not supported in serverless environments. Please use a cloud storage service like Vercel Blob, AWS S3, or Cloudinary.',
-          serverless: true
-        },
-        { status: 503 }
-      );
-    }
-
     const formData = await request.formData();
     const file = formData.get('image');
     const type = formData.get('type') || 'blog'; // 'blog', 'banner', or 'author'
@@ -60,64 +42,50 @@ export async function POST(request) {
       );
     }
 
-    // Generate unique filename
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Generate unique ID
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
+    const imageId = `${type}_${timestamp}_${randomString}`;
     const extension = file.name.split('.').pop();
-    const filename = `${type}_${timestamp}_${randomString}.${extension}`;
 
-    // Create upload directory based on type
-    const uploadDir = join(process.cwd(), 'public', 'uploads', type);
+    // Store image in MongoDB
+    const collection = await getCollection('uploaded_images');
     
-    // Ensure directory exists
-    try {
-      if (!existsSync(uploadDir)) {
-        await mkdir(uploadDir, { recursive: true });
-      }
-    } catch (dirError) {
-      console.error('❌ Directory creation error:', dirError);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Cannot create upload directory. Check file system permissions.',
-          details: dirError.message
-        },
-        { status: 500 }
-      );
-    }
+    const imageDocument = {
+      _id: imageId,
+      filename: file.name,
+      originalName: file.name,
+      type: file.type,
+      size: file.size,
+      category: type, // 'blog', 'banner', 'author', etc.
+      extension: extension,
+      data: buffer, // Store binary data
+      uploadedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
-    // Save file to disk
-    const filePath = join(uploadDir, filename);
-    try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      await writeFile(filePath, buffer);
-    } catch (writeError) {
-      console.error('❌ File write error:', writeError);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Failed to save file to disk. Check file system permissions.',
-          details: writeError.message
-        },
-        { status: 500 }
-      );
-    }
+    await collection.insertOne(imageDocument);
 
-    // Return the public URL
-    const publicUrl = `/uploads/${type}/${filename}`;
+    // Return the API URL to serve the image
+    const publicUrl = `/api/image/${imageId}`;
 
-    console.log(`✅ Image uploaded successfully: ${publicUrl}`);
+    console.log(`✅ Image uploaded successfully to MongoDB: ${imageId}`);
 
     return NextResponse.json({
       success: true,
       data: {
         url: publicUrl,
-        filename: filename,
+        id: imageId,
+        filename: file.name,
         size: file.size,
         type: file.type
       },
-      message: 'Image uploaded successfully'
+      message: 'Image uploaded successfully to database'
     });
 
   } catch (error) {
