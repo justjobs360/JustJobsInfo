@@ -1186,7 +1186,7 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
         }
         
         localStorage.setItem('resume_builder_form', dataStringWithoutImage);
-        toast.warning('Resume saved without image due to size limit. Please sign in for full functionality.');
+        toast('Resume saved without image due to size limit. Please sign in for full functionality.', { icon: '⚠️' });
       } else {
         localStorage.setItem('resume_builder_form', dataString);
       }

@@ -119,7 +119,7 @@ export default function Home() {
 
     const handleRecaptchaExpire = () => {
         setRecaptchaToken(null);
-        toast.warning('reCAPTCHA expired. Please verify again.');
+        toast.error('reCAPTCHA expired. Please verify again.');
     };
 
     return (

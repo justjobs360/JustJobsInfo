@@ -192,6 +192,30 @@ export default function BlogDetails() {
     return `/assets/images/testimonials/${authorImagePath}`;
   };
 
+  // Process blog content to fix image loading
+  useEffect(() => {
+    if (blogPost && blogPost.content) {
+      // Add error handlers to all images in the content
+      const contentDiv = document.querySelector('.blog-content-images');
+      if (contentDiv) {
+        const images = contentDiv.querySelectorAll('img');
+        images.forEach((img) => {
+          // Ensure images have proper error handling
+          img.onerror = function() {
+            console.error('❌ Image failed to load:', this.src);
+            this.src = '/assets/images/blog/01.webp';
+            this.alt = 'Image not available';
+          };
+          
+          // Add loading attribute for better performance
+          if (!img.hasAttribute('loading')) {
+            img.setAttribute('loading', 'lazy');
+          }
+        });
+      }
+    }
+  }, [blogPost]);
+
   // Fetch blog post by slug
   const fetchBlogPost = async () => {
     try {
@@ -448,7 +472,7 @@ export default function BlogDetails() {
 
   const handleRecaptchaExpire = () => {
     setRecaptchaToken(null);
-    toast.warning('reCAPTCHA expired. Please verify again.');
+    toast.error('reCAPTCHA expired. Please verify again.');
   };
 
   // Show loading state
@@ -590,7 +614,10 @@ export default function BlogDetails() {
                       {blogPost.title}
                     </h3>
                     <div className="disc para-1">
-                      <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
+                      <div 
+                        className="blog-content-images"
+                        dangerouslySetInnerHTML={{ __html: blogPost.content }} 
+                      />
                     </div>
                     <div className="row  align-items-center">
                       <div className="col-lg-6 col-md-12">

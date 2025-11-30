@@ -24,14 +24,29 @@ export async function GET(request, { params }) {
       );
     }
 
+    // Ensure data is a Buffer
+    let imageBuffer;
+    if (Buffer.isBuffer(image.data)) {
+      imageBuffer = image.data;
+    } else if (image.data instanceof Uint8Array) {
+      imageBuffer = Buffer.from(image.data);
+    } else if (typeof image.data === 'string') {
+      // If stored as base64 string
+      imageBuffer = Buffer.from(image.data, 'base64');
+    } else {
+      // Try to convert to buffer
+      imageBuffer = Buffer.from(image.data);
+    }
+
     // Return image with proper headers
-    return new NextResponse(image.data, {
+    return new NextResponse(imageBuffer, {
       status: 200,
       headers: {
         'Content-Type': image.type || 'image/jpeg',
-        'Content-Length': image.size.toString(),
+        'Content-Length': imageBuffer.length.toString(),
         'Cache-Control': 'public, max-age=31536000, immutable',
-        'Content-Disposition': `inline; filename="${image.filename || image.originalName || id}"`
+        'Content-Disposition': `inline; filename="${image.filename || image.originalName || id}"`,
+        'Accept-Ranges': 'bytes'
       }
     });
 
