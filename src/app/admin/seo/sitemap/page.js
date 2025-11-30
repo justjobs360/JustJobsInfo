@@ -16,6 +16,7 @@ export default function SitemapPage() {
     });
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
+    const [sitemapXml, setSitemapXml] = useState(null);
 
     useEffect(() => {
         loadSitemapData();
@@ -147,49 +148,28 @@ export default function SitemapPage() {
                 };
 
                 setSitemapData(newSitemapData);
-                toast.success(`Sitemap config saved with ${staticPages.length} URLs`);
                 console.log('✅ Sitemap configuration saved to database');
 
-                // Also generate and write the static sitemap.xml to /public so /sitemap.xml serves it
+                // Generate sitemap XML for download
                 try {
                     const writeResp = await fetch('/api/admin/generate-sitemap', { method: 'POST' });
                     
-                    // Check if response is OK
                     if (!writeResp.ok) {
-                        const errorText = await writeResp.text();
-                        console.warn('⚠️ Static sitemap generation failed:', writeResp.status, errorText);
-                        toast.error('Sitemap config saved, but static file generation failed. Sitemap will be generated on next deployment.');
-                        return;
+                        throw new Error('Failed to generate sitemap XML');
                     }
                     
-                    // Try to parse JSON
-                    let writeJson;
-                    try {
-                        writeJson = await writeResp.json();
-                    } catch (jsonError) {
-                        console.error('❌ Failed to parse JSON response:', jsonError);
-                        const textResponse = await writeResp.text();
-                        console.error('Response text:', textResponse);
-                        toast.error('Sitemap config saved, but could not parse generation response.');
-                        return;
-                    }
+                    const writeJson = await writeResp.json();
                     
-                    if (writeJson.success) {
-                        if (writeJson.warning) {
-                            toast(`Sitemap generated with warning: ${writeJson.warning}`, { icon: '⚠️' });
-                            console.log('⚠️ Sitemap generated with warning:', writeJson.warning);
-                        } else {
-                            toast.success('Static sitemap.xml updated');
-                            console.log('🗺️ Static sitemap.xml written:', writeJson.path, 'count:', writeJson.count);
-                        }
+                    if (writeJson.success && writeJson.xml) {
+                        setSitemapXml(writeJson.xml);
+                        toast.success(`Sitemap generated successfully with ${writeJson.count} URLs. You can download it below.`);
+                        console.log('✅ Sitemap XML generated:', writeJson.count, 'URLs');
                     } else {
-                        // If disk write failed (e.g. read-only), inform admin and provide fallback info
-                        console.warn('⚠️ Static sitemap write failed:', writeJson);
-                        toast.error(writeJson.message || 'Could not write sitemap.xml to disk. Sitemap will be generated on next deployment.');
+                        throw new Error(writeJson.error || 'Failed to generate sitemap XML');
                     }
                 } catch (e) {
-                    console.error('❌ Error writing static sitemap:', e);
-                    toast.error('Sitemap config saved, but static file generation encountered an error. Sitemap will be generated on next deployment.');
+                    console.error('❌ Error generating sitemap XML:', e);
+                    toast.error('Sitemap config saved, but failed to generate XML: ' + e.message);
                 }
             } else {
                 throw new Error(result.error || 'Failed to generate sitemap');
@@ -209,10 +189,22 @@ export default function SitemapPage() {
 
     const downloadSitemap = async () => {
         try {
-            // Fetch the static sitemap.xml and force a download
-            const res = await fetch('/sitemap.xml', { cache: 'no-store' });
-            if (!res.ok) throw new Error('Failed to fetch sitemap.xml');
-            const blob = await res.blob();
+            let xmlContent = sitemapXml;
+            
+            // If we have XML in state, use it; otherwise try to fetch from server
+            if (!xmlContent) {
+                const res = await fetch('/api/admin/generate-sitemap', { method: 'POST' });
+                if (!res.ok) throw new Error('Failed to generate sitemap');
+                const result = await res.json();
+                if (!result.success || !result.xml) {
+                    throw new Error('Failed to get sitemap XML');
+                }
+                xmlContent = result.xml;
+                setSitemapXml(xmlContent);
+            }
+            
+            // Create blob and download
+            const blob = new Blob([xmlContent], { type: 'application/xml' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -224,7 +216,7 @@ export default function SitemapPage() {
             toast.success('Sitemap downloaded successfully');
         } catch (e) {
             console.error('❌ Download sitemap error:', e);
-            toast.error('Could not download sitemap.xml');
+            toast.error('Could not download sitemap.xml: ' + e.message);
         }
     };
 
@@ -320,19 +312,20 @@ export default function SitemapPage() {
                                         </button>
                                         <button
                                             onClick={downloadSitemap}
+                                            disabled={!sitemapXml && !sitemapData.totalPages}
                                             style={{
                                                 padding: '12px 24px',
-                                                backgroundColor: '#6c757d',
+                                                backgroundColor: (!sitemapXml && !sitemapData.totalPages) ? '#ccc' : '#6c757d',
                                                 color: '#fff',
                                                 border: 'none',
                                                 borderRadius: '4px',
-                                                cursor: 'pointer',
+                                                cursor: (!sitemapXml && !sitemapData.totalPages) ? 'not-allowed' : 'pointer',
                                                 fontSize: '14px',
                                                 fontWeight: '500',
                                                 minWidth: '180px'
                                             }}
                                         >
-                                            Download Sitemap
+                                            {sitemapXml ? 'Download Sitemap' : 'Download Sitemap (Generate First)'}
                                         </button>
                                     </div>
                                 </div>
