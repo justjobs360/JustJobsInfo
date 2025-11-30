@@ -13,6 +13,12 @@ const MinimizedVideoPopup = ({
     const [isMaximized, setIsMaximized] = useState(false);
     const [isClosed, setIsClosed] = useState(false);
     const [gdprBannerHeight, setGdprBannerHeight] = useState(0);
+    const [videoError, setVideoError] = useState(false);
+
+    // Get the clean video source without query params
+    const getCleanVideoSource = (source) => {
+        return source.includes('?') ? source.split('?')[0] : source;
+    };
 
     useEffect(() => {
         // Check if GDPR banner exists and get its height
@@ -122,7 +128,7 @@ const MinimizedVideoPopup = ({
                 <div className="minimized-player" onClick={handleExpand}>
                     <div className="video-thumbnail">
                         <video 
-                            src={videoSource.includes('?') ? videoSource.split('?')[0] : videoSource}
+                            src={getCleanVideoSource(videoSource)}
                             muted
                             loop
                             playsInline
@@ -131,11 +137,17 @@ const MinimizedVideoPopup = ({
                             className="thumbnail-video"
                             key={`thumbnail-${videoSource}`}
                             onLoadStart={() => {
-                                console.log('Loading video:', videoSource.includes('?') ? videoSource.split('?')[0] : videoSource);
+                                console.log('Loading thumbnail video:', getCleanVideoSource(videoSource));
+                            }}
+                            onLoadedData={() => {
+                                console.log('Thumbnail video loaded successfully');
+                                setVideoError(false);
                             }}
                             onError={(e) => {
-                                console.error('Video load error:', e);
-                                console.error('Video source:', videoSource.includes('?') ? videoSource.split('?')[0] : videoSource);
+                                console.error('Thumbnail video load error:', e);
+                                console.error('Video source:', getCleanVideoSource(videoSource));
+                                console.error('Full video element:', e.target);
+                                setVideoError(true);
                             }}
                         />
                         <div className="play-overlay">
@@ -212,7 +224,7 @@ const MinimizedVideoPopup = ({
                     </div>
                     <div className="video-container">
                         <video
-                            src={videoSource.includes('?') ? videoSource.split('?')[0] : videoSource}
+                            src={getCleanVideoSource(videoSource)}
                             controls
                             autoPlay
                             playsInline
@@ -220,15 +232,39 @@ const MinimizedVideoPopup = ({
                             preload="auto"
                             key={`main-${videoSource}`}
                             onLoadStart={() => {
-                                console.log('Loading main video:', videoSource.includes('?') ? videoSource.split('?')[0] : videoSource);
+                                console.log('Loading main video:', getCleanVideoSource(videoSource));
+                            }}
+                            onLoadedData={() => {
+                                console.log('Main video loaded successfully');
+                                setVideoError(false);
                             }}
                             onError={(e) => {
-                                console.error('Video load error:', e);
-                                console.error('Video source:', videoSource.includes('?') ? videoSource.split('?')[0] : videoSource);
+                                console.error('Main video load error:', e);
+                                console.error('Video source:', getCleanVideoSource(videoSource));
+                                console.error('Full video element:', e.target);
+                                console.error('Network state:', e.target.networkState);
+                                console.error('Ready state:', e.target.readyState);
+                                setVideoError(true);
                             }}
                         >
                             Your browser does not support the video tag.
                         </video>
+                        {videoError && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                color: 'white',
+                                textAlign: 'center',
+                                padding: '20px'
+                            }}>
+                                <p>⚠️ Video failed to load</p>
+                                <p style={{ fontSize: '12px', marginTop: '10px' }}>
+                                    Source: {getCleanVideoSource(videoSource)}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

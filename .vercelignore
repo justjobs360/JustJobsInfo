@@ -1,40 +1,24 @@
-# Exclude large files from serverless functions
-# These files are served directly as static assets
+# Exclude large files from serverless function bundles
+# NOTE: .vercelignore does NOT prevent files from being deployed
+# It only excludes them from being traced/bundled into serverless functions
+# Static files in /public are ALWAYS deployed regardless of .vercelignore
 
-# Video files
-*.mp4
-*.mov
-*.avi
-*.webm
-
-# Large image directories
-public/assets/images/**
-public/uploads/**
-
-# Font files (served as static)
-public/assets/fonts/**
-
-# Already compiled static assets
-public/assets/css/**
-public/assets/js/**
-public/assets/resumes/**
-
-# Build artifacts that don't need to be in functions
-.next/cache/**
-.next/static/**
-
-# Development files
+# Development and build files only
 .git
 .gitignore
 .vscode
 .idea
 *.log
-*.md
 README.md
 CHANGELOG.md
+DEPLOYMENT_SUMMARY.md
 
 # Test files
 *.test.js
 *.spec.js
 __tests__/**
+
+# Cache directories
+.next/cache/**
+node_modules/.cache/**
 
