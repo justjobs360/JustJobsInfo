@@ -204,17 +204,17 @@ const BlogMain = (props) => {
                 }}>
                     <span style={{
                         display: 'inline-block',
-                        background: 'linear-gradient(135deg, rgba(9, 99, 211, 0.1) 0%, rgba(0, 86, 179, 0.1) 100%)',
                         color: 'var(--color-primary)',
-                        padding: '6px 20px',
-                        borderRadius: '20px',
-                        fontSize: '11px',
-                        fontWeight: '600',
+                        padding: 0,
+                        borderRadius: 0,
+                        fontSize: '12px',
+                        fontWeight: '700',
                         marginBottom: '20px',
                         width: 'fit-content',
                         textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        border: 'none'
+                        letterSpacing: '1px',
+                        border: 'none',
+                        background: 'transparent'
                     }}>
                         {blogCategory || 'Uncategorized'}
                     </span>
