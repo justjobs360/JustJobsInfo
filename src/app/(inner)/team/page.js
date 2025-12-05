@@ -79,7 +79,7 @@ export default function Home() {
                                     </a>
                                     <div className="inner-content">
                                         <a href="#">
-                                            <h3 className="title">Casey Jordan</h3>
+                                            <h3 className="title">Casey Jordan (Pen Name)</h3>
                                         </a>
                                         <span className="deg">Content Writer</span>
                                     </div>
