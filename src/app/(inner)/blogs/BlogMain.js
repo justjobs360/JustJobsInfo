@@ -205,7 +205,7 @@ const BlogMain = (props) => {
                     <span style={{
                         display: 'inline-block',
                         color: 'var(--color-primary)',
-                        padding: 0,
+                        padding: '6px 20px',
                         borderRadius: 0,
                         fontSize: '12px',
                         fontWeight: '700',
