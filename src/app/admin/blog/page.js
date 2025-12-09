@@ -86,6 +86,60 @@ export default function BlogManagementPage() {
   // Template form states
   const [templateData, setTemplateData] = useState(getTemplateOneDefaults());
 
+  const cleanTemplateHtml = (html = '') => html.replace(/<br\s*\/?>/gi, '');
+
+const parseTemplateOneContent = (html) => {
+  if (typeof window === 'undefined' || !html) return getTemplateOneDefaults();
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(cleanTemplateHtml(html), 'text/html');
+    const template = doc.querySelector('.template-one');
+    if (!template) return getTemplateOneDefaults();
+
+    const getText = (selector, fallback = '') => {
+      const el = template.querySelector(selector);
+      return el ? el.textContent.trim() : fallback;
+    };
+
+    const getImageSrc = (selector, fallback = '') => {
+      const el = template.querySelector(selector);
+      return el ? el.getAttribute('src') || fallback : fallback;
+    };
+
+    const directParagraphs = template.querySelectorAll(':scope > p');
+
+    const bulletSpans = template.querySelectorAll('.template-one__checklist .template-one__check span');
+    const bulletPoints = Array.from(bulletSpans).map((span) => span.textContent.trim());
+
+    return {
+      mainTitle: getText('.template-one__subheading'),
+      paragraph1: directParagraphs[0]?.textContent.trim() || '',
+      paragraph2: directParagraphs[1]?.textContent.trim() || '',
+      quoteText: getText('.template-one__quote-text'),
+      quoteAuthor: getText('.template-one__quote-author'),
+      quoteAuthorTitle: getText('.template-one__quote-role'),
+      paragraph3: directParagraphs[2]?.textContent.trim() || '',
+      image1: getImageSrc('.template-one__image-row img:nth-of-type(1)'),
+      image2: getImageSrc('.template-one__image-row img:nth-of-type(2)'),
+      sectionTitle: getText('.template-one__section-title'),
+      paragraph4: directParagraphs[3]?.textContent.trim() || '',
+      image3: getImageSrc('.template-one__feature-image img'),
+      bulletPoints: [
+        bulletPoints[0] || '',
+        bulletPoints[1] || '',
+        bulletPoints[2] || '',
+        bulletPoints[3] || '',
+        bulletPoints[4] || '',
+      ],
+      paragraph5: directParagraphs[4]?.textContent.trim() || '',
+      tags: ['', '', ''],
+    };
+  } catch (error) {
+    console.error('Failed to parse Template One content:', error);
+    return getTemplateOneDefaults();
+  }
+};
+
      // Handle rich text editor content changes
    const handleEditorChange = (e) => {
      if (editorRef.current) {
@@ -188,7 +242,7 @@ export default function BlogManagementPage() {
       value && value.trim() ? value.trim() : fallback;
 
     const formatText = (value, fallback = '') => escapeHtml(getValue(value, fallback));
-    const formatParagraph = (value, fallback = '') => escapeHtml(getValue(value, fallback)).replace(/\n/g, '<br>');
+  const formatParagraph = (value, fallback = '') => escapeHtml(getValue(value, fallback));
     const formatAttribute = (value, fallback = '') => escapeAttribute(getValue(value, fallback));
     const imageOrDefault = (value, fallback) => getValue(value, fallback);
 
@@ -206,128 +260,26 @@ export default function BlogManagementPage() {
       `)
       .join('');
 
-    const templateStyles = `
-<style>
-  .template-one {
-    width: 100%;
-    max-width: 100%;
-    font-family: var(--font-primary, 'Inter', sans-serif);
-    color: #1f2937;
-  }
-  .template-one * {
-    box-sizing: border-box;
-  }
-  .template-one p {
-    font-size: 16px;
-    line-height: 1.8;
-    color: #4b5563;
-    margin: 0 0 18px;
-  }
-  .template-one__subheading {
-    font-size: 24px;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 18px;
-  }
-  .template-one__quote {
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    padding: 30px;
-    text-align: center;
-    margin: 32px 0;
-  }
-  .template-one__quote-text {
-    font-size: 20px;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 14px;
-  }
-  .template-one__quote-author {
-    color: #2563eb;
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: inline-block;
-  }
-  .template-one__quote-role {
-    font-size: 14px;
-    color: #6b7280;
-  }
-  .template-one__image-row {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
-    margin: 30px 0;
-  }
-  .template-one__image-row img,
-  .template-one__feature-image img {
-    width: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-  .template-one__section-title {
-    font-size: 26px;
-    color: #111827;
-    font-weight: 700;
-    margin: 36px 0 14px;
-  }
-  .template-one__feature {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px;
-    align-items: center;
-    margin: 26px 0 20px;
-  }
-  .template-one__checklist {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .template-one__check {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 15px;
-    color: #1f2937;
-    line-height: 1.6;
-  }
-  .template-one__check i {
-    color: #2563eb;
-    margin-top: 4px;
-  }
-  @media (max-width: 640px) {
-    .template-one__quote {
-      padding: 20px;
-    }
-  }
-</style>
-`;
-
-    return `
-${templateStyles}
+    const html = `
 <section class="template-one">
   ${mainTitle?.trim() ? `<h3 class="template-one__subheading">${formatText(mainTitle, '')}</h3>` : ''}
   <p>${formatParagraph(paragraph1, defaults.paragraph1)}</p>
   <p>${formatParagraph(paragraph2, defaults.paragraph2)}</p>
   <div class="template-one__quote">
-    <p class="template-one__quote-text">&ldquo;${formatParagraph(quoteText, defaults.quoteText)}&rdquo;</p>
+    <p class="template-one__quote-text">${formatParagraph(quoteText, defaults.quoteText)}</p>
     <span class="template-one__quote-author">${formatText(quoteAuthor, defaults.quoteAuthor)}</span>
     <div class="template-one__quote-role">${formatText(quoteAuthorTitle, defaults.quoteAuthorTitle)}</div>
   </div>
   <p>${formatParagraph(paragraph3, defaults.paragraph3)}</p>
-  <div class="template-one__image-row">
-    <img src="${formatAttribute(imageOrDefault(image1, defaults.image1))}" alt="template one visual one" loading="lazy" />
-    <img src="${formatAttribute(imageOrDefault(image2, defaults.image2))}" alt="template one visual two" loading="lazy" />
+  <div class="template-one__image-row" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:24px 0;align-items:stretch;">
+    <img src="${formatAttribute(imageOrDefault(image1, defaults.image1))}" alt="template one visual one" loading="lazy" style="width:100%;border-radius:12px;object-fit:cover;display:block;aspect-ratio:16/9;min-height:240px;" />
+    <img src="${formatAttribute(imageOrDefault(image2, defaults.image2))}" alt="template one visual two" loading="lazy" style="width:100%;border-radius:12px;object-fit:cover;display:block;aspect-ratio:16/9;min-height:240px;" />
   </div>
   <h4 class="template-one__section-title">${formatParagraph(sectionTitle, defaults.sectionTitle)}</h4>
   <p>${formatParagraph(paragraph4, defaults.paragraph4)}</p>
-  <div class="template-one__feature">
+  <div class="template-one__feature" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;align-items:center;margin:24px 0 18px;">
     <div class="template-one__feature-image">
-      <img src="${formatAttribute(imageOrDefault(image3, defaults.image3))}" alt="template one feature visual" loading="lazy" />
+      <img src="${formatAttribute(imageOrDefault(image3, defaults.image3))}" alt="template one feature visual" loading="lazy" style="width:100%;border-radius:12px;object-fit:cover;display:block;aspect-ratio:16/9;min-height:240px;" />
     </div>
     <ul class="template-one__checklist">
       ${bulletMarkup}
@@ -335,6 +287,7 @@ ${templateStyles}
   </div>
   <p>${formatParagraph(paragraph5, defaults.paragraph5)}</p>
 </section>`;
+    return cleanTemplateHtml(html);
   };
 
   // Update editor content when template data changes (for preview only)
@@ -492,7 +445,7 @@ ${templateStyles}
        const result = await response.json();
 
        if (result.success) {
-         const imageHTML = `<img src="${result.data.url}" alt="Blog image" style="max-width: 100%; height: auto; margin: 15px 0;" />`;
+        const imageHTML = `<img src="${result.data.url}" alt="Blog image" style="width: 100%; max-width: 100%; height: auto; margin: 15px 0; display: block;" />`;
          insertHTML(imageHTML);
          setShowImageModal(false);
          toast.success('Image uploaded and inserted successfully!');
@@ -532,7 +485,7 @@ ${templateStyles}
    // Insert image from URL
    const insertImageFromUrl = () => {
      if (imageUrl.trim()) {
-       const imageHTML = `<img src="${imageUrl.trim()}" alt="Blog image" style="max-width: 100%; height: auto; margin: 15px 0;" />`;
+      const imageHTML = `<img src="${imageUrl.trim()}" alt="Blog image" style="width: 100%; max-width: 100%; height: auto; margin: 15px 0; display: block;" />`;
        insertHTML(imageHTML);
        setShowImageModal(false);
        setImageUrl('');
@@ -710,9 +663,13 @@ ${templateStyles}
     
     try {
       // Sync editorContent to formData before saving (for HTML and Template modes)
-      const contentToSave = editorMode === 'template' || editorMode === 'html' 
+      let contentToSave = editorMode === 'template' || editorMode === 'html' 
         ? editorContent 
         : formData.content;
+
+      if (editorMode === 'template' || (contentToSave && contentToSave.includes('template-one'))) {
+        contentToSave = cleanTemplateHtml(contentToSave || '');
+      }
       
       const dataToSave = {
         ...formData,
@@ -806,6 +763,12 @@ ${templateStyles}
     setEditorContent(blog.content); // Set editor content for editing
     setEditorMode('visual'); // Set editor to visual mode for editing
     setShowPreview(false); // Reset preview mode when editing
+    if (blog.content && blog.content.includes('template-one')) {
+      const parsedTemplate = parseTemplateOneContent(blog.content);
+      setTemplateData(parsedTemplate);
+    } else {
+      setTemplateData(getTemplateOneDefaults());
+    }
     setShowAddForm(true);
   };
 

@@ -181,22 +181,39 @@ export default function BlogDetails() {
     return `/assets/images/testimonials/${authorImagePath}`;
   };
 
+  const normalizeTemplateContent = (html = '') => {
+    if (!html.includes('template-one')) return html;
+    let cleaned = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    cleaned = cleaned.replace(/<br\s*\/?>/gi, '');
+    // collapse repeated smart quotes if any
+    cleaned = cleaned.replace(/“+/g, '“').replace(/”+/g, '”');
+    return cleaned;
+  };
+
   // Process blog content to fix image loading
   useEffect(() => {
     if (blogPost && blogPost.content) {
-      // Add error handlers to all images in the content
       const contentDiv = document.querySelector('.blog-content-images');
       if (contentDiv) {
+        const templateStyles = contentDiv.querySelectorAll('style');
+        templateStyles.forEach((styleEl) => {
+          if (styleEl.textContent && styleEl.textContent.includes('.template-one')) {
+            styleEl.remove();
+          }
+        });
+
+        const templateRoot = contentDiv.querySelector('.template-one');
+        if (templateRoot) {
+          templateRoot.querySelectorAll('br').forEach((br) => br.remove());
+        }
+
         const images = contentDiv.querySelectorAll('img');
         images.forEach((img) => {
-          // Ensure images have proper error handling
           img.onerror = function() {
             console.error('❌ Image failed to load:', this.src);
             this.src = '/assets/images/blog/01.webp';
             this.alt = 'Image not available';
           };
-          
-          // Add loading attribute for better performance
           if (!img.hasAttribute('loading')) {
             img.setAttribute('loading', 'lazy');
           }
@@ -586,7 +603,7 @@ export default function BlogDetails() {
                     <div className="disc para-1">
                       <div 
                         className="blog-content-images"
-                        dangerouslySetInnerHTML={{ __html: blogPost.content }} 
+                        dangerouslySetInnerHTML={{ __html: normalizeTemplateContent(blogPost.content) }} 
                       />
                     </div>
                     <div className="row  align-items-center">
