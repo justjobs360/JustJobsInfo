@@ -5,6 +5,24 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
 import toast from 'react-hot-toast';
 
+const getTemplateOneDefaults = () => ({
+  mainTitle: '',
+  paragraph1: '',
+  paragraph2: '',
+  quoteText: '',
+  quoteAuthor: '',
+  quoteAuthorTitle: '',
+  paragraph3: '',
+  image1: '',
+  image2: '',
+  sectionTitle: '',
+  paragraph4: '',
+  image3: '',
+  bulletPoints: ['', '', '', '', ''],
+  paragraph5: '',
+  tags: ['', '', '']
+});
+
 export default function BlogManagementPage() {
   const { hasPermission, user } = useAuth();
   const [blogs, setBlogs] = useState([]);
@@ -56,29 +74,17 @@ export default function BlogManagementPage() {
   const [imageUrl, setImageUrl] = useState('');
   const [uploadingContentImage, setUploadingContentImage] = useState(false);
   const contentImageFileRef = useRef(null);
+  const templateSectionStyle = {
+    border: '1px solid #e5e7eb',
+    borderRadius: '16px',
+    padding: '24px',
+    backgroundColor: '#fff',
+    boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)',
+    marginBottom: '24px'
+  };
 
   // Template form states
-  const [templateData, setTemplateData] = useState({
-    mainTitle: '',
-    paragraph1: '',
-    paragraph2: '',
-    quoteText: '',
-    quoteAuthor: '',
-    quoteAuthorTitle: '',
-    paragraph3: '',
-    image1: '',
-    image2: '',
-    sectionTitle: '',
-    paragraph4: '',
-    image3: '',
-    bulletPoints: ['', '', '', '', ''],
-    paragraph5: '',
-    tags: ['', '', ''],
-    authorName: '',
-    authorTitle: '',
-    authorDescription: '',
-    authorImage: ''
-  });
+  const [templateData, setTemplateData] = useState(getTemplateOneDefaults());
 
      // Handle rich text editor content changes
    const handleEditorChange = (e) => {
@@ -143,165 +149,192 @@ export default function BlogManagementPage() {
     const { 
       mainTitle, paragraph1, paragraph2, quoteText, quoteAuthor, quoteAuthorTitle,
       paragraph3, image1, image2, sectionTitle, paragraph4, image3, 
-      bulletPoints, paragraph5, tags, authorName, authorTitle, authorDescription, authorImage
+      bulletPoints, paragraph5
     } = templateData;
 
+    const defaults = {
+      mainTitle: '',
+      paragraph1: 'Collaboratively pontificate bleeding edge resources with inexpensive methodologies globally initiate multidisciplinary compatible architectures pidiously repurpose leading edge growth strategies with just in time web readiness communicate timely meta services.',
+      paragraph2: 'Onubia semper vel donec torquent fusce mauris felis aptent lacinia nisl, lectus himenaeos euismod molestie iaculis interdum in laoreet condimentum dictum, quisque quam risus sollicitudin gravida ut odio per a et. Gravida maecenas lobortis suscipit mus sociosqu convallis, mollis vestibulum donec aliquam risus sapien ridiculus.',
+      quoteText: 'Placerat pretium tristique mattis tellus accuan metus dictumst vivamus odio nulla fusce auctor into suscipit habitasse class congue potenti iaculis.',
+      quoteAuthor: 'Daniel X. Horrar',
+      quoteAuthorTitle: 'Author',
+      paragraph3: 'Ultrices iaculis commodo parturient euismod pulvinar donec cum eget a, accumsan viverra cras praesent cubilia dignissim ad rhoncus. Gravida maecenas lobortis suscipit mus sociosqu convallis, mollis vestibulum donec aliquam risus sapien ridiculus, nulla sollicitudin eget in venenatis.',
+      image1: '/assets/images/blog/d-lg-01.jpg',
+      image2: '/assets/images/blog/d-lg-02.jpg',
+      sectionTitle: 'Ultimate Business Strategy Solution',
+      paragraph4: 'Gravida maecenas lobortis suscipit mus sociosqu convallis, mollis vestibulum donec aliquam risus sapien ridiculus, nulla sollicitudin eget in venenatis. Tortor montes platea iaculis posuere per mauris, eros porta blandit curabitur ullamcorper varius nostra ante risus egestas.',
+      image3: '/assets/images/blog/details/03.jpg',
+      bulletPoints: [
+        'How will activities traditional manufacturing',
+        'All these digital and projects aim to enhance',
+        'I monitor my software that takes screenshots',
+        'Laoreet dolore niacin sodium glutimate',
+        'Minim veniam sodium glutimate nostrud'
+      ],
+      paragraph5: 'Cubilia hendrerit luctus sem aptent curae gravida maecenas eleifend nunc nec vitae morbi sodales fusce tristique aenean habitasse mattis sociis feugiat conubia mus auctor praesent urna tincidunt taciti dui lobortis nullam. Mattis placerat feugiat ridiculus sed a per curae fermentum aenean facilisi.'
+    };
+
+    const escapeHtml = (text = '') =>
+      text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    const escapeAttribute = (text = '') =>
+      escapeHtml(text).replace(/"/g, '&quot;');
+
+    const getValue = (value, fallback = '') =>
+      value && value.trim() ? value.trim() : fallback;
+
+    const formatText = (value, fallback = '') => escapeHtml(getValue(value, fallback));
+    const formatParagraph = (value, fallback = '') => escapeHtml(getValue(value, fallback)).replace(/\n/g, '<br>');
+    const formatAttribute = (value, fallback = '') => escapeAttribute(getValue(value, fallback));
+    const imageOrDefault = (value, fallback) => getValue(value, fallback);
+
+    const bulletSource = bulletPoints && bulletPoints.some(point => point && point.trim())
+      ? bulletPoints
+      : defaults.bulletPoints;
+
+    const bulletMarkup = bulletSource
+      .filter(point => point && point.trim())
+      .map(point => `
+        <li class="template-one__check">
+          <i class="far fa-check-circle"></i>
+          <span>${formatParagraph(point, '')}</span>
+        </li>
+      `)
+      .join('');
+
+    const templateStyles = `
+<style>
+  .template-one {
+    width: 100%;
+    max-width: 100%;
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    color: #1f2937;
+  }
+  .template-one * {
+    box-sizing: border-box;
+  }
+  .template-one p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #4b5563;
+    margin: 0 0 18px;
+  }
+  .template-one__subheading {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 18px;
+  }
+  .template-one__quote {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    padding: 30px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .template-one__quote-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 14px;
+  }
+  .template-one__quote-author {
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+  .template-one__quote-role {
+    font-size: 14px;
+    color: #6b7280;
+  }
+  .template-one__image-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin: 30px 0;
+  }
+  .template-one__image-row img,
+  .template-one__feature-image img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .template-one__section-title {
+    font-size: 26px;
+    color: #111827;
+    font-weight: 700;
+    margin: 36px 0 14px;
+  }
+  .template-one__feature {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+    align-items: center;
+    margin: 26px 0 20px;
+  }
+  .template-one__checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .template-one__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+  .template-one__check i {
+    color: #2563eb;
+    margin-top: 4px;
+  }
+  @media (max-width: 640px) {
+    .template-one__quote {
+      padding: 20px;
+    }
+  }
+</style>
+`;
+
     return `
-<div className="career-single-banner-area ptb--70 blog-page">
-  <div className="container">
-    <div className="row">
-      <div className="col-lg-12">
-        <div className="career-page-single-banner blog-page">
-          <h1 className="title">{blogPost.title}</h1>
-        </div>
-      </div>
-    </div>
+${templateStyles}
+<section class="template-one">
+  ${mainTitle?.trim() ? `<h3 class="template-one__subheading">${formatText(mainTitle, '')}</h3>` : ''}
+  <p>${formatParagraph(paragraph1, defaults.paragraph1)}</p>
+  <p>${formatParagraph(paragraph2, defaults.paragraph2)}</p>
+  <div class="template-one__quote">
+    <p class="template-one__quote-text">&ldquo;${formatParagraph(quoteText, defaults.quoteText)}&rdquo;</p>
+    <span class="template-one__quote-author">${formatText(quoteAuthor, defaults.quoteAuthor)}</span>
+    <div class="template-one__quote-role">${formatText(quoteAuthorTitle, defaults.quoteAuthorTitle)}</div>
   </div>
-</div>
-<div className="rts-blog-list-area rts-section-gapTop">
-  <div className="container">
-    <div className="row g-5">
-      <div className="col-xl-8 col-md-12 col-sm-12 col-12">
-        <div className="blog-single-post-listing details mb--0">
-          <div className="thumbnail">
-            <img src={blogPost.bannerImg} alt={blogPost.title} />
-          </div>
-          <div className="blog-listing-content">
-            <div className="user-info">
-              <div className="single">
-                <i className="far fa-user-circle" />
-                <span>by David Smith</span>
-              </div>
-              <div className="single">
-                <i className="far fa-clock" />
-                <span>by David Smith</span>
-              </div>
-              <div className="single">
-                <i className="far fa-tags" />
-                <span>by David Smith</span>
-              </div>
-            </div>
-            <h3 className="title animated fadeIn">
-              ${mainTitle || 'Building smart business solution for you'}
-            </h3>
-            <p className="disc para-1">
-              ${paragraph1 || 'Collaboratively pontificate bleeding edge resources with inexpensive methodologies globally initiate multidisciplinary compatible architectures pidiously repurpose leading edge growth strategies with just in time web readiness communicate timely meta services'}
-            </p>
-            <p className="disc">
-              ${paragraph2 || 'Onubia semper vel donec torquent fusce mauris felis aptent lacinia nisl, lectus himenaeos euismod molestie iaculis interdum in laoreet condimentum dictum, quisque quam risus sollicitudin gravida ut odio per a et. Gravida maecenas lobortis suscipit mus sociosqu convallis, mollis vestibulum donec aliquam risus sapien ridiculus, nulla sollicitudin eget in venenatis. Tortor montes platea iaculis posuere per mauris, eros porta blandit curabitur ullamcorper varius'}
-            </p>
-            <div className="rts-quote-area text-center">
-              <h5 className="title">
-                "${quoteText || 'Placerat pretium tristique mattis tellus accuan metus dictumst vivamus odio nulla fusce auctor into suscipit habitasse class congue potenti iaculis'}"
-              </h5>
-              <a href="#" className="name">
-                ${quoteAuthor || 'Daniel X. Horrar'}
-              </a>
-              <span>${quoteAuthorTitle || 'Author'}</span>
-            </div>
-            <p className="disc">
-              ${paragraph3 || 'Ultrices iaculis commodo parturient euismod pulvinar donec cum eget a, accumsan viverra cras praesent cubilia dignissim ad rhoncus. Gravida maecenas lobortis suscipit mus sociosqu convallis, mollis vestibulum donec aliquam risus sapien ridiculus, nulla sollicitudin eget in venenatis. Tortor montes platea iaculis posuere per mauris, eros porta blandit curabitur ullamcorper varius, nostra ante risus egestas suscipit. Quisque interdum nec parturient facilisis nunc ac quam, ad est cubilia mauris himenaeos nascetur vestibulum.'}
-            </p>
-            <div className="row g-5">
-              <div className="col-lg-6 col-md-6">
-                <div className="thumbnail details">
-                  <img src="${image1 || '/assets/images/blog/d-lg-01.jpg'}" alt="elevae construction" />
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-6">
-                <div className="thumbnail details">
-                  <img src="${image2 || '/assets/images/blog/d-lg-02.jpg'}" alt="elevae construction" />
-                </div>
-              </div>
-            </div>
-            <h4 className="title mt--40 mt_sm--20">
-              ${sectionTitle || 'Ultimate Business Strategy Solution'}
-            </h4>
-            <p className="disc mb--25">
-              ${paragraph4 || 'Gravida maecenas lobortis suscipit mus sociosqu convallis, mollis vestibulum donec aliquam risus sapien ridiculus, nulla sollicitudin eget in venenatis. Tortor montes platea iaculis posuere per mauris, eros porta blandit curabitur ullamcorper varius nostra ante risus egestas.'}
-            </p>
-            <div className="row align-items-center">
-              <div className="col-lg-5">
-                <div className="thumbnail details mb_sm--15">
-                  <img src="${image3 || '/assets/images/blog/details/03.jpg'}" alt="elevate" />
-                </div>
-              </div>
-              <div className="col-lg-7">
-                <div className="check-area-details">
-                  ${bulletPoints.filter(point => point.trim()).map(point => `
-                    <div className="single-check">
-                      <i className="far fa-check-circle" />
-                      <span>${point}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            </div>
-            <p className="disc mt--30">
-              ${paragraph5 || 'Cubilia hendrerit luctus sem aptent curae gravida maecenas eleifend nunc nec vitae morbi sodales fusce tristique aenean habitasse mattis sociis feugiat conubia mus auctor praesent urna tincidunt taciti dui lobortis nullam. Mattis placerat feugiat ridiculus sed a per curae fermentum aenean facilisi, vitae urna imperdiet ac mauris non inceptos luctus hac odio.'}
-            </p>
-            <div className="row align-items-center">
-              <div className="col-lg-6 col-md-12">
-                <div className="details-tag">
-                  <h6>Tags:</h6>
-                  ${tags.filter(tag => tag.trim()).map(tag => `<button>${tag}</button>`).join('')}
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-12">
-                <div className="details-share">
-                  <h6>Share:</h6>
-                  <button><i className="fab fa-facebook-f" /></button>
-                  <button><i className="fab fa-twitter" /></button>
-                  <button><i className="fab fa-instagram" /></button>
-                  <button><i className="fab fa-linkedin-in" /></button>
-                </div>
-              </div>
-            </div>
-            <div className="author-area">
-              <div className="thumbnail details mb_sm--15">
-                <img src="${authorImage || '/assets/images/blog/details/author.jpg'}" alt="finbiz_buseness" />
-              </div>
-              <div className="author-details team">
-                <span className="desig">${authorTitle || 'Brand Designer'}</span>
-                <h5>${authorName || 'Angelina H. Dekato'}</h5>
-                <p className="disc">
-                  ${authorDescription || 'Nullam varius luctus pharetra ultrices volpat facilisis donec tortor, nibhkisys habitant curabitur at nunc nisl magna ac rhoncus vehicula sociis tortor nist hendrerit molestie integer.'}
-                </p>
-              </div>
-            </div>
-            <div className="comments-area">
-              <div id="comments-container">
-                {/* Dynamic comments will appear here */}
-              </div>
-            </div>
-            <div className="replay-area-details">
-              <h4 className="title">Leave a Reply</h4>
-              <form id="comment-form">
-                <div className="row g-4">
-                  <div className="col-lg-6">
-                    <input type="text" id="name" placeholder="Your Name" required="" />
-                  </div>
-                  <div className="col-lg-6">
-                    <input type="text" id="email" placeholder="Your Email" required="" />
-                  </div>
-                  <div className="col-12">
-                    <input type="text" id="topic" placeholder="Select Topic" />
-                    <textarea id="message" placeholder="Type your message" required="" defaultValue={""} />
-                  </div>
-                  <div className="col-12">
-                    <button className="rts-btn btn-primary" type="submit">
-                      Submit Message
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <p>${formatParagraph(paragraph3, defaults.paragraph3)}</p>
+  <div class="template-one__image-row">
+    <img src="${formatAttribute(imageOrDefault(image1, defaults.image1))}" alt="template one visual one" loading="lazy" />
+    <img src="${formatAttribute(imageOrDefault(image2, defaults.image2))}" alt="template one visual two" loading="lazy" />
   </div>
-</div>`;
+  <h4 class="template-one__section-title">${formatParagraph(sectionTitle, defaults.sectionTitle)}</h4>
+  <p>${formatParagraph(paragraph4, defaults.paragraph4)}</p>
+  <div class="template-one__feature">
+    <div class="template-one__feature-image">
+      <img src="${formatAttribute(imageOrDefault(image3, defaults.image3))}" alt="template one feature visual" loading="lazy" />
+    </div>
+    <ul class="template-one__checklist">
+      ${bulletMarkup}
+    </ul>
+  </div>
+  <p>${formatParagraph(paragraph5, defaults.paragraph5)}</p>
+</section>`;
   };
 
   // Update editor content when template data changes (for preview only)
@@ -811,27 +844,7 @@ export default function BlogManagementPage() {
     setBannerUploadType('url');
     setTagsInput(''); // Reset tags input
     // Reset template data
-    setTemplateData({
-      mainTitle: '',
-      paragraph1: '',
-      paragraph2: '',
-      quoteText: '',
-      quoteAuthor: '',
-      quoteAuthorTitle: '',
-      paragraph3: '',
-      image1: '',
-      image2: '',
-      sectionTitle: '',
-      paragraph4: '',
-      image3: '',
-      bulletPoints: ['', '', '', '', ''],
-      paragraph5: '',
-      tags: ['', '', ''],
-      authorName: '',
-      authorTitle: '',
-      authorDescription: '',
-      authorImage: ''
-    });
+    setTemplateData(getTemplateOneDefaults());
   };
 
   // Filter blogs based on status
@@ -1718,251 +1731,219 @@ export default function BlogManagementPage() {
                   ) : (
                     <div className="template-editor">
                       <div className="template-form">
-                        <h4 style={{ marginBottom: '20px', color: '#333' }}>Template One - Content Fields</h4>
-                        
-                        {/* Main Title */}
-                        <div className="form-group">
-                          <label>Main Title</label>
-                          <input
-                            type="text"
-                            value={templateData.mainTitle}
-                            onChange={(e) => handleTemplateChange('mainTitle', e.target.value)}
-                            className="form-control"
-                            placeholder="Enter main title"
-                          />
+                        <h4 style={{ marginBottom: '10px', color: '#0f172a' }}>Template One - Content Builder</h4>
+                        <p style={{ color: '#6b7280', marginBottom: '24px' }}>
+                          Every block below maps 1:1 to the live blog layout. The generated HTML stretches the full width of the article body, so the preview and the published page will always match.
+                        </p>
+
+                        <div style={templateSectionStyle}>
+                          <div style={{ marginBottom: '16px' }}>
+                            <h5 style={{ margin: 0, color: '#0f172a' }}>Intro Section</h5>
+                            <p style={{ margin: '6px 0 0', color: '#6b7280' }}>
+                              Appears directly under the blog title. Keep copy concise and energetic.
+                            </p>
+                          </div>
+                          <div className="form-group">
+                            <label>Optional Subheading (appears before first paragraph)</label>
+                            <input
+                              type="text"
+                              value={templateData.mainTitle}
+                              onChange={(e) => handleTemplateChange('mainTitle', e.target.value)}
+                              className="form-control"
+                              placeholder="Intro headline (optional)"
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Lead Paragraph</label>
+                            <textarea
+                              value={templateData.paragraph1}
+                              onChange={(e) => handleTemplateChange('paragraph1', e.target.value)}
+                              className="form-control"
+                              rows="3"
+                              placeholder="Set the scene with a clear overview..."
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Secondary Paragraph</label>
+                            <textarea
+                              value={templateData.paragraph2}
+                              onChange={(e) => handleTemplateChange('paragraph2', e.target.value)}
+                              className="form-control"
+                              rows="3"
+                              placeholder="Add supporting context or a contrasting insight..."
+                            />
+                          </div>
                         </div>
 
-                        {/* Paragraphs */}
-                        <div className="form-group">
-                          <label>First Paragraph</label>
-                          <textarea
-                            value={templateData.paragraph1}
-                            onChange={(e) => handleTemplateChange('paragraph1', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                            placeholder="Enter first paragraph content"
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label>Second Paragraph</label>
-                          <textarea
-                            value={templateData.paragraph2}
-                            onChange={(e) => handleTemplateChange('paragraph2', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                            placeholder="Enter second paragraph content"
-                          />
-                        </div>
-
-                        {/* Quote Section */}
-                        <div className="form-group">
-                          <label>Quote Text</label>
-                          <textarea
-                            value={templateData.quoteText}
-                            onChange={(e) => handleTemplateChange('quoteText', e.target.value)}
-                            className="form-control"
-                            rows="2"
-                            placeholder="Enter quote text"
-                          />
-                        </div>
-
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group">
+                        <div style={templateSectionStyle}>
+                          <div style={{ marginBottom: '16px' }}>
+                            <h5 style={{ margin: 0, color: '#0f172a' }}>Quote Highlight</h5>
+                            <p style={{ margin: '6px 0 0', color: '#6b7280' }}>
+                              Shown as a full-width pull quote to break up long text.
+                            </p>
+                          </div>
+                          <div className="form-group">
+                            <label>Quote Text</label>
+                            <textarea
+                              value={templateData.quoteText}
+                              onChange={(e) => handleTemplateChange('quoteText', e.target.value)}
+                              className="form-control"
+                              rows="3"
+                              placeholder="Enter the quote in first person..."
+                            />
+                          </div>
+                          <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
                               <label>Quote Author</label>
                               <input
                                 type="text"
                                 value={templateData.quoteAuthor}
                                 onChange={(e) => handleTemplateChange('quoteAuthor', e.target.value)}
                                 className="form-control"
-                                placeholder="Quote author name"
+                                placeholder="Daniel X. Horrar"
                               />
                             </div>
-                          </div>
-                          <div className="col-md-6">
-                            <div className="form-group">
-                              <label>Quote Author Title</label>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
+                              <label>Author Title</label>
                               <input
                                 type="text"
                                 value={templateData.quoteAuthorTitle}
                                 onChange={(e) => handleTemplateChange('quoteAuthorTitle', e.target.value)}
                                 className="form-control"
-                                placeholder="Author title/position"
+                                placeholder="Author"
                               />
                             </div>
                           </div>
                         </div>
 
-                        <div className="form-group">
-                          <label>Third Paragraph</label>
-                          <textarea
-                            value={templateData.paragraph3}
-                            onChange={(e) => handleTemplateChange('paragraph3', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                            placeholder="Enter third paragraph content"
-                          />
-                        </div>
-
-                        {/* Images */}
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group">
-                              <label>First Image URL</label>
+                        <div style={templateSectionStyle}>
+                          <div style={{ marginBottom: '16px' }}>
+                            <h5 style={{ margin: 0, color: '#0f172a' }}>Narrative + Image Pair</h5>
+                            <p style={{ margin: '6px 0 0', color: '#6b7280' }}>
+                              Two balanced images follow the supporting paragraph. Use identical aspect ratios for clean rows.
+                            </p>
+                          </div>
+                          <div className="form-group">
+                            <label>Supporting Paragraph</label>
+                            <textarea
+                              value={templateData.paragraph3}
+                              onChange={(e) => handleTemplateChange('paragraph3', e.target.value)}
+                              className="form-control"
+                              rows="3"
+                              placeholder="Describe the challenge or opportunity in depth..."
+                            />
+                          </div>
+                          <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
+                              <label>Left Image URL</label>
                               <input
                                 type="text"
                                 value={templateData.image1}
                                 onChange={(e) => handleTemplateChange('image1', e.target.value)}
                                 className="form-control"
-                                placeholder="Enter first image URL"
+                                placeholder="https://..."
                               />
                             </div>
-                          </div>
-                          <div className="col-md-6">
-                            <div className="form-group">
-                              <label>Second Image URL</label>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
+                              <label>Right Image URL</label>
                               <input
                                 type="text"
                                 value={templateData.image2}
                                 onChange={(e) => handleTemplateChange('image2', e.target.value)}
                                 className="form-control"
-                                placeholder="Enter second image URL"
+                                placeholder="https://..."
                               />
                             </div>
                           </div>
                         </div>
 
-                        {/* Section Title */}
-                        <div className="form-group">
-                          <label>Section Title</label>
-                          <input
-                            type="text"
-                            value={templateData.sectionTitle}
-                            onChange={(e) => handleTemplateChange('sectionTitle', e.target.value)}
-                            className="form-control"
-                            placeholder="Enter section title"
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label>Fourth Paragraph</label>
-                          <textarea
-                            value={templateData.paragraph4}
-                            onChange={(e) => handleTemplateChange('paragraph4', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                            placeholder="Enter fourth paragraph content"
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label>Third Image URL</label>
-                          <input
-                            type="text"
-                            value={templateData.image3}
-                            onChange={(e) => handleTemplateChange('image3', e.target.value)}
-                            className="form-control"
-                            placeholder="Enter third image URL"
-                          />
-                        </div>
-
-                        {/* Bullet Points */}
-                        <div className="form-group">
-                          <label>Bullet Points</label>
-                          {templateData.bulletPoints.map((point, index) => (
+                        <div style={templateSectionStyle}>
+                          <div style={{ marginBottom: '16px' }}>
+                            <h5 style={{ margin: 0, color: '#0f172a' }}>Strategy Checklist</h5>
+                            <p style={{ margin: '6px 0 0', color: '#6b7280' }}>
+                              This section pairs a headline, supporting copy, bullet list, and a feature image.
+                            </p>
+                          </div>
+                          <div className="form-group">
+                            <label>Section Title</label>
                             <input
-                              key={index}
                               type="text"
-                              value={point}
-                              onChange={(e) => handleBulletPointChange(index, e.target.value)}
+                              value={templateData.sectionTitle}
+                              onChange={(e) => handleTemplateChange('sectionTitle', e.target.value)}
                               className="form-control"
-                              style={{ marginBottom: '10px' }}
-                              placeholder={`Bullet point ${index + 1}`}
+                              placeholder="Ultimate Business Strategy Solution"
                             />
-                          ))}
-                        </div>
-
-                        <div className="form-group">
-                          <label>Fifth Paragraph</label>
-                          <textarea
-                            value={templateData.paragraph5}
-                            onChange={(e) => handleTemplateChange('paragraph5', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                            placeholder="Enter fifth paragraph content"
-                          />
-                        </div>
-
-                        {/* Tags */}
-                        <div className="form-group">
-                          <label>Tags</label>
-                          {templateData.tags.map((tag, index) => (
+                          </div>
+                          <div className="form-group">
+                            <label>Section Paragraph</label>
+                            <textarea
+                              value={templateData.paragraph4}
+                              onChange={(e) => handleTemplateChange('paragraph4', e.target.value)}
+                              className="form-control"
+                              rows="3"
+                              placeholder="Explain how the strategy works and why it matters..."
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Checklist Bullet Points</label>
+                            {templateData.bulletPoints.map((point, index) => (
+                              <input
+                                key={index}
+                                type="text"
+                                value={point}
+                                onChange={(e) => handleBulletPointChange(index, e.target.value)}
+                                className="form-control"
+                                style={{ marginBottom: '10px' }}
+                                placeholder={`Bullet point ${index + 1}`}
+                              />
+                            ))}
+                          </div>
+                          <div className="form-group">
+                            <label>Feature Image URL</label>
                             <input
-                              key={index}
                               type="text"
-                              value={tag}
-                              onChange={(e) => handleTagChange(index, e.target.value)}
+                              value={templateData.image3}
+                              onChange={(e) => handleTemplateChange('image3', e.target.value)}
                               className="form-control"
-                              style={{ marginBottom: '10px' }}
-                              placeholder={`Tag ${index + 1}`}
+                              placeholder="https://..."
                             />
-                          ))}
-                        </div>
-
-                        {/* Author Section */}
-                        <h5 style={{ marginTop: '30px', marginBottom: '15px', color: '#333' }}>Author Information</h5>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group">
-                              <label>Author Name</label>
-                              <input
-                                type="text"
-                                value={templateData.authorName}
-                                onChange={(e) => handleTemplateChange('authorName', e.target.value)}
-                                className="form-control"
-                                placeholder="Author name"
-                              />
-                            </div>
-                          </div>
-                          <div className="col-md-6">
-                            <div className="form-group">
-                              <label>Author Title</label>
-                              <input
-                                type="text"
-                                value={templateData.authorTitle}
-                                onChange={(e) => handleTemplateChange('authorTitle', e.target.value)}
-                                className="form-control"
-                                placeholder="Author title/position"
-                              />
-                            </div>
                           </div>
                         </div>
 
-                        <div className="form-group">
-                          <label>Author Description</label>
-                          <textarea
-                            value={templateData.authorDescription}
-                            onChange={(e) => handleTemplateChange('authorDescription', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                            placeholder="Enter author description"
-                          />
+                        <div style={templateSectionStyle}>
+                          <div style={{ marginBottom: '16px' }}>
+                            <h5 style={{ margin: 0, color: '#0f172a' }}>Closing + Tags</h5>
+                            <p style={{ margin: '6px 0 0', color: '#6b7280' }}>
+                              Wrap things up and surface related tags for quick scanning.
+                            </p>
+                          </div>
+                          <div className="form-group">
+                            <label>Closing Paragraph</label>
+                            <textarea
+                              value={templateData.paragraph5}
+                              onChange={(e) => handleTemplateChange('paragraph5', e.target.value)}
+                              className="form-control"
+                              rows="3"
+                              placeholder="Summarize the outcomes or next steps..."
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Tag Chips</label>
+                            {templateData.tags.map((tag, index) => (
+                              <input
+                                key={index}
+                                type="text"
+                                value={tag}
+                                onChange={(e) => handleTagChange(index, e.target.value)}
+                                className="form-control"
+                                style={{ marginBottom: '10px' }}
+                                placeholder={`Tag ${index + 1}`}
+                              />
+                            ))}
+                          </div>
                         </div>
 
-                        <div className="form-group">
-                          <label>Author Image URL</label>
-                          <input
-                            type="text"
-                            value={templateData.authorImage}
-                            onChange={(e) => handleTemplateChange('authorImage', e.target.value)}
-                            className="form-control"
-                            placeholder="Enter author image URL"
-                          />
-                        </div>
-
-                        {/* Preview Button */}
-                        <div style={{ marginTop: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
                           <button
                             type="button"
                             className="rts-btn btn-border"
@@ -1970,18 +1951,20 @@ export default function BlogManagementPage() {
                           >
                             {showPreview ? 'Hide Preview' : 'Show Preview'}
                           </button>
+                          <span style={{ fontSize: '13px', color: '#6b7280' }}>
+                            Preview mirrors the exact HTML/CSS saved to the blog.
+                          </span>
                         </div>
 
-                        {/* Preview */}
                         {showPreview && (
                           <div style={{ 
                             marginTop: '20px', 
-                            padding: '20px', 
-                            border: '1px solid var(--color-border)', 
-                            borderRadius: 'var(--radius)',
-                            backgroundColor: '#f8f9fa'
+                            padding: '24px', 
+                            border: '1px solid #dfe3ea', 
+                            borderRadius: '18px',
+                            backgroundColor: '#f8fafc'
                           }}>
-                            <h5 style={{ marginBottom: '15px', color: '#333' }}>Template Preview:</h5>
+                            <h5 style={{ marginBottom: '15px', color: '#0f172a' }}>Template Preview</h5>
                             <div 
                               className="editor-preview"
                               dangerouslySetInnerHTML={{ 

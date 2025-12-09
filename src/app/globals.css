@@ -6,4 +6,117 @@
  
 .single-solution-style-one .disc {
     flex-grow: 1;
-} 
+}
+
+/* Template One Blog Styling */
+.template-one {
+    width: 100%;
+    max-width: 100%;
+    font-family: var(--font-primary, 'Inter', sans-serif);
+    color: #1f2937;
+}
+
+.template-one * {
+    box-sizing: border-box;
+}
+
+.template-one p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #4b5563;
+    margin: 0 0 18px;
+}
+
+.template-one__subheading {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 18px;
+}
+
+.template-one__quote {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    padding: 30px;
+    text-align: center;
+    margin: 32px 0;
+}
+
+.template-one__quote-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 14px;
+}
+
+.template-one__quote-author {
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: inline-block;
+}
+
+.template-one__quote-role {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.template-one__image-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin: 30px 0;
+}
+
+.template-one__image-row img,
+.template-one__feature-image img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.template-one__section-title {
+    font-size: 26px;
+    color: #111827;
+    font-weight: 700;
+    margin: 36px 0 14px;
+}
+
+.template-one__feature {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+    align-items: center;
+    margin: 26px 0 20px;
+}
+
+.template-one__checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.template-one__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.template-one__check i {
+    color: #2563eb;
+    margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+    .template-one__quote {
+        padding: 20px;
+    }
+}

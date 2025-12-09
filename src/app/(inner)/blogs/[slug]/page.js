@@ -18,25 +18,14 @@ const BlogDetailSkeleton = () => (
     <div className="container">
       <div className="row g-5">
         {/* Main content skeleton */}
-        <div className="col-xl-8 col-md-12 col-sm-12 col-12">
+        <div className="col-xl-12 col-md-12 col-sm-12 col-12">
           <div className="blog-single-post-listing details mb--0">
             {/* Banner image skeleton */}
             <div className="thumbnail">
               <div className="skeleton-banner-image"></div>
             </div>
             <div className="blog-listing-content">
-              {/* User info skeleton */}
-              <div className="user-info">
-                <div className="single">
-                  <div className="skeleton-user-info"></div>
-                </div>
-                <div className="single">
-                  <div className="skeleton-user-info"></div>
-                </div>
-                <div className="single">
-                  <div className="skeleton-user-info"></div>
-                </div>
-              </div>
+              
               {/* Title skeleton */}
               <div className="skeleton-title-large"></div>
               {/* Content skeleton */}
@@ -514,7 +503,7 @@ export default function BlogDetails() {
             </div>
           </div>
         </div>
-        <div className="rts-blog-list-area rts-section-gapTop">
+        <div className="rts-blog-list-area">
           <div className="container">
             <div className="row">
               <div className="col-12 text-center">
@@ -590,26 +579,7 @@ export default function BlogDetails() {
                     />
                   </div>
                   <div className="blog-listing-content">
-                    <div className="user-info">
-                      {/* single info */}
-                      <div className="single">
-                        <i className="far fa-user-circle" />
-                        <span>by {blogPost.author || 'Unknown Author'}</span>
-                      </div>
-                      {/* single info end */}
-                      {/* single info */}
-                      <div className="single">
-                        <i className="far fa-clock" />
-                        <span>{new Date(blogPost.publishedDate).toLocaleDateString()}</span>
-                      </div>
-                      {/* single info end */}
-                      {/* single info */}
-                      <div className="single">
-                        <i className="far fa-tags" />
-                        <span>{blogPost.category || 'Uncategorized'}</span>
-                      </div>
-                      {/* single info end */}
-                    </div>
+                    
                     <h3 className="title animated fadeIn">
                       {blogPost.title}
                     </h3>
@@ -1145,14 +1115,7 @@ export default function BlogDetails() {
           border-radius: 8px;
         }
 
-        .skeleton-user-info {
-          width: 120px;
-          height: 16px;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-          background-size: 200% 100%;
-          animation: loading 1.5s infinite;
-          border-radius: 4px;
-        }
+        
 
         .skeleton-title-large {
           width: 100%;

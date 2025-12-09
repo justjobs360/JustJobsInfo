@@ -256,7 +256,9 @@ const BlogMain = (props) => {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         minHeight: '95px',
-                        maxHeight: '95px'
+                        maxHeight: '95px',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'anywhere'
                     }}>
                         {blogDescription ? blogDescription : 'How do you create compelling presentations that wow your colleagues and impress your managers? This comprehensive guide will help you master the art of professional presentations.'}
                     </p>
