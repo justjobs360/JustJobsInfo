@@ -91,15 +91,45 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
     }
   }, [step, onStepChange]);
 
-  // Load saved resume data from Firebase when component mounts
+  // Track if we've loaded initial data to prevent overwriting
+  const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
+
+  // Handle initialFormData changes (e.g., when loaded from sessionStorage)
   useEffect(() => {
-    if (isAuthenticated && user) {
-      loadSavedResume();
-    } else {
-      // Fallback to localStorage for non-authenticated users
-      loadFromLocalStorage();
+    if (initialFormData && Object.keys(initialFormData).length > 0) {
+      // Check if initialFormData has meaningful content (not just empty defaults)
+      const hasInitialData = initialFormData.firstName || initialFormData.lastName || initialFormData.summary || 
+        (initialFormData.employment && initialFormData.employment[0]?.jobTitle) ||
+        (initialFormData.education && initialFormData.education[0]?.degree);
+      
+      if (hasInitialData && !hasLoadedInitialData) {
+        setForm({ ...initialForm, ...initialFormData });
+        setHasLoadedInitialData(true);
+      }
     }
-  }, [isAuthenticated, user]);
+  }, [initialFormData, hasLoadedInitialData]);
+
+  // Load saved resume data from Firebase when component mounts
+  // Skip loading if initialFormData is provided (from tailored CV)
+  useEffect(() => {
+    // Check if initialFormData has meaningful content (not just empty defaults)
+    const hasInitialData = initialFormData && Object.keys(initialFormData).length > 0 && 
+      (initialFormData.firstName || initialFormData.lastName || initialFormData.summary || 
+       (initialFormData.employment && initialFormData.employment[0]?.jobTitle) ||
+       (initialFormData.education && initialFormData.education[0]?.degree));
+    
+    // Only load from saved data if:
+    // 1. No initial data is provided, AND
+    // 2. We haven't already loaded initial data
+    if (!hasInitialData && !hasLoadedInitialData) {
+      if (isAuthenticated && user) {
+        loadSavedResume();
+      } else {
+        // Fallback to localStorage for non-authenticated users
+        loadFromLocalStorage();
+      }
+    }
+  }, [isAuthenticated, user, initialFormData, hasLoadedInitialData]);
 
   // Auto-save resume data when form changes
   useEffect(() => {

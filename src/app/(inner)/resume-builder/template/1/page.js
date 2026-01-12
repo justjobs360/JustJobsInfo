@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import ResumeBuilderForm from "@/components/resume/ResumeBuilderForm";
+import { useTailoredCVData } from "@/utils/useTailoredCVData";
 
 import html2pdf from 'html2pdf.js';
 import { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, TabStopType } from 'docx';
@@ -17,6 +18,16 @@ export default function ResumeEditorPage({ params }) {
   const [sections, setSections] = useState(["personal", "summary", "employment", "education", "skills"]);
   const [customSections, setCustomSections] = useState([]);
   const [step, setStep] = useState(0);
+  
+  // Get tailored CV data from job fit analysis
+  const { initialFormData, initialSections } = useTailoredCVData();
+  
+  // Update sections if tailored data provides them
+  useEffect(() => {
+    if (initialSections && initialSections.length > 0) {
+      setSections(initialSections);
+    }
+  }, [initialSections]);
 
   // Responsive preview scaling
   const previewWrapperRef = useRef(null);
@@ -1436,6 +1447,7 @@ export default function ResumeEditorPage({ params }) {
               onSectionsChange={handleSectionsChange}
               onCustomSectionsChange={handleCustomSectionsChange}
               onStepChange={handleStepChange}
+              initialFormData={initialFormData}
               templateId="template-1"
               onDownloadDOCX={handleDownloadDOCXButton}
             />

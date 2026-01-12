@@ -166,6 +166,7 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
                                         {jobDescription.length}/5000 characters
                                     </div>
                                 </div>
+
                             </div>
 
                             {/* Right Column: 30% width - Resume Upload */}

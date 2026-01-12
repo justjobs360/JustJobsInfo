@@ -85,6 +85,37 @@ class JobFitService {
         if (score >= 40) return { label: 'Moderate Fit', color: '#f97316' };
         return { label: 'Poor Fit', color: '#ef4444' };
     }
+
+    static async tailorCV(formData, user) {
+        try {
+            // Create FormData for file upload
+            const formDataToSend = new FormData();
+            formDataToSend.append('jobDescription', formData.jobDescription);
+            formDataToSend.append('resumeFile', formData.resumeFile);
+            formDataToSend.append('templateId', formData.templateId || '1');
+
+            const headers = {};
+            if (user) {
+                headers['x-user-id'] = user.uid;
+                headers['x-user-email'] = user.email;
+            }
+
+            const response = await fetch('/api/job-fit/tailor-cv', {
+                method: 'POST',
+                headers,
+                body: formDataToSend
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('CV tailoring error:', error);
+            return {
+                success: false,
+                error: 'Network error. Please check your connection and try again.'
+            };
+        }
+    }
 }
 
 export { JobFitService };

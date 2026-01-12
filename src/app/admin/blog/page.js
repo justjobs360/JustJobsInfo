@@ -4,6 +4,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { ADMIN_PERMISSIONS } from '@/utils/userRoleService';
 import toast from 'react-hot-toast';
+import AutoBlogGenerator from '@/components/admin/AutoBlogGenerator';
 
 const getTemplateOneDefaults = () => ({
   mainTitle: '',
@@ -34,6 +35,7 @@ export default function BlogManagementPage() {
   const [showComments, setShowComments] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all'); // Add status filter state
   const [categoryFilter, setCategoryFilter] = useState('all'); // Add category filter state
+  const [activeTab, setActiveTab] = useState('manage'); // 'manage' or 'auto'
   
   // Form states
   const [formData, setFormData] = useState({
@@ -867,16 +869,18 @@ const parseTemplateOneContent = (html) => {
         <div className="admin-header">
           <h1>Blog Management</h1>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <button 
-              className="btn btn-primary add-blog-btn"
-              onClick={() => {
-                setShowAddForm(true);
-                setEditingBlog(null);
-                resetForm();
-              }}
-            >
-              <i className="fas fa-plus"></i> Add New Blog
-            </button>
+            {activeTab === 'manage' && (
+              <button 
+                className="btn btn-primary add-blog-btn"
+                onClick={() => {
+                  setShowAddForm(true);
+                  setEditingBlog(null);
+                  resetForm();
+                }}
+              >
+                <i className="fas fa-plus"></i> Add New Blog
+              </button>
+            )}
             
             {/* Quick Links */}
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -918,8 +922,55 @@ const parseTemplateOneContent = (html) => {
           </div>
         </div>
 
-        {/* Add/Edit Form */}
-        {showAddForm && (
+        {/* Tabs */}
+        <div style={{ 
+          borderBottom: '2px solid #e5e7eb', 
+          marginBottom: '24px',
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <button
+            onClick={() => setActiveTab('manage')}
+            style={{
+              padding: '12px 24px',
+              border: 'none',
+              background: 'transparent',
+              borderBottom: activeTab === 'manage' ? '3px solid var(--color-primary)' : '3px solid transparent',
+              color: activeTab === 'manage' ? 'var(--color-primary)' : 'var(--color-body)',
+              fontWeight: activeTab === 'manage' ? '600' : '400',
+              cursor: 'pointer',
+              fontSize: '16px',
+              transition: 'all 0.2s'
+            }}
+          >
+            📝 Manage Blogs
+          </button>
+          <button
+            onClick={() => setActiveTab('auto')}
+            style={{
+              padding: '12px 24px',
+              border: 'none',
+              background: 'transparent',
+              borderBottom: activeTab === 'auto' ? '3px solid var(--color-primary)' : '3px solid transparent',
+              color: activeTab === 'auto' ? 'var(--color-primary)' : 'var(--color-body)',
+              fontWeight: activeTab === 'auto' ? '600' : '400',
+              cursor: 'pointer',
+              fontSize: '16px',
+              transition: 'all 0.2s'
+            }}
+          >
+            🤖 Auto Blog Generator
+          </button>
+        </div>
+
+        {/* Auto Blog Tab Content */}
+        {activeTab === 'auto' && <AutoBlogGenerator onBlogsGenerated={fetchBlogs} />}
+
+        {/* Manage Blogs Tab Content */}
+        {activeTab === 'manage' && (
+          <>
+            {/* Add/Edit Form */}
+            {showAddForm && (
           <div className="admin-form-section">
             <div className="form-header">
               <h3>{editingBlog ? 'Edit Blog' : 'Add New Blog'}</h3>
@@ -2217,7 +2268,8 @@ const parseTemplateOneContent = (html) => {
             </div>
           )}
         </div>
-      </div>
+        </>
+      )}
 
       <style jsx>{`
         .admin-content {
@@ -3135,6 +3187,7 @@ const parseTemplateOneContent = (html) => {
           </div>
         </div>
       )}
+      </div>
     </AdminLayout>
   );
 } 

@@ -1,6 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import TemplateSelector from './TemplateSelector';
 
-export default function JobFitResults({ analysisData, onNewAnalysis }) {
+export default function JobFitResults({ analysisData, onNewAnalysis, tailoredCVData, isTailoringCV, cvTailoringError, onTailorCVNow }) {
+    const [showTailorCVOption, setShowTailorCVOption] = useState(false);
+    const [showChangeTemplate, setShowChangeTemplate] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState(1);
+
+    // Always show the option if there's no tailored CV and not currently tailoring
+    useEffect(() => {
+        if (!tailoredCVData && !isTailoringCV && !cvTailoringError) {
+            setShowTailorCVOption(true);
+        } else {
+            setShowTailorCVOption(false);
+        }
+    }, [tailoredCVData, isTailoringCV, cvTailoringError]);
     const { 
         fitScore, 
         fitLevel,
@@ -100,6 +113,34 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+    };
+
+    const handleOpenResumeBuilder = () => {
+        if (!tailoredCVData || !tailoredCVData.redirectUrl) {
+            console.error('No tailored CV data or redirect URL available');
+            return;
+        }
+
+        try {
+            // Store the form data in sessionStorage so the resume builder can read it
+            if (tailoredCVData.resumeForm) {
+                // Get dataKey from URL or from the response data
+                const dataKey = tailoredCVData.dataKey || new URLSearchParams(tailoredCVData.redirectUrl.split('?')[1]).get('dataKey');
+                if (dataKey) {
+                    const storageKey = `tailored_cv_${dataKey}`;
+                    sessionStorage.setItem(storageKey, JSON.stringify({
+                        form: tailoredCVData.resumeForm,
+                        sections: tailoredCVData.sections || ['personal', 'summary', 'employment', 'education', 'skills']
+                    }));
+                }
+            }
+
+            // Redirect to resume builder
+            window.location.href = tailoredCVData.redirectUrl;
+        } catch (error) {
+            console.error('Error opening resume builder:', error);
+            alert('Failed to open resume builder. Please try again.');
+        }
     };
 
     return (
@@ -362,7 +403,284 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                 </div>
             </div>
 
-            <div className="results-actions" style={{ display: 'flex', gap: '12px', justifyContent: 'center', alignItems: 'center' }}>
+            {/* CV Tailoring Loading State */}
+            {isTailoringCV && (
+                <div style={{
+                    background: 'linear-gradient(135deg, rgba(9, 99, 211, 0.1), rgba(9, 99, 211, 0.05))',
+                    border: '2px solid rgba(9, 99, 211, 0.3)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginTop: '30px',
+                    maxWidth: '800px',
+                    margin: '30px auto 0',
+                    textAlign: 'center'
+                }}>
+                    <div className="processing-spinner" style={{ margin: '0 auto 15px' }}></div>
+                    <h4 style={{ 
+                        fontSize: '18px', 
+                        fontWeight: '600', 
+                        color: 'var(--color-primary)',
+                        marginBottom: '10px'
+                    }}>
+                        🤖 Tailoring Your CV...
+                    </h4>
+                    <p style={{ 
+                        fontSize: '14px', 
+                        color: 'var(--color-body)'
+                    }}>
+                        We're extracting your resume details, tailoring the content to match the job description, and generating your optimized CV. This may take a minute...
+                    </p>
+                </div>
+            )}
+
+            {/* CV Tailoring Error Message */}
+            {cvTailoringError && !isTailoringCV && (
+                <div style={{
+                    background: 'rgba(220, 53, 69, 0.1)',
+                    border: '2px solid rgba(220, 53, 69, 0.3)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginTop: '30px',
+                    maxWidth: '800px',
+                    margin: '30px auto 0',
+                    textAlign: 'center'
+                }}>
+                    <h4 style={{ 
+                        fontSize: '18px', 
+                        fontWeight: '600', 
+                        color: '#dc3545',
+                        marginBottom: '10px'
+                    }}>
+                        ⚠️ CV Tailoring Failed
+                    </h4>
+                    <p style={{ 
+                        fontSize: '14px', 
+                        color: 'var(--color-body)',
+                        marginBottom: '15px'
+                    }}>
+                        {cvTailoringError}
+                    </p>
+                    {onTailorCVNow && (
+                        <button 
+                            className="action-btn"
+                            onClick={() => {
+                                setShowTailorCVOption(true);
+                            }}
+                            style={{ 
+                                padding: '10px 20px',
+                                fontSize: '14px',
+                                backgroundColor: 'var(--color-primary)',
+                                borderColor: 'var(--color-primary)',
+                                fontWeight: '600'
+                            }}
+                        >
+                            Try Again
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {/* Option to Tailor CV Now (if not already done) */}
+            {showTailorCVOption && !tailoredCVData && !isTailoringCV && (
+                <div style={{
+                    background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05))',
+                    border: '2px solid rgba(255, 193, 7, 0.3)',
+                    borderRadius: '12px',
+                    padding: '25px',
+                    marginTop: '30px',
+                    maxWidth: '800px',
+                    margin: '30px auto 0'
+                }}>
+                    <h4 style={{ 
+                        fontSize: '18px', 
+                        fontWeight: '600', 
+                        color: '#ffc107',
+                        marginBottom: '10px',
+                        textAlign: 'center'
+                    }}>
+                        ✨ Tailor your resume with our templates
+                    </h4>
+                    <p style={{ 
+                        fontSize: '14px', 
+                        color: 'var(--color-body)',
+                        marginBottom: '20px',
+                        textAlign: 'center'
+                    }}>
+                        Get an AI-tailored resume optimized for this specific job. We'll extract your resume details, tailor the content to match the job description, and open it in our resume builder where you can edit and download it.
+                    </p>
+                    
+                    <TemplateSelector
+                        selectedTemplate={selectedTemplate}
+                        onTemplateSelect={setSelectedTemplate}
+                        disabled={isTailoringCV}
+                        compact={false}
+                    />
+
+                    <div style={{ textAlign: 'center', marginTop: '20px', display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        {onTailorCVNow ? (
+                            <>
+                                <button 
+                                    className="action-btn"
+                                    onClick={() => {
+                                        onTailorCVNow(selectedTemplate);
+                                        setShowTailorCVOption(false);
+                                    }}
+                                    disabled={isTailoringCV}
+                                    style={{ 
+                                        padding: '12px 24px',
+                                        fontSize: '14px',
+                                        backgroundColor: '#ffc107',
+                                        borderColor: '#ffc107',
+                                        color: '#000',
+                                        fontWeight: '600',
+                                        cursor: isTailoringCV ? 'not-allowed' : 'pointer',
+                                        opacity: isTailoringCV ? 0.6 : 1
+                                    }}
+                                >
+                                    {isTailoringCV ? 'Tailoring...' : '✨ Tailor My Resume'}
+                                </button>
+                                <button 
+                                    onClick={() => setShowTailorCVOption(false)}
+                                    style={{ 
+                                        padding: '12px 24px',
+                                        fontSize: '14px',
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid #6b7280',
+                                        color: '#6b7280',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Maybe Later
+                                </button>
+                            </>
+                        ) : (
+                            <p style={{ 
+                                fontSize: '14px', 
+                                color: '#6b7280',
+                                fontStyle: 'italic'
+                            }}>
+                                Please refresh the page to enable CV tailoring.
+                            </p>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Tailored CV Success Message */}
+            {tailoredCVData && !isTailoringCV && (
+                <div style={{
+                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))',
+                    border: '2px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginTop: '30px',
+                    maxWidth: '800px',
+                    margin: '30px auto 0'
+                }}>
+                    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                        <h4 style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '600', 
+                            color: '#10b981',
+                            marginBottom: '10px'
+                        }}>
+                            ✅ Your Tailored CV is Ready!
+                        </h4>
+                        <p style={{ 
+                            fontSize: '14px', 
+                            color: 'var(--color-body)',
+                            marginBottom: '15px'
+                        }}>
+                            Your resume has been tailored to match this job description. Open it in our resume builder to review, edit, and download your optimized CV.
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button 
+                                className="action-btn"
+                                onClick={handleOpenResumeBuilder}
+                                style={{ 
+                                    padding: '12px 24px',
+                                    fontSize: '14px',
+                                    backgroundColor: '#10b981',
+                                    borderColor: '#10b981',
+                                    fontWeight: '600'
+                                }}
+                            >
+                                ✏️ Open in Resume Builder
+                            </button>
+                            {onTailorCVNow && (
+                                <button 
+                                    className="action-btn"
+                                    onClick={() => setShowChangeTemplate(true)}
+                                    style={{ 
+                                        padding: '12px 24px',
+                                        fontSize: '14px',
+                                        backgroundColor: 'transparent',
+                                        border: '2px solid #10b981',
+                                        color: '#10b981',
+                                        fontWeight: '600'
+                                    }}
+                                >
+                                    🎨 Change Template
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Change Template Section */}
+                    {showChangeTemplate && onTailorCVNow && (
+                        <div style={{
+                            marginTop: '20px',
+                            paddingTop: '20px',
+                            borderTop: '1px solid rgba(16, 185, 129, 0.2)'
+                        }}>
+                            <TemplateSelector
+                                selectedTemplate={selectedTemplate}
+                                onTemplateSelect={setSelectedTemplate}
+                                disabled={isTailoringCV}
+                                compact={true}
+                            />
+                            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '15px', flexWrap: 'wrap' }}>
+                                <button 
+                                    className="action-btn"
+                                    onClick={() => {
+                                        onTailorCVNow(selectedTemplate);
+                                        setShowChangeTemplate(false);
+                                    }}
+                                    disabled={isTailoringCV}
+                                    style={{ 
+                                        padding: '10px 20px',
+                                        fontSize: '14px',
+                                        backgroundColor: '#10b981',
+                                        borderColor: '#10b981',
+                                        fontWeight: '600',
+                                        cursor: isTailoringCV ? 'not-allowed' : 'pointer',
+                                        opacity: isTailoringCV ? 0.6 : 1
+                                    }}
+                                >
+                                    {isTailoringCV ? 'Regenerating...' : '🔄 Regenerate with New Template'}
+                                </button>
+                                <button 
+                                    onClick={() => setShowChangeTemplate(false)}
+                                    style={{ 
+                                        padding: '10px 20px',
+                                        fontSize: '14px',
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid #6b7280',
+                                        color: '#6b7280',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            <div className="results-actions" style={{ display: 'flex', gap: '12px', justifyContent: 'center', alignItems: 'center', marginTop: '30px' }}>
                 <button 
                     className="action-btn secondary"
                     onClick={onNewAnalysis}

@@ -532,6 +532,78 @@ export default function ResumeBuilderPage() {
                     </div>
                 </div>
             `
+        },
+        {
+            id: 8,
+            title: "Executive Sidebar Modern",
+            category: "free",
+            filterCategories: ["free", "professional", "modern"],
+            tags: ["sidebar", "two-column", "blue-accents", "professional", "executive", "clean", "arial"],
+            thumbnail: "/assets/resumes/templateeight.png",
+            editableHtml: `<div class="resume-template executive-sidebar-modern">Executive Sidebar Modern Template</div>`
+        },
+        {
+            id: 9,
+            title: "Clean ATS Minimal",
+            category: "free",
+            filterCategories: ["free", "simple", "professional"],
+            tags: ["ats-friendly", "minimal", "centered", "clean", "professional", "standard"],
+            thumbnail: "/assets/resumes/templatenine.png",
+            editableHtml: `<div class="resume-template clean-ats-minimal">Clean ATS Minimal Template</div>`
+        },
+        {
+            id: 10,
+            title: "Elegant Designer Two-Column",
+            category: "free",
+            filterCategories: ["free", "modern", "creative"],
+            tags: ["designer", "modern", "inter-font", "two-column", "navy", "beige", "circular-photo"],
+            thumbnail: "/assets/resumes/templateten.png",
+            editableHtml: `<div class="resume-template elegant-designer-two-column">Elegant Designer Two-Column Template</div>`
+        },
+        {
+            id: 11,
+            title: "Bold Impact Yellow",
+            category: "free",
+            filterCategories: ["free", "modern", "creative"],
+            tags: ["bold", "brutalist", "yellow", "high-contrast", "creative", "impactful"],
+            thumbnail: "/assets/resumes/templateeleven.png",
+            editableHtml: `<div class="resume-template bold-impact-yellow">Bold Impact Yellow Template</div>`
+        },
+        {
+            id: 12,
+            title: "Classic Serif Executive",
+            category: "free",
+            filterCategories: ["free", "professional", "simple"],
+            tags: ["serif", "classic", "executive", "professional", "playfair-display", "traditional"],
+            thumbnail: "/assets/resumes/templatetwelve.png",
+            editableHtml: `<div class="resume-template classic-serif-executive">Classic Serif Executive Template</div>`
+        },
+        {
+            id: 13,
+            title: "Luxury Dark Professional",
+            category: "free",
+            filterCategories: ["free", "modern", "professional"],
+            tags: ["luxury", "dark-header", "premium", "professional", "centered", "elegant"],
+            thumbnail: "/assets/resumes/templatethirteen.png",
+            editableHtml: `<div class="resume-template luxury-dark-professional">Luxury Dark Professional Template</div>`
+        },
+        {
+            id: 14,
+            title: "Cyber Modern Dark",
+            category: "free",
+            filterCategories: ["free", "modern", "creative"],
+            tags: ["dark-mode", "modern", "cyan", "creative", "tech", "georgia-serif"],
+            thumbnail: "/assets/resumes/templatefourteen.png",
+            editableHtml: `<div class="resume-template cyber-modern-dark">Cyber Modern Dark Template</div>`
+        },
+        {
+            id: 15,
+            title: "Creative Forest Minimal",
+            category: "free",
+            filterCategories: ["free", "modern", "creative"],
+            tags: ["forest-green", "creative", "minimal", "sidebar-accent", "modern", "professional"],
+            thumbnail: "/assets/resumes/templatefifteen.png",
+            editableHtml: `<div class="resume-template creative-forest-minimal">Creative Forest Minimal Template</div>`
         }
     ]);
 
@@ -569,14 +641,14 @@ export default function ResumeBuilderPage() {
     const filteredTemplates = activeFilter === 'All templates'
         ? templates
         : activeFilter === 'Free'
-        ? templates.filter(t => t.category === 'free')
-        : activeFilter === 'Simple'
-        ? templates.filter(t => t.filterCategories && t.filterCategories.includes('simple'))
-        : activeFilter === 'Modern'
-        ? templates.filter(t => t.filterCategories && t.filterCategories.includes('modern'))
-        : activeFilter === 'Premium'
-        ? templates.filter(t => t.category === 'premium')
-        : templates;
+            ? templates.filter(t => t.category === 'free')
+            : activeFilter === 'Simple'
+                ? templates.filter(t => t.filterCategories && t.filterCategories.includes('simple'))
+                : activeFilter === 'Modern'
+                    ? templates.filter(t => t.filterCategories && t.filterCategories.includes('modern'))
+                    : activeFilter === 'Premium'
+                        ? templates.filter(t => t.category === 'premium')
+                        : templates;
 
     // When a template is selected, navigate to the dynamic page
     const handleTemplateSelect = (template) => {
@@ -599,9 +671,9 @@ export default function ResumeBuilderPage() {
                             Resume templates
                         </h1>
                         <p className="subtitle" style={{ fontSize: '20px', color: 'var(--color-body)', marginBottom: '24px' }}>
-                        No-nonsense resume templates. Cut the fluff and get real results.
-                        <br />
-                        Skip the guesswork. Use proven templates that speak for you and help you stand out.
+                            No-nonsense resume templates. Cut the fluff and get real results.
+                            <br />
+                            Skip the guesswork. Use proven templates that speak for you and help you stand out.
 
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px' }}>

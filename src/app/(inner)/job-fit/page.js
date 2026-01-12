@@ -25,15 +25,21 @@ export default function JobFitPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState('');
     const [resetKey, setResetKey] = useState(0);
+    const [tailoredCVData, setTailoredCVData] = useState(null);
+    const [isTailoringCV, setIsTailoringCV] = useState(false);
+    const [cvTailoringError, setCvTailoringError] = useState('');
+    const [lastFormData, setLastFormData] = useState(null);
 
     const handleAnalysisSubmit = async (formData) => {
         setIsProcessing(true);
         setError('');
+        setTailoredCVData(null);
         
         try {
             // Validate file
             if (!formData.resumeFile) {
                 setError('Please upload a resume file');
+                setIsProcessing(false);
                 return;
             }
 
@@ -42,6 +48,7 @@ export default function JobFitPage() {
 
             if (result.success) {
                 setAnalysisData(result.data);
+                setLastFormData(formData); // Store form data for later CV tailoring
             } else {
                 setError(result.error || 'Failed to analyze job fit. Please try again.');
             }
@@ -65,8 +72,43 @@ export default function JobFitPage() {
 
     const handleNewAnalysis = () => {
         setAnalysisData(null);
+        setTailoredCVData(null);
         setError('');
+        setCvTailoringError('');
+        setIsTailoringCV(false);
+        setLastFormData(null);
         setResetKey(prev => prev + 1); // Increment reset key to trigger form reset
+    };
+
+    const handleTailorCVNow = async (templateId = 1) => {
+        if (!lastFormData || !lastFormData.resumeFile) {
+            setCvTailoringError('Resume file is required. Please start a new analysis.');
+            return;
+        }
+
+        setIsTailoringCV(true);
+        setCvTailoringError('');
+        setTailoredCVData(null); // Clear any previous data
+
+        try {
+            const cvResult = await JobFitService.tailorCV({
+                jobDescription: lastFormData.jobDescription,
+                resumeFile: lastFormData.resumeFile,
+                templateId: templateId
+            }, user);
+
+            if (cvResult.success) {
+                setTailoredCVData(cvResult.data);
+                setCvTailoringError('');
+            } else {
+                setCvTailoringError(cvResult.error || 'Failed to tailor CV. Please try again.');
+            }
+        } catch (cvError) {
+            console.error('CV tailoring error:', cvError);
+            setCvTailoringError('Failed to tailor CV. Please try again.');
+        } finally {
+            setIsTailoringCV(false);
+        }
     };
 
     return (
@@ -108,6 +150,10 @@ export default function JobFitPage() {
                             <JobFitResults 
                                 analysisData={analysisData}
                                 onNewAnalysis={handleNewAnalysis}
+                                tailoredCVData={tailoredCVData}
+                                isTailoringCV={isTailoringCV}
+                                cvTailoringError={cvTailoringError}
+                                onTailorCVNow={handleTailorCVNow}
                             />
                         )}
                     </div>

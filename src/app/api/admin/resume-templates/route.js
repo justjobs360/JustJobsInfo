@@ -121,6 +121,118 @@ const DEFAULT_TEMPLATES = [
     tags: ['modern', 'professional', 'clean', 'photo', 'business', 'contemporary'],
     createdAt: '2024-01-22T10:00:00Z',
     lastUpdated: '2024-01-22T10:00:00Z'
+  },
+  {
+    id: 8,
+    name: 'Executive Minimal',
+    category: 'Professional',
+    description: 'Ultra-clean minimal design with large typography and charcoal headers',
+    imageUrl: '/assets/resumes/templateeight.png',
+    downloads: 0,
+    rating: 4.7,
+    status: 'active',
+    features: ['Minimal design', 'Large typography', 'Executive focus'],
+    tags: ['minimal', 'executive', 'clean', 'professional', 'elegant'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 9,
+    name: 'Creative Gradient',
+    category: 'Creative',
+    description: 'Modern gradient design with purple-to-blue vertical accent bar',
+    imageUrl: '/assets/resumes/templatenine.png',
+    downloads: 0,
+    rating: 4.6,
+    status: 'active',
+    features: ['Gradient design', 'Modern style', 'Creative layout'],
+    tags: ['modern', 'creative', 'gradient', 'colorful'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 10,
+    name: 'Modern Teal',
+    category: 'Modern',
+    description: 'Contemporary design with teal accents and clean layout',
+    imageUrl: '/assets/resumes/templateten.png',
+    downloads: 0,
+    rating: 4.5,
+    status: 'active',
+    features: ['Teal accents', 'Modern design', 'Professional layout'],
+    tags: ['modern', 'teal', 'professional', 'clean', 'two-column'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 11,
+    name: 'Compact Professional',
+    category: 'Professional',
+    description: 'Space-efficient design perfect for comprehensive resumes',
+    imageUrl: '/assets/resumes/templateeleven.png',
+    downloads: 0,
+    rating: 4.6,
+    status: 'active',
+    features: ['Compact layout', 'Professional style', 'Space-efficient'],
+    tags: ['professional', 'compact', 'traditional', 'business'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 12,
+    name: 'Bold Orange',
+    category: 'Creative',
+    description: 'Eye-catching design with bold orange accents and modern styling',
+    imageUrl: '/assets/resumes/templatetwelve.png',
+    downloads: 0,
+    rating: 4.7,
+    status: 'active',
+    features: ['Bold colors', 'Orange accents', 'Modern design'],
+    tags: ['modern', 'creative', 'orange', 'bold', 'vibrant'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 13,
+    name: 'Sidebar Green',
+    category: 'Modern',
+    description: 'Professional two-column layout with green sidebar design',
+    imageUrl: '/assets/resumes/templatethirteen.png',
+    downloads: 0,
+    rating: 4.5,
+    status: 'active',
+    features: ['Green sidebar', 'Two-column layout', 'Modern style'],
+    tags: ['modern', 'sidebar', 'green', 'two-column', 'professional'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 14,
+    name: 'Timeline Modern',
+    category: 'Modern',
+    description: 'Innovative timeline-style layout for showcasing career progression',
+    imageUrl: '/assets/resumes/templatefourteen.png',
+    downloads: 0,
+    rating: 4.8,
+    status: 'active',
+    features: ['Timeline design', 'Modern style', 'Visual progression'],
+    tags: ['modern', 'timeline', 'visual', 'creative', 'professional'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
+  },
+  {
+    id: 15,
+    name: 'Elegant Bordeaux',
+    category: 'Professional',
+    description: 'Sophisticated design with bordeaux accents and serif typography',
+    imageUrl: '/assets/resumes/templatefifteen.png',
+    downloads: 0,
+    rating: 4.7,
+    status: 'active',
+    features: ['Elegant design', 'Bordeaux accents', 'Serif typography'],
+    tags: ['professional', 'elegant', 'bordeaux', 'serif', 'sophisticated'],
+    createdAt: '2024-12-11T20:00:00Z',
+    lastUpdated: '2024-12-11T20:00:00Z'
   }
 ];
 
@@ -135,11 +247,11 @@ async function initializeTemplates() {
       console.log('📝 Initializing default resume templates...');
       for (const template of DEFAULT_TEMPLATES) {
         const templateRef = db.collection('resumeTemplates').doc(template.id.toString());
+        const { rating, ...templateData } = template; // Remove rating from template data
         await templateRef.set({
-          ...template,
+          ...templateData,
           // Start actual metrics at zero; real values will accumulate via tracking endpoint
           downloadCount: 0,
-          rating: undefined,
           tags: template.tags || [],
           createdAt: new Date().toISOString(),
           lastUpdated: new Date().toISOString()
@@ -148,6 +260,28 @@ async function initializeTemplates() {
       console.log('✅ Default templates initialized');
     } else {
       console.log(`ℹ️ resumeTemplates already exists with ${templatesSnapshot.size} docs`);
+
+      // Check for missing templates and add them
+      const existingIds = new Set();
+      templatesSnapshot.forEach(doc => existingIds.add(parseInt(doc.id)));
+
+      const missingTemplates = DEFAULT_TEMPLATES.filter(t => !existingIds.has(t.id));
+
+      if (missingTemplates.length > 0) {
+        console.log(`📝 Adding ${missingTemplates.length} missing templates: ${missingTemplates.map(t => t.id).join(', ')}`);
+        for (const template of missingTemplates) {
+          const templateRef = db.collection('resumeTemplates').doc(template.id.toString());
+          const { rating, ...templateData } = template; // Remove rating from template data
+          await templateRef.set({
+            ...templateData,
+            downloadCount: 0,
+            tags: template.tags || [],
+            createdAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+          });
+        }
+        console.log('✅ Missing templates added');
+      }
     }
   } catch (error) {
     console.error('❌ Error initializing templates:', error);

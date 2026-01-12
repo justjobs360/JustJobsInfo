@@ -51,7 +51,7 @@ async function createBlog(blogData) {
       ...blogData,
       createdAt: new Date(),
       updatedAt: new Date(),
-      status: 'published', // draft, published, archived
+      status: blogData.status || 'published', // draft, published, archived - use provided status or default to published
       views: 0,
       likes: 0,
       comments: []
