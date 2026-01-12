@@ -428,7 +428,7 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                         fontSize: '14px', 
                         color: 'var(--color-body)'
                     }}>
-                        We're extracting your resume details, tailoring the content to match the job description, and generating your optimized CV. This may take a minute...
+                        We&apos;re extracting your resume details, tailoring the content to match the job description, and generating your optimized CV. This may take a minute...
                     </p>
                 </div>
             )}
@@ -506,7 +506,7 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                         marginBottom: '20px',
                         textAlign: 'center'
                     }}>
-                        Get an AI-tailored resume optimized for this specific job. We'll extract your resume details, tailor the content to match the job description, and open it in our resume builder where you can edit and download it.
+                        Get an AI-tailored resume optimized for this specific job. We&apos;ll extract your resume details, tailor the content to match the job description, and open it in our resume builder where you can edit and download it.
                     </p>
                     
                     <TemplateSelector

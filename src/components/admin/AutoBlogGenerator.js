@@ -494,7 +494,7 @@ export default function AutoBlogGenerator({ onBlogsGenerated }) {
               gap: '8px'
             }}>
               <span style={{ fontSize: '18px' }}>💡</span>
-              <span><strong>Tip:</strong> All generated blogs are saved in draft status. You can review and edit them in the "Manage Blogs" tab before publishing.</span>
+              <span><strong>Tip:</strong> All generated blogs are saved in draft status. You can review and edit them in the &quot;Manage Blogs&quot; tab before publishing.</span>
             </p>
           </div>
         </div>
