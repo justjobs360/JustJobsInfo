@@ -22,18 +22,24 @@ export async function POST(request) {
             }, { status: 400 });
         }
 
-        if (jobDescription.length < 50) {
+        if (jobDescription.trim().length < 50) {
             return NextResponse.json({
                 success: false,
-                error: 'Job description must be at least 50 characters.'
+                error: 'Job description must be at least 50 characters. Please provide more details about the position.'
             }, { status: 400 });
         }
 
-        if (jobDescription.length > 5000) {
+        // Allow up to 50,000 characters with a warning (but still process)
+        if (jobDescription.length > 50000) {
             return NextResponse.json({
                 success: false,
-                error: 'Job description cannot exceed 5000 characters.'
+                error: 'Job description cannot exceed 50,000 characters. Please provide a more concise version.'
             }, { status: 400 });
+        }
+        
+        // Log warning if exceeds recommended limit
+        if (jobDescription.length > 10000) {
+            console.warn(`⚠️ Job description exceeds recommended limit: ${jobDescription.length} characters (recommended: 10,000)`);
         }
 
         // Validate file
@@ -63,10 +69,10 @@ export async function POST(request) {
             const result = await mammoth.extractRawText({ buffer });
             resumeContent = result.value;
 
-            if (!resumeContent || resumeContent.trim().length < 50) {
+            if (!resumeContent || resumeContent.trim().length < 100) {
                 return NextResponse.json({
                     success: false,
-                    error: 'Could not extract sufficient text from the resume file. Please ensure the file contains readable text.'
+                    error: 'Could not extract sufficient text from the resume file. Please ensure the file contains readable text and is not corrupted. Minimum 100 characters required.'
                 }, { status: 400 });
             }
         } catch (extractError) {
@@ -91,7 +97,12 @@ Conduct a comprehensive analysis across multiple dimensions:
 
 1. HARD SKILLS: Technical abilities, tools, software, programming languages, etc.
 2. SOFT SKILLS: Communication, leadership, teamwork, problem-solving, etc.
-3. EXPERIENCE LEVEL: Years of experience, seniority, career progression
+3. EXPERIENCE LEVEL: 
+   - Calculate the total years of experience from the resume (sum of all employment durations)
+   - Extract the required years of experience from the job description (e.g., "5+ years", "3-5 years", "minimum 2 years")
+   - Compare the candidate's actual years of experience with the job requirements
+   - Assess seniority level (entry-level, mid-level, senior, executive) and match with job level
+   - Evaluate career progression and advancement trajectory
 4. EDUCATION: Degrees, certifications, specialized training
 5. KEYWORDS MATCH: Industry-specific terms and requirements
 6. TRANSFERABLE SKILLS: Skills from different contexts that apply to this role
@@ -119,7 +130,13 @@ Provide your analysis in JSON format with this EXACT structure:
         "experience": {
             "score": [percentage 0-100],
             "resumeItems": ["Experience 1", "Experience 2"],
-            "jobItems": ["Required experience 1", "Required experience 2"]
+            "jobItems": ["Required experience 1", "Required experience 2"],
+            "yearsOfExperience": {
+                "candidateYears": [number - total years calculated from resume],
+                "requiredYears": [number or range - extracted from job description, e.g., 5 or "3-5" or null if not specified],
+                "match": [boolean - true if candidate meets or exceeds requirement],
+                "analysis": "Detailed comparison of candidate's years vs required years"
+            }
         },
         "education": {
             "score": [percentage 0-100],
@@ -196,7 +213,7 @@ IMPORTANT INSTRUCTIONS:
                     content: analysisPrompt
                 }
             ],
-            max_tokens: 2000,
+            max_tokens: 4000,
             temperature: 0.3
         });
 

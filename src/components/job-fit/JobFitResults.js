@@ -286,6 +286,28 @@ Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeStr
                                             }}></div>
                                         </div>
                                         
+                                        {/* Years of Experience Comparison (for experience section) */}
+                                        {key === 'experience' && value.yearsOfExperience && (
+                                            <div style={{ marginTop: '12px', padding: '10px', background: value.yearsOfExperience.match ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', borderRadius: '6px', border: `1px solid ${value.yearsOfExperience.match ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}` }}>
+                                                <div style={{ fontSize: '12px', fontWeight: '600', color: value.yearsOfExperience.match ? '#059669' : '#f59e0b', marginBottom: '6px' }}>
+                                                    {value.yearsOfExperience.match ? '✓' : '⚠️'} Years of Experience
+                                                </div>
+                                                <div style={{ fontSize: '12px', color: 'var(--color-body)', lineHeight: '1.5' }}>
+                                                    <div style={{ marginBottom: '4px' }}>
+                                                        <strong>Your Experience:</strong> {value.yearsOfExperience.candidateYears || 'N/A'} years
+                                                    </div>
+                                                    <div style={{ marginBottom: '4px' }}>
+                                                        <strong>Required:</strong> {value.yearsOfExperience.requiredYears || 'Not specified'}
+                                                    </div>
+                                                    {value.yearsOfExperience.analysis && (
+                                                        <div style={{ marginTop: '6px', fontStyle: 'italic', fontSize: '11px', color: '#6b7280' }}>
+                                                            {value.yearsOfExperience.analysis}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                        
                                         {/* Expandable Comparison */}
                                         {hasComparison && isExpanded && (
                                             <div style={{ marginTop: '15px', padding: '12px', background: '#f9fafb', borderRadius: '6px', border: '1px solid #e5e7eb' }}>

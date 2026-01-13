@@ -20,7 +20,7 @@ export default function ResumeEditorPage({ params }) {
   const [step, setStep] = useState(0);
   
   // Get tailored CV data from job fit analysis
-  const { initialFormData, initialSections } = useTailoredCVData();
+  const { initialFormData, initialSections, hasLoadedInitialData } = useTailoredCVData();
   
   // Update sections if tailored data provides them
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function ResumeEditorPage({ params }) {
           </div>
           ` : ''}
 
-          ${form.projects && form.projects[0]?.name ? `
+          ${sections.includes('projects') && form.projects && form.projects[0]?.name ? `
           <div style="margin-bottom: 32px;">
             <div style="font-size: 10px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;">Projects</div>
             ${form.projects.map(proj => `
@@ -611,8 +611,8 @@ export default function ResumeEditorPage({ params }) {
         }
       }
 
-      // Sidebar Column: Projects
-      if (form.projects && form.projects[0]?.name) {
+      // Sidebar Column: Projects (only if section is included and data exists)
+      if (sections.includes('projects') && form.projects && form.projects[0]?.name) {
         sidebarContent.push(
           new Paragraph({
             children: [new TextRun({ text: 'PROJECTS', color: 'FFFFFF', bold: true, size: 9 * 2, font: 'Georgia' })],
@@ -969,6 +969,8 @@ export default function ResumeEditorPage({ params }) {
                 onCustomSectionsChange={handleCustomSectionsChange}
                 onStepChange={handleStepChange}
                 initialFormData={initialFormData}
+                initialSections={initialSections}
+                hasTailoredDataLoaded={hasLoadedInitialData}
                 templateId="template-14"
                 onDownloadDOCX={handleDownloadDOCXButton}
               />

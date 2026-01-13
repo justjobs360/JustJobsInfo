@@ -253,6 +253,7 @@ async function initializeTemplates() {
           // Start actual metrics at zero; real values will accumulate via tracking endpoint
           downloadCount: 0,
           tags: template.tags || [],
+          pricingTier: template.pricingTier || 'Free', // Default to 'Free' if not specified
           createdAt: new Date().toISOString(),
           lastUpdated: new Date().toISOString()
         });
@@ -276,6 +277,7 @@ async function initializeTemplates() {
             ...templateData,
             downloadCount: 0,
             tags: template.tags || [],
+            pricingTier: template.pricingTier || 'Free', // Default to 'Free' if not specified
             createdAt: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
           });
@@ -314,6 +316,7 @@ export async function GET() {
         status: data.status,
         features: data.features,
         tags: data.tags || [],
+        pricingTier: data.pricingTier || 'Free', // Default to 'Free' if not set
         createdAt: data.createdAt,
         lastUpdated: data.lastUpdated
       });
@@ -397,7 +400,7 @@ export async function POST(request) {
 export async function PUT(request) {
   try {
     const body = await request.json();
-    const { id, name, category, description, imageUrl, status, tags, features } = body;
+    const { id, name, category, description, imageUrl, status, tags, features, pricingTier } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -425,6 +428,7 @@ export async function PUT(request) {
     if (typeof status === 'string' && ['active', 'inactive', 'draft'].includes(status)) updatePayload.status = status;
     if (Array.isArray(tags)) updatePayload.tags = tags;
     if (Array.isArray(features)) updatePayload.features = features;
+    if (typeof pricingTier === 'string') updatePayload.pricingTier = pricingTier;
 
     await templateRef.update(updatePayload);
 

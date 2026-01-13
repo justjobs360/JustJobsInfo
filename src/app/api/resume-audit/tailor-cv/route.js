@@ -12,36 +12,27 @@ const openai = new OpenAI({
 export async function POST(request) {
     try {
         const formData = await request.formData();
-        const jobDescription = formData.get('jobDescription');
         const resumeFile = formData.get('resumeFile');
+        const auditData = formData.get('auditData'); // JSON string of audit results
         const templateId = formData.get('templateId') || '1';
 
         // Validate inputs
-        if (!jobDescription || !resumeFile) {
+        if (!resumeFile || !auditData) {
             return NextResponse.json({
                 success: false,
-                error: 'Both job description and resume file are required.'
+                error: 'Both resume file and audit data are required.'
             }, { status: 400 });
         }
 
-        if (jobDescription.trim().length < 50) {
+        // Parse audit data
+        let audit;
+        try {
+            audit = JSON.parse(auditData);
+        } catch (parseError) {
             return NextResponse.json({
                 success: false,
-                error: 'Job description must be at least 50 characters. Please provide more details about the position.'
+                error: 'Invalid audit data format.'
             }, { status: 400 });
-        }
-
-        // Allow up to 50,000 characters with a warning (but still process)
-        if (jobDescription.length > 50000) {
-            return NextResponse.json({
-                success: false,
-                error: 'Job description cannot exceed 50,000 characters. Please provide a more concise version.'
-            }, { status: 400 });
-        }
-        
-        // Log warning if exceeds recommended limit
-        if (jobDescription.length > 10000) {
-            console.warn(`⚠️ Job description exceeds recommended limit: ${jobDescription.length} characters (recommended: 10,000)`);
         }
 
         // Validate file
@@ -88,78 +79,103 @@ export async function POST(request) {
         const resumeData = await parseResume(resumeContent);
         console.log('✅ Resume parsed successfully');
 
-        // Step 2: Use OpenAI to tailor the CV content based on job description
-        console.log('🤖 Tailoring CV with OpenAI...');
-        const tailoringPrompt = `
-You are an expert resume writer and career consultant specializing in ATS optimization and job-specific resume tailoring. Your task is to transform the provided resume to perfectly match the job description.
+        // Step 2: Use OpenAI to tailor the CV based on audit recommendations
+        console.log('🤖 Tailoring CV based on audit recommendations...');
+        
+        // Build recommendations summary from audit data
+        const recommendationsSummary = `
+AUDIT SCORE: ${audit.score}/100
 
-JOB DESCRIPTION:
-${jobDescription}
+STRENGTHS IDENTIFIED:
+${(audit.strengths || []).map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+AREAS TO IMPROVE:
+${(audit.weaknesses || []).map((w, i) => `${i + 1}. ${w}`).join('\n')}
+
+RECOMMENDATIONS:
+${(audit.improvements || []).map((r, i) => `${i + 1}. ${r}`).join('\n')}
+
+ATS COMPATIBILITY ISSUES:
+${(audit.atsCompatibility || []).map((ats, i) => `${i + 1}. ${ats}`).join('\n')}
+
+ANNOTATIONS (if available):
+${(audit.annotations || []).map((ann, i) => `${i + 1}. [${ann.section}] ${ann.issue} - Suggestion: ${ann.suggestion}`).join('\n')}
+        `.trim();
+
+        const tailoringPrompt = `
+You are an expert resume writer and career consultant specializing in resume optimization and ATS enhancement. Your task is to improve the provided resume based on the audit recommendations and problems identified.
+
+AUDIT ANALYSIS AND RECOMMENDATIONS:
+${recommendationsSummary}
 
 ORIGINAL RESUME INFORMATION:
 ${JSON.stringify(resumeData, null, 2)}
 
-CRITICAL TAILORING REQUIREMENTS:
+CRITICAL IMPROVEMENT REQUIREMENTS:
 
-1. ANALYZE THE JOB DESCRIPTION FIRST:
-   - Extract all key requirements, skills, qualifications, and responsibilities mentioned
-   - Identify the most important keywords and phrases
-   - Note the industry, role level, and company culture implied
-   - Understand what the employer is really looking for
+1. ADDRESS ALL WEAKNESSES:
+   - Review each "Area to Improve" from the audit
+   - Fix formatting issues, missing information, or unclear descriptions
+   - Enhance weak sections with more detail and impact
+   - Remove or improve problematic content
 
-2. PROFESSIONAL SUMMARY:
-   - Rewrite to open with the most relevant experience/qualification for THIS specific job
-   - Include 2-3 key job requirements that match the candidate's background
-   - Use exact keywords from the job description naturally
-   - Make it immediately clear why this candidate is perfect for THIS role
-   - Keep it to 2-3 sentences, maximum impact
+2. IMPLEMENT RECOMMENDATIONS:
+   - Apply each recommendation from the audit
+   - Add missing sections if recommended (e.g., summary, skills, certifications)
+   - Improve existing sections based on suggestions
+   - Enhance ATS compatibility as suggested
 
-3. WORK EXPERIENCE (MOST CRITICAL):
-   - REORDER experiences to put the most relevant job FIRST (even if not chronologically first)
-   - For each position, rewrite descriptions to:
-     * Lead with achievements/responsibilities that match job requirements
-     * Use the EXACT terminology and keywords from the job description
-     * Emphasize transferable skills that apply to the target role
-     * Include quantifiable metrics and achievements
-     * Frame past experience in terms relevant to the new role
-   - If a past job has skills mentioned in the job description, emphasize those heavily
-   - If a past job seems unrelated, find and highlight transferable skills
-   - Use bullet points with action verbs that match the job description's language
-   - Each bullet should connect to something in the job description
+3. MAINTAIN STRENGTHS:
+   - Keep all identified strengths intact
+   - Enhance strong sections further if possible
+   - Don't remove content that was identified as a strength
 
-4. SKILLS SECTION:
-   - REORDER skills to put job-relevant skills FIRST
-   - If the job mentions specific skills, ensure they appear prominently
-   - Group skills to match how they're categorized in the job description
-   - Remove or de-emphasize skills not mentioned in the job description
-   - Use the exact skill names/terminology from the job description when possible
-   - If the resume has skills that match job requirements, put them at the top
+4. FIX ATS COMPATIBILITY ISSUES:
+   - Address all ATS compatibility problems identified
+   - Use standard section headings
+   - Ensure proper formatting for ATS parsing
+   - Add relevant keywords naturally
+   - Fix any formatting that could confuse ATS systems
 
-5. EDUCATION:
-   - If education is relevant to the job, emphasize relevant coursework, projects, or achievements
-   - If the job requires specific degrees/certifications, highlight those prominently
-   - Otherwise, keep it concise
+5. IMPROVE PROFESSIONAL SUMMARY:
+   - If missing or weak, create a compelling 2-3 sentence summary
+   - Highlight key qualifications and experience
+   - Use industry-standard keywords
+   - Make it ATS-friendly
 
-6. PROJECTS:
-   - Only include projects relevant to the job description
-   - Rewrite project descriptions to emphasize skills/technologies mentioned in the job
-   - Frame projects in terms of their relevance to the target role
-   - Remove projects that don't relate to the job
+6. ENHANCE WORK EXPERIENCE:
+   - Improve descriptions to be more impactful and specific
+   - Add quantifiable achievements where possible
+   - Use action verbs and industry keywords
+   - Ensure proper formatting for ATS
+   - Address any issues mentioned in annotations
 
-7. KEYWORD OPTIMIZATION:
-   - Use exact keywords from the job description throughout the resume
-   - Match the terminology and phrasing used in the job description
-   - Ensure ATS systems will recognize the alignment
-   - Natural integration - keywords should flow naturally, not feel forced
+7. OPTIMIZE SKILLS SECTION:
+   - Ensure skills are properly categorized
+   - Add missing relevant skills if identified in audit
+   - Use standard skill names for ATS compatibility
+   - Remove outdated or irrelevant skills if recommended
 
-8. TONE AND LANGUAGE:
-   - Match the professional tone of the job description
-   - Use industry-standard terminology from the job description
-   - Align with the level of formality implied by the job posting
+8. IMPROVE EDUCATION SECTION:
+   - Add missing information if recommended
+   - Format consistently for ATS
+   - Include relevant coursework or achievements if suggested
+
+9. FIX ANNOTATIONS:
+   - Address each specific annotation issue
+   - Implement the suggested fixes
+   - Ensure all sections are properly formatted
+
+10. OVERALL OPTIMIZATION:
+    - Ensure consistent formatting throughout
+    - Use professional language and terminology
+    - Make the resume more ATS-friendly
+    - Improve readability and visual hierarchy
+    - Fix any grammar or spelling issues
 
 Return a JSON object with this EXACT structure:
 {
-    "summary": "A compelling 2-3 sentence summary that immediately shows alignment with the job. Must include key job requirements and use keywords from the job description.",
+    "summary": "Improved professional summary (2-3 sentences) that addresses audit recommendations. If original was good, enhance it. If missing or weak, create a new one.",
     "experience": [
         {
             "jobTitle": "Original job title (keep exact)",
@@ -167,7 +183,7 @@ Return a JSON object with this EXACT structure:
             "location": "Original location (keep exact)",
             "startDate": "Original start date (keep exact)",
             "endDate": "Original end date (keep exact)",
-            "description": "COMPLETELY REWRITTEN description using bullet points. Each bullet should: (1) Use keywords from job description, (2) Emphasize achievements/skills relevant to the job, (3) Include metrics, (4) Frame experience in terms of the target role. Prioritize most relevant responsibilities first."
+            "description": "IMPROVED description addressing audit recommendations. Fix formatting issues, add quantifiable achievements, use action verbs, ensure ATS compatibility, and address any specific issues mentioned in annotations."
         }
     ],
     "education": [
@@ -178,32 +194,33 @@ Return a JSON object with this EXACT structure:
             "startDate": "Original start date (keep exact)",
             "endDate": "Original end date (keep exact)",
             "gpa": "Original GPA if provided (keep exact)",
-            "description": "If education is highly relevant to job, add description emphasizing relevance. Otherwise, leave empty string."
+            "description": "If education section needs improvement per audit, add description. Otherwise, leave empty string."
         }
     ],
     "skills": {
-        "technical": ["REORDERED list - job-relevant skills FIRST. Use exact terminology from job description. Remove skills not mentioned in job if space is limited."],
-        "soft": ["REORDERED list - job-relevant soft skills FIRST. Match terminology from job description."],
-        "languages": ["Keep only if relevant to job"],
-        "certifications": ["Keep only if relevant to job, prioritize job-relevant ones first"]
+        "technical": ["IMPROVED list - address audit recommendations, add missing skills, use standard names for ATS"],
+        "soft": ["IMPROVED list - address audit recommendations, add missing skills"],
+        "languages": ["Keep if relevant, improve if needed"],
+        "certifications": ["Add if recommended in audit, improve formatting if needed"]
     },
     "projects": [
         {
             "name": "Original project name (keep exact)",
-            "description": "REWRITTEN to emphasize relevance to job. Use keywords from job description. Frame in terms of target role.",
-            "technologies": ["Filter to only technologies mentioned in job description or highly relevant"],
+            "description": "IMPROVED description addressing audit recommendations",
+            "technologies": ["Filter and improve based on audit"],
             "date": "Original date (keep exact)"
         }
     ]
 }
 
 CRITICAL RULES:
-- NEVER fabricate experience, skills, or achievements - only reframe what exists
-- ALWAYS prioritize job-relevant content - put it first
-- ALWAYS use keywords from the job description naturally
-- REORDER content to match job relevance, not chronology
-- Make every word count toward showing job fit
-- The resume should read like it was written specifically for THIS job
+- NEVER fabricate experience, skills, or achievements - only improve what exists
+- ADDRESS every weakness and recommendation from the audit
+- FIX all ATS compatibility issues identified
+- IMPLEMENT all suggestions from annotations
+- MAINTAIN all strengths identified in the audit
+- IMPROVE formatting, clarity, and impact throughout
+- The resume should be significantly better after these improvements
 - Return ONLY valid JSON, no additional text or explanations
         `;
 
@@ -218,7 +235,7 @@ CRITICAL RULES:
                 messages: [
                     {
                         role: "system",
-                        content: "You are an expert resume writer and ATS optimization specialist. Your expertise is in transforming generic resumes into job-specific, keyword-optimized documents that perfectly match job descriptions. You excel at identifying transferable skills, reordering content for relevance, and using exact terminology from job postings. You NEVER fabricate information - only reframe and reorder existing content to maximize job fit. You MUST return ONLY valid JSON without any additional text, explanations, or markdown formatting."
+                        content: "You are an expert resume writer and ATS optimization specialist. Your expertise is in improving resumes based on audit feedback. You address weaknesses, implement recommendations, fix ATS issues, and enhance overall quality. You NEVER fabricate information - only improve and optimize existing content."
                     },
                     {
                         role: "user",
@@ -239,7 +256,7 @@ CRITICAL RULES:
                     messages: [
                         {
                             role: "system",
-                            content: "You are an expert resume writer and ATS optimization specialist. Your expertise is in transforming generic resumes into job-specific, keyword-optimized documents that perfectly match job descriptions. You excel at identifying transferable skills, reordering content for relevance, and using exact terminology from job postings. You NEVER fabricate information - only reframe and reorder existing content to maximize job fit. You MUST return ONLY valid JSON without any additional text, explanations, or markdown formatting. Your response must start with { and end with }."
+                            content: "You are an expert resume writer and ATS optimization specialist. Your expertise is in improving resumes based on audit feedback. You address weaknesses, implement recommendations, fix ATS issues, and enhance overall quality. You NEVER fabricate information - only improve and optimize existing content. You MUST return ONLY valid JSON without any additional text, explanations, or markdown formatting. Your response must start with { and end with }."
                         },
                         {
                             role: "user",
@@ -304,11 +321,9 @@ CRITICAL RULES:
             }, { status: 500 });
         }
         
-        console.log('✅ CV tailored successfully');
+        console.log('✅ CV tailored successfully based on audit recommendations');
 
         // Step 3: Merge tailored content with original personal info
-        // Ensure we use tailored data, but fallback to original if tailoring didn't provide it
-        // Also ensure all description fields are strings
         const normalizeExperience = (exp) => {
             if (!exp) return null;
             return {
@@ -350,21 +365,18 @@ CRITICAL RULES:
             summary: typeof tailoredData.summary === 'string' 
                 ? tailoredData.summary 
                 : (resumeData.summary || ''),
-            // Reorder experience by relevance if tailored data exists, normalize descriptions
             experience: (tailoredData.experience && tailoredData.experience.length > 0) 
                 ? tailoredData.experience.map(normalizeExperience).filter(Boolean)
                 : (resumeData.experience || []).map(normalizeExperience).filter(Boolean),
             education: (tailoredData.education && tailoredData.education.length > 0)
                 ? tailoredData.education.map(normalizeEducation).filter(Boolean)
                 : (resumeData.education || []).map(normalizeEducation).filter(Boolean),
-            // Use tailored skills which should be reordered and filtered
             skills: tailoredData.skills || resumeData.skills || {
                 technical: [],
                 soft: [],
                 languages: [],
                 certifications: []
             },
-            // Filter projects to only relevant ones, normalize descriptions
             projects: (tailoredData.projects && tailoredData.projects.length > 0)
                 ? tailoredData.projects.map(normalizeProject).filter(Boolean)
                 : (resumeData.projects || []).map(normalizeProject).filter(Boolean),
@@ -373,10 +385,10 @@ CRITICAL RULES:
 
         // Log tailoring summary for debugging
         console.log('📊 Tailoring Summary:');
-        console.log(`   - Summary tailored: ${!!tailoredData.summary}`);
+        console.log(`   - Summary improved: ${!!tailoredData.summary}`);
         console.log(`   - Experience items: ${finalCVData.experience.length}`);
-        console.log(`   - Skills reordered: ${!!tailoredData.skills}`);
-        console.log(`   - Projects filtered: ${finalCVData.projects.length}`);
+        console.log(`   - Skills improved: ${!!tailoredData.skills}`);
+        console.log(`   - Projects improved: ${finalCVData.projects.length}`);
 
         // Step 4: Map tailored CV data to resume builder form structure
         console.log('📝 Mapping CV data to resume form...');
@@ -391,11 +403,8 @@ CRITICAL RULES:
         if (resumeForm.projects && resumeForm.projects[0]?.name) sectionsToInclude.push('projects');
         
         // Step 5: Store form data and redirect to resume builder
-        // Generate a unique key for storing the data (without prefix, will be added in sessionStorage)
         const dataKey = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         
-        // Store the form data temporarily (client will read from sessionStorage)
-        // We'll return the data in the response and the client will store it
         console.log('✅ CV data mapped successfully, redirecting to resume builder...');
 
         return NextResponse.json({
@@ -406,7 +415,7 @@ CRITICAL RULES:
                 sections: sectionsToInclude.length > 1 ? sectionsToInclude : ['personal', 'summary', 'employment', 'education', 'skills'],
                 templateId: parseInt(templateId),
                 redirectUrl: `/resume-builder/template/${templateId}?tailored=true&dataKey=${dataKey}`,
-                dataKey: dataKey // Also return the dataKey separately for easier access
+                dataKey: dataKey
             }
         });
 

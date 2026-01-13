@@ -158,13 +158,35 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
                                         placeholder="Paste the complete job description here. Include requirements, responsibilities, and qualifications..."
                                         value={jobDescription}
                                         onChange={handleJobDescriptionChange}
-                                        maxLength={5000}
                                         required
                                         style={{ minHeight: '200px' }}
                                     />
-                                    <div className="character-count">
-                                        {jobDescription.length}/5000 characters
+                                    <div className="character-count" style={{ 
+                                        fontSize: '14px', 
+                                        color: jobDescription.length < 50 ? '#dc3545' : jobDescription.length > 10000 ? '#f59e0b' : '#6c757d',
+                                        marginTop: '8px',
+                                        fontWeight: jobDescription.length < 50 || jobDescription.length > 10000 ? '600' : '400'
+                                    }}>
+                                        {jobDescription.length} characters {jobDescription.length > 10000 ? '(exceeds recommended 10,000)' : ''}
+                                        {jobDescription.length > 0 && jobDescription.length < 50 && (
+                                            <span style={{ color: '#dc3545', marginLeft: '8px' }}>
+                                                (Minimum 50 characters required)
+                                            </span>
+                                        )}
                                     </div>
+                                    {jobDescription.length > 10000 && (
+                                        <div style={{
+                                            background: 'rgba(245, 158, 11, 0.1)',
+                                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                                            borderRadius: '8px',
+                                            padding: '12px 16px',
+                                            marginTop: '12px',
+                                            fontSize: '14px',
+                                            color: '#f59e0b'
+                                        }}>
+                                            ⚠️ <strong>Warning:</strong> Your job description exceeds the recommended 10,000 character limit. Analysis may take longer and results may be less accurate. You can still proceed if you wish.
+                                        </div>
+                                    )}
                                 </div>
 
                             </div>
@@ -285,7 +307,20 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
                                             textAlign: 'center',
                                             border: '1px solid rgba(255, 143, 60, 0.2)'
                                         }}>
-                                            ⚠️ Please provide both job description (min 50 chars) and resume file
+                                            {!selectedFile && jobDescription.trim().length >= 50 && (
+                                                <span>⚠️ Please upload a resume file</span>
+                                            )}
+                                            {selectedFile && jobDescription.trim().length < 50 && (
+                                                <span>
+                                                    ⚠️ Job description must be at least 50 characters
+                                                    {jobDescription.trim().length > 0 && ` (currently ${jobDescription.trim().length} characters)`}
+                                                </span>
+                                            )}
+                                            {!selectedFile && jobDescription.trim().length < 50 && (
+                                                <span>
+                                                    ⚠️ Please provide both job description (minimum 50 characters) and resume file
+                                                </span>
+                                            )}
                                         </div>
                                     )}
                                 </div>

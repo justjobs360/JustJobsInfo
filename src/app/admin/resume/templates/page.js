@@ -22,6 +22,7 @@ export default function ResumeTemplatesPage() {
     // Local UI state: search/filter and edit modal
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [pricingTierFilter, setPricingTierFilter] = useState('all');
     const [editingTemplate, setEditingTemplate] = useState(null);
     const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -124,19 +125,20 @@ export default function ResumeTemplatesPage() {
         }
     };
 
-    // Derived: filtered view (search + status)
+    // Derived: filtered view (search + status + pricing tier)
     const filteredTemplates = templates.filter(t => {
         const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
+        const matchesPricingTier = pricingTierFilter === 'all' || (t.pricingTier || 'Free') === pricingTierFilter;
         const term = searchTerm.trim().toLowerCase();
         const matchesSearch = term.length === 0 || (
             (t.name || '').toLowerCase().includes(term) ||
             (t.description || '').toLowerCase().includes(term) ||
             (Array.isArray(t.tags) ? t.tags : []).some(tag => (tag || '').toLowerCase().includes(term))
         );
-        return matchesStatus && matchesSearch;
+        return matchesStatus && matchesPricingTier && matchesSearch;
     });
 
-    const openEdit = (template) => setEditingTemplate(template);
+    const openEdit = (template) => setEditingTemplate({ ...template, pricingTier: template.pricingTier || 'Free' });
     const closeEdit = () => setEditingTemplate(null);
 
     const saveEdit = async () => {
@@ -154,6 +156,7 @@ export default function ResumeTemplatesPage() {
                     status: editingTemplate.status,
                     tags: editingTemplate.tags,
                     features: editingTemplate.features,
+                    pricingTier: editingTemplate.pricingTier || 'Free',
                 })
             });
             const result = await response.json();
@@ -268,6 +271,13 @@ export default function ResumeTemplatesPage() {
                                     <option value="inactive">Inactive</option>
                                     <option value="draft">Draft</option>
                                 </select>
+                                <select value={pricingTierFilter} onChange={(e) => setPricingTierFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #e9ecef', borderRadius: '6px' }}>
+                                    <option value="all">All Pricing Tiers</option>
+                                    <option value="Free">Free</option>
+                                    <option value="Simple">Simple</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Enterprise">Enterprise</option>
+                                </select>
                             </div>
 
                             <div className="table-responsive">
@@ -300,6 +310,16 @@ export default function ResumeTemplatesPage() {
                                                 borderBottom: '1px solid #e9ecef'
                                             }}>
                                                 Category
+                                            </th>
+                                            <th style={{
+                                                padding: '16px',
+                                                textAlign: 'left',
+                                                fontWeight: '600',
+                                                fontSize: '14px',
+                                                color: 'var(--color-heading-1)',
+                                                borderBottom: '1px solid #e9ecef'
+                                            }}>
+                                                Pricing Tier
                                             </th>
                                             <th style={{
                                                 padding: '16px',
@@ -424,6 +444,23 @@ export default function ResumeTemplatesPage() {
                                                         {template.category}
                                                     </span>
                                                 </td>
+                                                <td style={{ padding: '16px', verticalAlign: 'top' }}>
+                                                    <span style={{
+                                                        padding: '4px 8px',
+                                                        background: template.pricingTier === 'Free' ? '#d4edda' :
+                                                                   template.pricingTier === 'Simple' ? '#fff3cd' :
+                                                                   template.pricingTier === 'Premium' ? '#cfe2ff' : '#e9ecef',
+                                                        borderRadius: '12px',
+                                                        fontSize: '12px',
+                                                        color: template.pricingTier === 'Free' ? '#155724' :
+                                                               template.pricingTier === 'Simple' ? '#856404' :
+                                                               template.pricingTier === 'Premium' ? '#084298' : 'var(--color-body)',
+                                                        fontWeight: '600',
+                                                        textTransform: 'capitalize'
+                                                    }}>
+                                                        {template.pricingTier || 'Free'}
+                                                    </span>
+                                                </td>
                                                 <td style={{ padding: '16px', textAlign: 'center', verticalAlign: 'top' }}>
                                                     <div style={{
                                                         fontSize: '16px',
@@ -522,6 +559,18 @@ export default function ResumeTemplatesPage() {
                             <div>
                                 <label>Category</label>
                                 <input value={editingTemplate.category} onChange={(e) => setEditingTemplate({ ...editingTemplate, category: e.target.value })} />
+                            </div>
+                            <div>
+                                <label>Pricing Tier</label>
+                                <select 
+                                    value={editingTemplate.pricingTier || 'Free'} 
+                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, pricingTier: e.target.value })}
+                                >
+                                    <option value="Free">Free</option>
+                                    <option value="Simple">Simple</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Enterprise">Enterprise</option>
+                                </select>
                             </div>
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label>Description</label>

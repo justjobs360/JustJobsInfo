@@ -55,11 +55,11 @@ class JobFitService {
         const errors = [];
 
         if (!formData.jobDescription || formData.jobDescription.trim().length < 50) {
-            errors.push('Job description must be at least 50 characters long.');
+            errors.push('Job description must be at least 50 characters long. Please provide more details about the position.');
         }
 
-        if (formData.jobDescription && formData.jobDescription.length > 5000) {
-            errors.push('Job description cannot exceed 5000 characters.');
+        if (formData.jobDescription && formData.jobDescription.length > 50000) {
+            errors.push('Job description cannot exceed 50,000 characters. Please provide a more concise version.');
         }
 
         if (!formData.resumeFile) {

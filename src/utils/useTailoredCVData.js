@@ -7,9 +7,10 @@ import { useState, useEffect } from 'react';
 export function useTailoredCVData() {
   const [initialFormData, setInitialFormData] = useState({});
   const [initialSections, setInitialSections] = useState(null);
+  const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !hasLoadedInitialData) {
       const urlParams = new URLSearchParams(window.location.search);
       const tailored = urlParams.get('tailored');
       const dataKey = urlParams.get('dataKey');
@@ -20,22 +21,37 @@ export function useTailoredCVData() {
           const storedData = sessionStorage.getItem(storageKey);
           if (storedData) {
             const parsedData = JSON.parse(storedData);
-            setInitialFormData(parsedData.form || {});
-            if (parsedData.sections && parsedData.sections.length > 0) {
-              setInitialSections(parsedData.sections);
+            const formData = parsedData.form || {};
+            const sections = parsedData.sections || null;
+            
+            // Only set if we have meaningful data
+            if (formData && Object.keys(formData).length > 0) {
+              setInitialFormData(formData);
+              if (sections && sections.length > 0) {
+                setInitialSections(sections);
+              }
+              setHasLoadedInitialData(true);
+              
+              // Clear the data from sessionStorage after reading
+              sessionStorage.removeItem(storageKey);
+              // Clean up URL
+              const newUrl = window.location.pathname;
+              window.history.replaceState({}, '', newUrl);
             }
-            // Clear the data from sessionStorage after reading
-            sessionStorage.removeItem(storageKey);
-            // Clean up URL
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, '', newUrl);
+          } else {
+            // No data found, mark as loaded to prevent infinite waiting
+            setHasLoadedInitialData(true);
           }
         } catch (error) {
           console.error('Error loading tailored CV data:', error);
+          setHasLoadedInitialData(true);
         }
+      } else {
+        // No tailored flag, mark as loaded
+        setHasLoadedInitialData(true);
       }
     }
-  }, []);
+  }, [hasLoadedInitialData]);
 
-  return { initialFormData, initialSections };
+  return { initialFormData, initialSections, hasLoadedInitialData };
 }

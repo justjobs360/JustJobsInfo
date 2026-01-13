@@ -38,7 +38,7 @@ const initialForm = {
 
 const DEFAULT_SECTIONS = ["personal", "summary", "employment", "education", "skills"];
 
-export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSectionsChange, onCustomSectionsChange, onStepChange, initialFormData = {}, onDownloadDOCX, templateId = null }) {
+export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSectionsChange, onCustomSectionsChange, onStepChange, initialFormData = {}, initialSections = null, hasTailoredDataLoaded = true, onDownloadDOCX, templateId = null }) {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const [form, setForm] = useState({ ...initialForm, ...initialFormData });
@@ -95,7 +95,13 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
 
   // Handle initialFormData changes (e.g., when loaded from sessionStorage)
+  // This effect should run when tailored data arrives
   useEffect(() => {
+    // Wait for tailored data to finish loading before processing
+    if (!hasTailoredDataLoaded) {
+      return;
+    }
+    
     if (initialFormData && Object.keys(initialFormData).length > 0) {
       // Check if initialFormData has meaningful content (not just empty defaults)
       const hasInitialData = initialFormData.firstName || initialFormData.lastName || initialFormData.summary || 
@@ -103,15 +109,44 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
         (initialFormData.education && initialFormData.education[0]?.degree);
       
       if (hasInitialData && !hasLoadedInitialData) {
-        setForm({ ...initialForm, ...initialFormData });
+        console.log('📝 Loading tailored CV data into form...', initialFormData);
+        // Deep merge to ensure all fields are properly set
+        const mergedForm = {
+          ...initialForm,
+          ...initialFormData,
+          // Ensure arrays are properly set (use tailored data if available, otherwise keep defaults)
+          employment: initialFormData.employment && initialFormData.employment.length > 0 
+            ? initialFormData.employment 
+            : initialForm.employment,
+          education: initialFormData.education && initialFormData.education.length > 0 
+            ? initialFormData.education 
+            : initialForm.education,
+          skills: initialFormData.skills && initialFormData.skills.length > 0 
+            ? initialFormData.skills 
+            : initialForm.skills,
+          projects: initialFormData.projects && initialFormData.projects.length > 0 
+            ? initialFormData.projects 
+            : initialForm.projects,
+        };
+        setForm(mergedForm);
         setHasLoadedInitialData(true);
+        console.log('✅ Tailored CV data loaded successfully');
       }
+    } else if (hasTailoredDataLoaded && !hasLoadedInitialData) {
+      // No tailored data found, mark as loaded so we can load saved data
+      setHasLoadedInitialData(true);
     }
-  }, [initialFormData, hasLoadedInitialData]);
+  }, [initialFormData, hasLoadedInitialData, hasTailoredDataLoaded]);
 
   // Load saved resume data from Firebase when component mounts
   // Skip loading if initialFormData is provided (from tailored CV)
+  // Wait for tailored data to finish loading first
   useEffect(() => {
+    // Don't load saved data until we know if tailored data is coming
+    if (!hasTailoredDataLoaded) {
+      return; // Wait for tailored data to load
+    }
+    
     // Check if initialFormData has meaningful content (not just empty defaults)
     const hasInitialData = initialFormData && Object.keys(initialFormData).length > 0 && 
       (initialFormData.firstName || initialFormData.lastName || initialFormData.summary || 
@@ -129,7 +164,7 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
         loadFromLocalStorage();
       }
     }
-  }, [isAuthenticated, user, initialFormData, hasLoadedInitialData]);
+  }, [isAuthenticated, user, initialFormData, hasLoadedInitialData, hasTailoredDataLoaded]);
 
   // Auto-save resume data when form changes
   useEffect(() => {

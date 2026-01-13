@@ -20,8 +20,11 @@ export default function ResumeAuditPage() {
     const [auditData, setAuditData] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState('');
+    const [originalResumeFile, setOriginalResumeFile] = useState(null);
 
     const handleFileUploaded = async (fileData) => {
+        // Store the original file for later use in tailoring
+        setOriginalResumeFile(fileData.file);
         setIsProcessing(true);
         setError('');
         
@@ -117,6 +120,7 @@ export default function ResumeAuditPage() {
                             <AuditResults 
                                 auditData={auditData}
                                 onNewAudit={handleNewAudit}
+                                originalResumeFile={originalResumeFile}
                             />
                         )}
                     </div>

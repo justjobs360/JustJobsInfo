@@ -20,7 +20,7 @@ export default function ResumeEditorPage({ params }) {
   const [step, setStep] = useState(0);
   
   // Get tailored CV data from job fit analysis
-  const { initialFormData, initialSections } = useTailoredCVData();
+  const { initialFormData, initialSections, hasLoadedInitialData } = useTailoredCVData();
   
   // Update sections if tailored data provides them
   useEffect(() => {
@@ -998,6 +998,8 @@ export default function ResumeEditorPage({ params }) {
                 onCustomSectionsChange={handleCustomSectionsChange}
                 onStepChange={handleStepChange}
                 initialFormData={initialFormData}
+                initialSections={initialSections}
+                hasTailoredDataLoaded={hasLoadedInitialData}
                 templateId="template-9"
                 onDownloadDOCX={handleDownloadDOCXButton}
               />

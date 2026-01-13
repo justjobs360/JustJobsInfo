@@ -20,7 +20,7 @@ export default function ResumeEditorPage({ params }) {
   const [step, setStep] = useState(0);
   
   // Get tailored CV data from job fit analysis
-  const { initialFormData, initialSections } = useTailoredCVData();
+  const { initialFormData, initialSections, hasLoadedInitialData } = useTailoredCVData();
   
   // Update sections if tailored data provides them
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function ResumeEditorPage({ params }) {
             ${form.firstName || 'SEBASTIAN'}<br/>${form.lastName || 'WILDER'}
           </div>
           <div style="font-size: 14px; font-weight: 700; color: #000; opacity: 1;">
-            ${form.tagline || 'Student'}
+            ${form.tagline || ''}
           </div>
         </div>
       </div>
@@ -502,17 +502,17 @@ export default function ResumeEditorPage({ params }) {
                     ],
                     spacing: { after: 100, line: 550, lineRule: HeightRule.EXACT },
                   }),
-                  new Paragraph({
+                  form.tagline ? new Paragraph({
                     children: [
                       new TextRun({
-                        text: (form.tagline || 'Student').toUpperCase(),
+                        text: form.tagline.toUpperCase(),
                         size: 11 * 2,
                         bold: true,
                         font: 'Inter',
                         color: '000000',
                       }),
                     ],
-                  }),
+                  }) : new Paragraph({}),
                 ],
               }),
             ],
@@ -954,6 +954,8 @@ export default function ResumeEditorPage({ params }) {
                 onCustomSectionsChange={handleCustomSectionsChange}
                 onStepChange={handleStepChange}
                 initialFormData={initialFormData}
+                initialSections={initialSections}
+                hasTailoredDataLoaded={hasLoadedInitialData}
                 templateId="template-11"
                 onDownloadDOCX={handleDownloadDOCXButton}
               />
