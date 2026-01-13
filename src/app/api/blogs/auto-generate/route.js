@@ -1,3 +1,16 @@
+/**
+ * Auto Blog Generation API Route
+ * 
+ * NOTE: This route is configured with an 800-second (13.3-minute) timeout in vercel.json
+ * to accommodate OpenAI API calls and image fetching for multiple blog posts.
+ * Each blog generation can take 30-60 seconds, so processing multiple blogs
+ * sequentially may approach the timeout limit.
+ * 
+ * Configuration: vercel.json -> functions -> "src/app/api/blogs/auto-generate/route.js"
+ * - maxDuration: 300 seconds (Vercel Pro plan limit)
+ * - memory: 2048 MB
+ */
+
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getBlogs } from '@/utils/blogService';
