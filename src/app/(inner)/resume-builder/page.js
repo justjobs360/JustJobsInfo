@@ -14,15 +14,11 @@ export default function ResumeBuilderPage() {
     const { user, isAuthenticated } = useAuth();
     const [activeFilter, setActiveFilter] = useState('All templates');
     const router = useRouter();
+    const [categories, setCategories] = useState([]);
+    const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-    // Template categories for filter bar
-    const templateCategories = [
-        'All templates',
-        'Free',
-        'Simple',
-        'Modern',
-        'Premium'
-    ];
+    // Template categories for filter bar - will be populated from API
+    const templateCategories = ['All templates', ...categories.map(cat => cat.name)];
 
     const [templates, setTemplates] = useState([
         {
@@ -607,6 +603,39 @@ export default function ResumeBuilderPage() {
         }
     ]);
 
+    // Load categories from API
+    useEffect(() => {
+        let isMounted = true;
+        async function loadCategories() {
+            try {
+                const res = await fetch('/api/admin/resume-template-categories');
+                const json = await res.json();
+                if (json?.success && Array.isArray(json.data) && isMounted) {
+                    // Only show active categories
+                    const activeCategories = json.data.filter(cat => cat.status === 'active');
+                    setCategories(activeCategories);
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                // Fallback to default categories if API fails
+                if (isMounted) {
+                    setCategories([
+                        { name: 'Free', id: 'free' },
+                        { name: 'Simple', id: 'simple' },
+                        { name: 'Modern', id: 'modern' },
+                        { name: 'Premium', id: 'premium' }
+                    ]);
+                }
+            } finally {
+                if (isMounted) {
+                    setCategoriesLoading(false);
+                }
+            }
+        }
+        loadCategories();
+        return () => { isMounted = false; };
+    }, []);
+
     // Load templates from admin API and filter by active
     useEffect(() => {
         let isMounted = true;
@@ -620,7 +649,7 @@ export default function ResumeBuilderPage() {
                         .map(t => ({
                             id: t.id,
                             title: t.name,
-                            category: (t.category || '').toLowerCase(),
+                            category: t.category || '', // Keep original case to match category names
                             filterCategories: (t.tags || []).map(x => String(x).toLowerCase()),
                             tags: t.tags || [],
                             thumbnail: t.imageUrl,
@@ -640,15 +669,10 @@ export default function ResumeBuilderPage() {
     // Filter logic - show templates based on selected category
     const filteredTemplates = activeFilter === 'All templates'
         ? templates
-        : activeFilter === 'Free'
-            ? templates.filter(t => t.category === 'free')
-            : activeFilter === 'Simple'
-                ? templates.filter(t => t.filterCategories && t.filterCategories.includes('simple'))
-                : activeFilter === 'Modern'
-                    ? templates.filter(t => t.filterCategories && t.filterCategories.includes('modern'))
-                    : activeFilter === 'Premium'
-                        ? templates.filter(t => t.category === 'premium')
-                        : templates;
+        : templates.filter(t => {
+            // Match by category name (exact match, case-sensitive to match API category names)
+            return (t.category || '') === activeFilter;
+        });
 
     // When a template is selected, navigate to the dynamic page
     const handleTemplateSelect = (template) => {
@@ -693,31 +717,34 @@ export default function ResumeBuilderPage() {
                                 width: '100%',
                                 maxWidth: '700px',
                             }}>
-                                {templateCategories.map((cat) => (
-                                    <button
-                                        key={cat}
-                                        className={`filter-btn${activeFilter === cat ? ' active' : ''}`}
-                                        style={{
-                                            display: 'inline-flex',
-                                            width: 'auto',
-                                            background: activeFilter === cat ? 'var(--color-primary)' : 'var(--color-white)',
-                                            color: activeFilter === cat ? 'var(--color-white)' : 'var(--color-body)',
-                                            border: activeFilter === cat ? '1.5px solid var(--color-primary)' : '1.5px solid #B5D2F6',
-                                            borderRadius: '24px',
-                                            padding: '8px 24px',
-                                            fontWeight: 500,
-                                            fontSize: '16px',
-                                            cursor: 'pointer',
-                                            transition: 'background 0.2s, color 0.2s',
-                                            boxShadow: activeFilter === cat ? '0 2px 8px rgba(9,99,211,0.08)' : 'none',
-                                            outline: 'none',
-                                            // Remove minWidth to prevent forced wrapping
-                                        }}
-                                        onClick={() => setActiveFilter(cat)}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
+                                {categoriesLoading ? (
+                                    <div style={{ padding: '8px 24px', color: 'var(--color-body)' }}>Loading categories...</div>
+                                ) : (
+                                    templateCategories.map((cat) => (
+                                        <button
+                                            key={cat}
+                                            className={`filter-btn${activeFilter === cat ? ' active' : ''}`}
+                                            style={{
+                                                display: 'inline-flex',
+                                                width: 'auto',
+                                                background: activeFilter === cat ? 'var(--color-primary)' : 'var(--color-white)',
+                                                color: activeFilter === cat ? 'var(--color-white)' : 'var(--color-body)',
+                                                border: activeFilter === cat ? '1.5px solid var(--color-primary)' : '1.5px solid #B5D2F6',
+                                                borderRadius: '24px',
+                                                padding: '8px 24px',
+                                                fontWeight: 500,
+                                                fontSize: '16px',
+                                                cursor: 'pointer',
+                                                transition: 'background 0.2s, color 0.2s',
+                                                boxShadow: activeFilter === cat ? '0 2px 8px rgba(9,99,211,0.08)' : 'none',
+                                                outline: 'none',
+                                            }}
+                                            onClick={() => setActiveFilter(cat)}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>

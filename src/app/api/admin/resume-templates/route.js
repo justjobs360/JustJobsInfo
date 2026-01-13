@@ -1,6 +1,35 @@
 import { NextResponse } from 'next/server';
 import * as admin from 'firebase-admin';
 
+// Helper function to update category template counts
+async function updateCategoryTemplateCounts(db, categoryName) {
+  try {
+    // Count active templates with this category
+    const templatesSnapshot = await db.collection('resumeTemplates')
+      .where('category', '==', categoryName)
+      .where('status', '==', 'active')
+      .get();
+
+    const templateCount = templatesSnapshot.size;
+
+    // Find category by name
+    const categoriesSnapshot = await db.collection('resumeTemplateCategories')
+      .where('name', '==', categoryName)
+      .get();
+
+    if (!categoriesSnapshot.empty) {
+      const categoryDoc = categoriesSnapshot.docs[0];
+      await categoryDoc.ref.update({
+        templateCount,
+        lastUpdated: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error('Error updating category template counts:', error);
+    // Don't throw - this is a background update
+  }
+}
+
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
   try {
@@ -253,7 +282,6 @@ async function initializeTemplates() {
           // Start actual metrics at zero; real values will accumulate via tracking endpoint
           downloadCount: 0,
           tags: template.tags || [],
-          pricingTier: template.pricingTier || 'Free', // Default to 'Free' if not specified
           createdAt: new Date().toISOString(),
           lastUpdated: new Date().toISOString()
         });
@@ -277,7 +305,6 @@ async function initializeTemplates() {
             ...templateData,
             downloadCount: 0,
             tags: template.tags || [],
-            pricingTier: template.pricingTier || 'Free', // Default to 'Free' if not specified
             createdAt: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
           });
@@ -316,7 +343,6 @@ export async function GET() {
         status: data.status,
         features: data.features,
         tags: data.tags || [],
-        pricingTier: data.pricingTier || 'Free', // Default to 'Free' if not set
         createdAt: data.createdAt,
         lastUpdated: data.lastUpdated
       });
@@ -381,6 +407,12 @@ export async function POST(request) {
       lastUpdated: new Date().toISOString()
     });
 
+    // Update category template counts
+    const templateData = templateDoc.data();
+    if (templateData.category) {
+      await updateCategoryTemplateCounts(db, templateData.category);
+    }
+
     console.log(`✅ Template ${id} status updated to ${status}`);
     return NextResponse.json({
       success: true,
@@ -400,7 +432,7 @@ export async function POST(request) {
 export async function PUT(request) {
   try {
     const body = await request.json();
-    const { id, name, category, description, imageUrl, status, tags, features, pricingTier } = body;
+    const { id, name, category, description, imageUrl, status, tags, features } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -428,9 +460,13 @@ export async function PUT(request) {
     if (typeof status === 'string' && ['active', 'inactive', 'draft'].includes(status)) updatePayload.status = status;
     if (Array.isArray(tags)) updatePayload.tags = tags;
     if (Array.isArray(features)) updatePayload.features = features;
-    if (typeof pricingTier === 'string') updatePayload.pricingTier = pricingTier;
 
     await templateRef.update(updatePayload);
+
+    // Update category template counts if category changed
+    if (typeof category === 'string' && category.trim().length > 0) {
+      await updateCategoryTemplateCounts(db, category);
+    }
 
     console.log(`✏️ Updated template ${id}:`, Object.keys(updatePayload));
     return NextResponse.json({ success: true, message: 'Template updated' });

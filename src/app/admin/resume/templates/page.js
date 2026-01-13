@@ -22,9 +22,38 @@ export default function ResumeTemplatesPage() {
     // Local UI state: search/filter and edit modal
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [pricingTierFilter, setPricingTierFilter] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
     const [editingTemplate, setEditingTemplate] = useState(null);
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [activeTab, setActiveTab] = useState('templates'); // 'templates' or 'categories'
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [editingCategory, setEditingCategory] = useState(null);
+    const [categoryFormData, setCategoryFormData] = useState({ name: '', description: '' });
+    const [categoriesLoading, setCategoriesLoading] = useState(false);
+
+    // Fetch categories from API
+    const fetchCategories = async () => {
+        try {
+            setCategoriesLoading(true);
+            const response = await fetch('/api/admin/resume-template-categories');
+            const result = await response.json();
+            if (result.success && Array.isArray(result.data)) {
+                setCategories(result.data);
+                // Also update the filter dropdown with active categories only
+                const activeCategories = result.data.filter(cat => cat.status === 'active');
+                // This will be used for the template filter dropdown
+            } else {
+                setCategories([]);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            setCategories([]);
+            toast.error('Failed to fetch categories');
+        } finally {
+            setCategoriesLoading(false);
+        }
+    };
 
     // Fetch templates from API
     const fetchTemplates = async () => {
@@ -74,9 +103,113 @@ export default function ResumeTemplatesPage() {
 
     useEffect(() => {
         if (hasPermission(ADMIN_PERMISSIONS.MANAGE_CONTENT)) {
+            fetchCategories();
             fetchTemplates();
         }
     }, [hasPermission]);
+
+    // Category management functions
+    const openCategoryModal = (category = null) => {
+        if (category) {
+            setCategoryFormData({ name: category.name, description: category.description || '' });
+            setEditingCategory(category);
+        } else {
+            setCategoryFormData({ name: '', description: '' });
+            setEditingCategory(null);
+        }
+        setShowCategoryModal(true);
+    };
+
+    const closeCategoryModal = () => {
+        setShowCategoryModal(false);
+        setEditingCategory(null);
+        setCategoryFormData({ name: '', description: '' });
+    };
+
+    const saveCategory = async () => {
+        if (!categoryFormData.name.trim()) {
+            toast.error('Category name is required');
+            return;
+        }
+
+        try {
+            const url = '/api/admin/resume-template-categories';
+            const method = editingCategory ? 'PUT' : 'POST';
+            const body = editingCategory
+                ? { id: editingCategory.id, ...categoryFormData }
+                : categoryFormData;
+
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success(editingCategory ? 'Category updated' : 'Category created');
+                closeCategoryModal();
+                fetchCategories();
+            } else {
+                throw new Error(result.error || 'Failed to save category');
+            }
+        } catch (error) {
+            console.error('Error saving category:', error);
+            toast.error(error.message || 'Failed to save category');
+        }
+    };
+
+    const deleteCategory = async (category) => {
+        if (!confirm(`Are you sure you want to delete "${category.name}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/resume-template-categories?id=${category.id}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success('Category deleted');
+                fetchCategories();
+            } else {
+                throw new Error(result.error || 'Failed to delete category');
+            }
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            toast.error(error.message || 'Failed to delete category');
+        }
+    };
+
+    const toggleCategoryStatus = async (category) => {
+        const newStatus = category.status === 'active' ? 'inactive' : 'active';
+        
+        try {
+            const response = await fetch('/api/admin/resume-template-categories', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: category.id,
+                    status: newStatus
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success(`Category ${newStatus === 'active' ? 'activated' : 'deactivated'}`);
+                fetchCategories();
+            } else {
+                throw new Error(result.error || 'Failed to update status');
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+            toast.error(error.message || 'Failed to update status');
+        }
+    };
 
     // Toggle template status
     const toggleStatus = async (templateId, currentStatus) => {
@@ -125,38 +258,65 @@ export default function ResumeTemplatesPage() {
         }
     };
 
-    // Derived: filtered view (search + status + pricing tier)
+    // Derived: filtered view (search + status + category)
     const filteredTemplates = templates.filter(t => {
         const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
-        const matchesPricingTier = pricingTierFilter === 'all' || (t.pricingTier || 'Free') === pricingTierFilter;
+        const matchesCategory = categoryFilter === 'all' || (t.category || '') === categoryFilter;
         const term = searchTerm.trim().toLowerCase();
         const matchesSearch = term.length === 0 || (
             (t.name || '').toLowerCase().includes(term) ||
             (t.description || '').toLowerCase().includes(term) ||
             (Array.isArray(t.tags) ? t.tags : []).some(tag => (tag || '').toLowerCase().includes(term))
         );
-        return matchesStatus && matchesPricingTier && matchesSearch;
+        return matchesStatus && matchesCategory && matchesSearch;
     });
 
-    const openEdit = (template) => setEditingTemplate({ ...template, pricingTier: template.pricingTier || 'Free' });
+    const openEdit = (template) => {
+        try {
+            if (!template || !template.id) {
+                toast.error('Invalid template data');
+                return;
+            }
+            // Ensure categories are loaded before opening edit
+            if (!Array.isArray(categories) || categories.length === 0) {
+                fetchCategories();
+            }
+            // Create a safe copy of the template with all required fields
+            setEditingTemplate({
+                id: template.id,
+                name: template.name || '',
+                category: template.category || '',
+                description: template.description || '',
+                imageUrl: template.imageUrl || '',
+                status: template.status || 'active',
+                tags: Array.isArray(template.tags) ? [...template.tags] : [],
+                features: Array.isArray(template.features) ? [...template.features] : []
+            });
+        } catch (error) {
+            console.error('Error opening edit modal:', error);
+            toast.error('Failed to open edit modal: ' + error.message);
+        }
+    };
     const closeEdit = () => setEditingTemplate(null);
 
     const saveEdit = async () => {
-        if (!editingTemplate) return;
+        if (!editingTemplate || !editingTemplate.id) {
+            toast.error('Invalid template data');
+            return;
+        }
         try {
             const response = await fetch('/api/admin/resume-templates', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: editingTemplate.id,
-                    name: editingTemplate.name,
-                    category: editingTemplate.category,
-                    description: editingTemplate.description,
-                    imageUrl: editingTemplate.imageUrl,
-                    status: editingTemplate.status,
-                    tags: editingTemplate.tags,
-                    features: editingTemplate.features,
-                    pricingTier: editingTemplate.pricingTier || 'Free',
+                    name: editingTemplate.name || '',
+                    category: editingTemplate.category || '',
+                    description: editingTemplate.description || '',
+                    imageUrl: editingTemplate.imageUrl || '',
+                    status: editingTemplate.status || 'active',
+                    tags: Array.isArray(editingTemplate.tags) ? editingTemplate.tags : [],
+                    features: Array.isArray(editingTemplate.features) ? editingTemplate.features : [],
                 })
             });
             const result = await response.json();
@@ -165,7 +325,8 @@ export default function ResumeTemplatesPage() {
             closeEdit();
             fetchTemplates();
         } catch (e) {
-            toast.error(e.message);
+            console.error('Error saving template:', e);
+            toast.error(e.message || 'Failed to update template');
         }
     };
 
@@ -184,8 +345,44 @@ export default function ResumeTemplatesPage() {
         <AdminLayout>
             <div className="admin-dashboard">
                 <div className="dashboard-header">
-                    <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Resume Templates Management</h1>
-                    <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Manage resume templates, view download statistics, and control template availability</p>
+                    <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--color-heading-1)', margin: '0 0 8px 0' }}>Resume Templates & Categories</h1>
+                    <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>Manage resume templates, categories, view download statistics, and control template availability</p>
+                </div>
+
+                {/* Tabs */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #e9ecef' }}>
+                    <button
+                        onClick={() => setActiveTab('templates')}
+                        style={{
+                            padding: '12px 24px',
+                            background: 'none',
+                            border: 'none',
+                            borderBottom: activeTab === 'templates' ? '3px solid var(--color-primary)' : '3px solid transparent',
+                            color: activeTab === 'templates' ? 'var(--color-primary)' : 'var(--color-body)',
+                            fontWeight: activeTab === 'templates' ? '600' : '500',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            transition: 'all 0.3s ease'
+                        }}
+                    >
+                        📄 Templates
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('categories')}
+                        style={{
+                            padding: '12px 24px',
+                            background: 'none',
+                            border: 'none',
+                            borderBottom: activeTab === 'categories' ? '3px solid var(--color-primary)' : '3px solid transparent',
+                            color: activeTab === 'categories' ? 'var(--color-primary)' : 'var(--color-body)',
+                            fontWeight: activeTab === 'categories' ? '600' : '500',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            transition: 'all 0.3s ease'
+                        }}
+                    >
+                        🏷️ Categories
+                    </button>
                 </div>
 
                 {/* Statistics Cards */}
@@ -241,6 +438,142 @@ export default function ResumeTemplatesPage() {
                     </div>
                 )}
 
+                {/* Categories Tab */}
+                {activeTab === 'categories' && (
+                    <>
+                        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--color-heading-1)', margin: '0 0 4px 0' }}>Template Categories</h3>
+                                <p style={{ fontSize: '14px', color: 'var(--color-body)', margin: 0 }}>Manage categories for organizing resume templates</p>
+                            </div>
+                            <button
+                                onClick={() => openCategoryModal()}
+                                style={{
+                                    padding: '12px 24px',
+                                    backgroundColor: 'var(--color-primary)',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                + Add New Category
+                            </button>
+                        </div>
+
+                        {categoriesLoading ? (
+                            <div style={{ textAlign: 'center', padding: '40px' }}>
+                                <div className="loading-spinner"></div>
+                                <p style={{ marginTop: '16px', color: 'var(--color-body)' }}>Loading categories...</p>
+                            </div>
+                        ) : (
+                            <div className="activity-card">
+                                <div style={{ padding: '24px' }}>
+                                    {categories.length === 0 ? (
+                                        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-body)' }}>
+                                            <p>No categories found. Create your first category to get started.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="table-responsive">
+                                            <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '8px', overflow: 'hidden' }}>
+                                                <thead style={{ background: '#f8f9fa' }}>
+                                                    <tr>
+                                                        <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>Category Name</th>
+                                                        <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>Description</th>
+                                                        <th style={{ padding: '16px', textAlign: 'center', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>Templates</th>
+                                                        <th style={{ padding: '16px', textAlign: 'center', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>Status</th>
+                                                        <th style={{ padding: '16px', textAlign: 'center', fontWeight: '600', fontSize: '14px', color: 'var(--color-heading-1)', borderBottom: '1px solid #e9ecef' }}>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {categories.map((category) => (
+                                                        <tr key={category.id} style={{ borderBottom: '1px solid #f8f9fa' }}>
+                                                            <td style={{ padding: '16px', verticalAlign: 'top' }}>
+                                                                <div style={{ fontWeight: '600', color: 'var(--color-heading-1)', marginBottom: '4px' }}>
+                                                                    {category.name}
+                                                                </div>
+                                                                <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>
+                                                                    Slug: {category.slug}
+                                                                </div>
+                                                            </td>
+                                                            <td style={{ padding: '16px', verticalAlign: 'top', color: 'var(--color-body)', fontSize: '14px' }}>
+                                                                {category.description || <span style={{ fontStyle: 'italic', color: '#6c757d' }}>No description</span>}
+                                                            </td>
+                                                            <td style={{ padding: '16px', textAlign: 'center', verticalAlign: 'top' }}>
+                                                                <span style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-heading-1)' }}>
+                                                                    {category.templateCount || 0}
+                                                                </span>
+                                                            </td>
+                                                            <td style={{ padding: '16px', textAlign: 'center', verticalAlign: 'top' }}>
+                                                                <span
+                                                                    onClick={() => toggleCategoryStatus(category)}
+                                                                    style={{
+                                                                        padding: '6px 12px',
+                                                                        borderRadius: '20px',
+                                                                        fontSize: '12px',
+                                                                        fontWeight: '600',
+                                                                        textTransform: 'capitalize',
+                                                                        backgroundColor: category.status === 'active' ? '#d4edda' : '#f8d7da',
+                                                                        color: category.status === 'active' ? '#155724' : '#721c24',
+                                                                        cursor: 'pointer',
+                                                                        display: 'inline-block'
+                                                                    }}
+                                                                    title="Click to toggle status"
+                                                                >
+                                                                    {category.status}
+                                                                </span>
+                                                            </td>
+                                                            <td style={{ padding: '16px', textAlign: 'center', verticalAlign: 'top' }}>
+                                                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                                                    <button
+                                                                        onClick={() => openCategoryModal(category)}
+                                                                        style={{
+                                                                            padding: '6px 12px',
+                                                                            backgroundColor: 'var(--color-primary)',
+                                                                            color: '#fff',
+                                                                            border: 'none',
+                                                                            borderRadius: '4px',
+                                                                            fontSize: '12px',
+                                                                            cursor: 'pointer',
+                                                                            fontWeight: '500'
+                                                                        }}
+                                                                    >
+                                                                        Edit
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => deleteCategory(category)}
+                                                                        style={{
+                                                                            padding: '6px 12px',
+                                                                            backgroundColor: '#dc3545',
+                                                                            color: '#fff',
+                                                                            border: 'none',
+                                                                            borderRadius: '4px',
+                                                                            fontSize: '12px',
+                                                                            cursor: 'pointer',
+                                                                            fontWeight: '500'
+                                                                        }}
+                                                                    >
+                                                                        Delete
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* Templates Tab */}
+                {activeTab === 'templates' && (
+                    <>
                 {/* Templates List */}
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -271,12 +604,11 @@ export default function ResumeTemplatesPage() {
                                     <option value="inactive">Inactive</option>
                                     <option value="draft">Draft</option>
                                 </select>
-                                <select value={pricingTierFilter} onChange={(e) => setPricingTierFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #e9ecef', borderRadius: '6px' }}>
-                                    <option value="all">All Pricing Tiers</option>
-                                    <option value="Free">Free</option>
-                                    <option value="Simple">Simple</option>
-                                    <option value="Premium">Premium</option>
-                                    <option value="Enterprise">Enterprise</option>
+                                <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #e9ecef', borderRadius: '6px' }}>
+                                    <option value="all">All Categories</option>
+                                    {Array.isArray(categories) && categories.filter(cat => cat.status === 'active').map(cat => (
+                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                    ))}
                                 </select>
                             </div>
 
@@ -310,16 +642,6 @@ export default function ResumeTemplatesPage() {
                                                 borderBottom: '1px solid #e9ecef'
                                             }}>
                                                 Category
-                                            </th>
-                                            <th style={{
-                                                padding: '16px',
-                                                textAlign: 'left',
-                                                fontWeight: '600',
-                                                fontSize: '14px',
-                                                color: 'var(--color-heading-1)',
-                                                borderBottom: '1px solid #e9ecef'
-                                            }}>
-                                                Pricing Tier
                                             </th>
                                             <th style={{
                                                 padding: '16px',
@@ -444,23 +766,6 @@ export default function ResumeTemplatesPage() {
                                                         {template.category}
                                                     </span>
                                                 </td>
-                                                <td style={{ padding: '16px', verticalAlign: 'top' }}>
-                                                    <span style={{
-                                                        padding: '4px 8px',
-                                                        background: template.pricingTier === 'Free' ? '#d4edda' :
-                                                                   template.pricingTier === 'Simple' ? '#fff3cd' :
-                                                                   template.pricingTier === 'Premium' ? '#cfe2ff' : '#e9ecef',
-                                                        borderRadius: '12px',
-                                                        fontSize: '12px',
-                                                        color: template.pricingTier === 'Free' ? '#155724' :
-                                                               template.pricingTier === 'Simple' ? '#856404' :
-                                                               template.pricingTier === 'Premium' ? '#084298' : 'var(--color-body)',
-                                                        fontWeight: '600',
-                                                        textTransform: 'capitalize'
-                                                    }}>
-                                                        {template.pricingTier || 'Free'}
-                                                    </span>
-                                                </td>
                                                 <td style={{ padding: '16px', textAlign: 'center', verticalAlign: 'top' }}>
                                                     <div style={{
                                                         fontSize: '16px',
@@ -541,47 +846,111 @@ export default function ResumeTemplatesPage() {
                         </div>
                     </div>
                 )}
+                    </>
+                )}
             </div>
 
-            {/* Edit Modal */}
-            {editingTemplate && (
-                <div className="modal-backdrop" onClick={closeEdit}>
+            {/* Category Modal */}
+            {showCategoryModal && (
+                <div className="modal-backdrop" onClick={closeCategoryModal}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h4 style={{ margin: 0 }}>Edit: {editingTemplate.name}</h4>
+                            <h4 style={{ margin: 0 }}>{editingCategory ? 'Edit Category' : 'Add New Category'}</h4>
+                            <button onClick={closeCategoryModal} className="modal-close">×</button>
+                        </div>
+                        <div className="modal-body">
+                            <div>
+                                <label>Category Name *</label>
+                                <input
+                                    type="text"
+                                    value={categoryFormData.name}
+                                    onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
+                                    placeholder="e.g., Free, Simple, Premium, Enterprise"
+                                />
+                            </div>
+                            <div>
+                                <label>Description</label>
+                                <textarea
+                                    value={categoryFormData.description}
+                                    onChange={(e) => setCategoryFormData({ ...categoryFormData, description: e.target.value })}
+                                    placeholder="Optional description for this category"
+                                    rows={3}
+                                />
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={closeCategoryModal} className="btn btn-secondary">Cancel</button>
+                            <button onClick={saveCategory} className="btn btn-success">Save</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Template Modal */}
+            {editingTemplate && editingTemplate.id && (
+                <div className="modal-backdrop" onClick={closeEdit} style={{ zIndex: 2000, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="modal" onClick={(e) => e.stopPropagation()} style={{ zIndex: 2001, maxWidth: '900px', backgroundColor: '#fff', borderRadius: '12px', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                        <div className="modal-header">
+                            <h4 style={{ margin: 0 }}>Edit: {editingTemplate?.name || 'Template'}</h4>
                             <button onClick={closeEdit} className="modal-close">×</button>
                         </div>
                         <div className="modal-body" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                             <div>
                                 <label>Name</label>
-                                <input value={editingTemplate.name} onChange={(e) => setEditingTemplate({ ...editingTemplate, name: e.target.value })} />
+                                <input 
+                                    value={editingTemplate?.name || ''} 
+                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, name: e.target.value })} 
+                                />
                             </div>
                             <div>
-                                <label>Category</label>
-                                <input value={editingTemplate.category} onChange={(e) => setEditingTemplate({ ...editingTemplate, category: e.target.value })} />
-                            </div>
-                            <div>
-                                <label>Pricing Tier</label>
+                                <label>Category *</label>
                                 <select 
-                                    value={editingTemplate.pricingTier || 'Free'} 
-                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, pricingTier: e.target.value })}
+                                    value={editingTemplate?.category || ''} 
+                                    onChange={(e) => editingTemplate && setEditingTemplate({ ...editingTemplate, category: e.target.value })}
                                 >
-                                    <option value="Free">Free</option>
-                                    <option value="Simple">Simple</option>
-                                    <option value="Premium">Premium</option>
-                                    <option value="Enterprise">Enterprise</option>
+                                    <option value="">Select a category</option>
+                                    {Array.isArray(categories) && categories.filter(cat => cat && cat.status === 'active').length > 0 ? (
+                                        categories.filter(cat => cat && cat.status === 'active').map(cat => (
+                                            <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
+                                        ))
+                                    ) : (
+                                        <option value="" disabled>No categories available. Switch to Categories tab to add categories.</option>
+                                    )}
                                 </select>
+                                <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--color-body)' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            closeEdit();
+                                            setActiveTab('categories');
+                                        }}
+                                        style={{ 
+                                            background: 'none', 
+                                            border: 'none', 
+                                            color: 'var(--color-primary)', 
+                                            textDecoration: 'underline',
+                                            cursor: 'pointer',
+                                            padding: 0,
+                                            fontSize: '12px'
+                                        }}
+                                    >
+                                        Manage categories →
+                                    </button>
+                                </div>
                             </div>
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label>Description</label>
-                                <textarea value={editingTemplate.description} onChange={(e) => setEditingTemplate({ ...editingTemplate, description: e.target.value })} />
+                                <textarea 
+                                    value={editingTemplate?.description || ''} 
+                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, description: e.target.value })} 
+                                />
                             </div>
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label>Image URL</label>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8, alignItems: 'center' }}>
                                     <input
                                         placeholder="/assets/... or https://example.com/image.png"
-                                        value={editingTemplate.imageUrl}
+                                        value={editingTemplate?.imageUrl || ''}
                                         onChange={(e) => setEditingTemplate({ ...editingTemplate, imageUrl: e.target.value })}
                                     />
                                     <label className="btn btn-primary" style={{ margin: 0, cursor: 'pointer' }}>
@@ -601,9 +970,11 @@ export default function ResumeTemplatesPage() {
                                                     const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
                                                     const json = await res.json();
                                                     if (!json.success) throw new Error(json.error || 'Upload failed');
-                                                    const url = json?.data?.url;
-                                                    if (url) setEditingTemplate({ ...editingTemplate, imageUrl: url });
-                                                    toast.success('Image uploaded');
+                                    const url = json?.data?.url;
+                                    if (url && editingTemplate) {
+                                        setEditingTemplate({ ...editingTemplate, imageUrl: url });
+                                    }
+                                    toast.success('Image uploaded');
                                                 } catch (err) {
                                                     console.error(err);
                                                     toast.error(err.message || 'Failed to upload');
@@ -618,7 +989,7 @@ export default function ResumeTemplatesPage() {
                                 <div style={{ marginTop: 8, fontSize: 12, color: 'var(--color-body)' }}>
                                     You can paste an external URL (https://...) or upload an image. Uploaded files are stored under /public/uploads/resumes.
                                 </div>
-                                {editingTemplate.imageUrl && (
+                                {editingTemplate?.imageUrl && (
                                     <div style={{ marginTop: 10 }}>
                                         <img src={editingTemplate.imageUrl} alt="Template preview" style={{ maxWidth: '100%', border: '1px solid #e9ecef', borderRadius: 6 }} />
                                     </div>
@@ -626,7 +997,10 @@ export default function ResumeTemplatesPage() {
                             </div>
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label>Status</label>
-                                <select value={editingTemplate.status} onChange={(e) => setEditingTemplate({ ...editingTemplate, status: e.target.value })}>
+                                <select 
+                                    value={editingTemplate?.status || 'active'} 
+                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, status: e.target.value })}
+                                >
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                     <option value="draft">Draft</option>
@@ -634,11 +1008,17 @@ export default function ResumeTemplatesPage() {
                             </div>
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label>Tags (comma separated)</label>
-                                <input value={(editingTemplate.tags || []).join(', ')} onChange={(e) => setEditingTemplate({ ...editingTemplate, tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} />
+                                <input 
+                                    value={(editingTemplate?.tags || []).join(', ')} 
+                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} 
+                                />
                             </div>
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <label>Features (one per line)</label>
-                                <textarea value={(editingTemplate.features || []).join('\n')} onChange={(e) => setEditingTemplate({ ...editingTemplate, features: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })} />
+                                <textarea 
+                                    value={(editingTemplate?.features || []).join('\n')} 
+                                    onChange={(e) => setEditingTemplate({ ...editingTemplate, features: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })} 
+                                />
                             </div>
                         </div>
                         <div className="modal-footer">
