@@ -85,7 +85,7 @@ export async function POST(request) {
 
         // Create the analysis prompt
         const analysisPrompt = `
-You are an expert career counselor and HR professional. Analyze the job fit between the provided job description and resume content. Provide an objective, honest, and transparent assessment.
+You are an expert career counselor and HR professional. Analyze the job fit between the provided job description and resume content. Provide an objective, honest, and transparent assessment, but avoid being unrealistically harsh.
 
 JOB DESCRIPTION:
 ${jobDescription}
@@ -107,11 +107,17 @@ Conduct a comprehensive analysis across multiple dimensions:
 5. KEYWORDS MATCH: Industry-specific terms and requirements
 6. TRANSFERABLE SKILLS: Skills from different contexts that apply to this role
 
-SCORING CRITERIA (0-100):
-- 80-100: Excellent/Strong Fit - Candidate meets or exceeds most requirements
-- 60-79: Good/Partial Fit - Candidate has transferable skills and some gaps
-- 40-59: Moderate Fit - Significant gaps but potential with development
-- 0-39: Weak Fit - Major misalignment with role requirements
+SCORING CRITERIA (0-100) - USE THE FULL RANGE:
+- 85-100: Excellent/Strong Fit - Candidate meets or exceeds most core requirements and is clearly very well aligned.
+- 80-84: Good Fit - Candidate has strong alignment with most requirements, with only minor or manageable gaps.
+- 60-79: Moderate Fit - Candidate has a reasonable foundation and transferable skills, but noticeable gaps exist.
+- 40-59: Weak Fit - Major gaps and misalignment with role requirements. Reserve this band for candidates who clearly do not yet meet several important requirements.
+- 0-39: Poor Fit - Severe misalignment with role requirements. Use this only when the resume is largely unrelated to the role.
+
+IMPORTANT SCORING BEHAVIOUR:
+- If a candidate meets MOST of the core requirements in the job description (even with some gaps), their overall fitScore should GENERALLY NOT be lower than the high 70s or low 80s.
+- Only push scores below 60 when there are clear, significant gaps in multiple critical areas (skills, experience level, and domain fit).
+- Use moderate sub-scores (50–80 range) for partial matches instead of defaulting to very low numbers unless the mismatch is obvious.
 
 Provide your analysis in JSON format with this EXACT structure:
 {
@@ -250,9 +256,10 @@ IMPORTANT INSTRUCTIONS:
         }
 
         // Ensure fitScore is a number between 0-100
-        analysisData.fitScore = Math.max(0, Math.min(100, parseInt(analysisData.fitScore)));
+        const originalFitScore = Math.max(0, Math.min(100, parseInt(analysisData.fitScore)));
+        analysisData.fitScore = originalFitScore;
 
-        // Validate score breakdown if present
+        // Validate score breakdown if present and normalise sub-scores
         if (analysisData.scoreBreakdown) {
             Object.keys(analysisData.scoreBreakdown).forEach(key => {
                 // Handle both old format (number) and new format (object with score)
@@ -266,6 +273,55 @@ IMPORTANT INSTRUCTIONS:
                     analysisData.scoreBreakdown[key] = Math.max(0, Math.min(100, parseInt(analysisData.scoreBreakdown[key] || 0)));
                 }
             });
+
+            // Compute a weighted average from sub-scores to smooth extremes
+            const breakdown = analysisData.scoreBreakdown;
+            const weightConfig = {
+                hardSkills: 1.2,
+                softSkills: 0.8,
+                experience: 1.3,
+                education: 0.7,
+                keywordMatch: 1.0,
+                transferableSkills: 0.8
+            };
+
+            let weightedSum = 0;
+            let totalWeight = 0;
+
+            Object.keys(weightConfig).forEach(key => {
+                const weight = weightConfig[key];
+                const value = breakdown[key];
+                if (value !== undefined && value !== null) {
+                    const score = typeof value === 'object' ? (value.score ?? 0) : value;
+                    const numeric = Math.max(0, Math.min(100, parseInt(score || 0)));
+                    weightedSum += numeric * weight;
+                    totalWeight += weight;
+                }
+            });
+
+            if (totalWeight > 0) {
+                const subScoreAverage = weightedSum / totalWeight;
+
+                // Blend model's original score with sub-score average
+                let blendedScore = (0.65 * subScoreAverage) + (0.35 * originalFitScore);
+
+                // Apply a gentle upward bias for mid-range candidates (45–70 band)
+                if (blendedScore >= 45 && blendedScore <= 70) {
+                    const t = (blendedScore - 45) / (70 - 45); // 0 to 1
+                    const boost = 3 + (t * 5); // between 3 and 8 points
+                    blendedScore += boost;
+                }
+
+                // Never boost clearly poor fits; cap everything into 0–100
+                blendedScore = Math.max(0, Math.min(100, blendedScore));
+                analysisData.fitScore = Math.round(blendedScore);
+
+                console.log('📊 Job fit score normalisation:', {
+                    originalFitScore,
+                    subScoreAverage: Math.round(subScoreAverage),
+                    finalFitScore: analysisData.fitScore
+                });
+            }
         }
 
         // Ensure arrays have the right number of items
@@ -278,10 +334,11 @@ IMPORTANT INSTRUCTIONS:
 
         // Add fit level if not provided
         if (!analysisData.fitLevel) {
-            if (analysisData.fitScore >= 80) analysisData.fitLevel = 'Excellent Fit';
-            else if (analysisData.fitScore >= 60) analysisData.fitLevel = 'Good Fit';
-            else if (analysisData.fitScore >= 40) analysisData.fitLevel = 'Moderate Fit';
-            else analysisData.fitLevel = 'Weak Fit';
+            if (analysisData.fitScore >= 85) analysisData.fitLevel = 'Excellent Fit';
+            else if (analysisData.fitScore >= 80) analysisData.fitLevel = 'Good Fit';
+            else if (analysisData.fitScore >= 60) analysisData.fitLevel = 'Moderate Fit';
+            else if (analysisData.fitScore >= 40) analysisData.fitLevel = 'Weak Fit';
+            else analysisData.fitLevel = 'Poor Fit';
         }
 
         // Add scoring rationale if not provided

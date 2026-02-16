@@ -92,12 +92,12 @@ export default function ResumeEditorPage({ params }) {
     <div style="padding: 40px 40px; font-family: 'Times New Roman', serif; color: #000; min-height: 1040px; font-size: 10px; line-height: 1.0;">
       
       <!-- Header Section - Centered -->
-      ${form.firstName ? `
+      ${(form.firstName ?? form.lastName ?? form.phone ?? form.email ?? form.tagline ?? form.city ?? form.country) ? `
         <div style="text-align: center; margin-bottom: 15px;">
-          <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px;">${form.firstName} ${form.lastName || ''}</div>
-          ${form.tagline ? `<div style="font-size: 10px; font-weight: normal; margin-bottom: 8px; color: #333;">${form.tagline}</div>` : ''}
+          <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px;">${(form.firstName ?? '')} ${(form.lastName ?? '')}</div>
+          ${(form.tagline ?? '') ? `<div style="font-size: 10px; font-weight: normal; margin-bottom: 8px; color: #333;">${form.tagline}</div>` : ''}
           <div style="font-size: 9px; color: #333;">
-            ${form.phone ? form.phone : ''}${form.phone && form.email ? ' • ' : ''}${form.email ? form.email : ''}${(form.phone || form.email) && form.linkedin ? ' • ' : ''}${form.linkedin ? form.linkedin : ''}${(form.phone || form.email || form.linkedin) && (form.city || form.country) ? ' • ' : ''}${form.city ? form.city : ''}${form.city && form.country ? ', ' : ''}${form.country ? form.country : ''}
+            ${(form.phone ?? '')}${(form.phone && form.email) ? ' • ' : ''}${(form.email ?? '')}${(form.phone || form.email) && form.linkedin ? ' • ' : ''}${(form.linkedin ?? '')}${(form.phone || form.email || form.linkedin) && (form.city || form.country) ? ' • ' : ''}${(form.city ?? '')}${(form.city && form.country) ? ', ' : ''}${(form.country ?? '')}
           </div>
         </div>
       ` : ''}
@@ -111,22 +111,26 @@ export default function ResumeEditorPage({ params }) {
             </div>
           `;
         }
-        if (section === 'employment' && form.employment && form.employment[0].jobTitle) {
+        if (section === 'employment' && form.employment && form.employment.some(j => j && (j.jobTitle || j.company))) {
           return `
             <div style="margin-bottom: 10px;">
               <div style="font-size: 11px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 1px;">EXPERIENCE</div>
-              ${form.employment.map((job, idx) => `
+              ${form.employment.filter(j => j && (j.jobTitle || j.company || j.desc)).map((job, idx) => `
                 <div style="margin-top: 4px;">
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1px;">
-                    <div style="font-size: 10px; font-weight: bold;">${job.jobTitle}</div>
-                    <div style="font-size: 10px;">${job.start}${job.start && job.end ? ' - ' : ''}${job.end}</div>
+                    <div style="font-size: 10px; font-weight: bold;">${job.jobTitle ?? ''}</div>
+                    <div style="font-size: 10px;">${job.start ?? ''}${(job.start && job.end) ? ' - ' : ''}${job.end ?? ''}</div>
                   </div>
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                    <div style="font-size: 10px; font-style: italic;">${job.company}</div>
-                    <div style="font-size: 10px;">${job.location || ''}</div>
+                    <div style="font-size: 10px; font-style: italic;">${job.company ?? ''}</div>
+                    <div style="font-size: 10px;">${job.location ?? ''}</div>
                   </div>
                   <div style="font-size: 9px; margin-left: 16px;">
-                    ${job.desc ? job.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                    ${(job.desc ?? '') ? String(job.desc).split('\n').filter(line => line.trim()).map(line => {
+                      let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').trim();
+                      cleanLine = cleanLine.replace(/^\s*-\s*/, '').trim();
+                      return `<div style="margin-bottom: 1px;">• ${cleanLine}</div>`;
+                    }).join('') : ''}
                   </div>
                 </div>
               `).join('')}
@@ -148,7 +152,7 @@ export default function ResumeEditorPage({ params }) {
                     <div style="font-size: 10px;">${edu.location || ''}</div>
                   </div>
                   <div style="font-size: 9px; margin-left: 16px;">
-                    ${edu.desc ? edu.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                    ${edu.desc ? edu.desc.split('\n').filter(line => line.trim()).map(line => { let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').replace(/^\s*-\s*/, '').trim(); return `<div style="margin-bottom: 1px;">• ${cleanLine}</div>`; }).join('') : ''}
                   </div>
                 </div>
               `).join('')}
@@ -209,7 +213,7 @@ export default function ResumeEditorPage({ params }) {
                     <div style="font-size: 10px;">${proj.date || ''}</div>
                   </div>
                   <div style="font-size: 9px; margin-left: 16px;">
-                    ${proj.desc ? proj.desc.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                    ${proj.desc ? proj.desc.split('\n').filter(line => line.trim()).map(line => { let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').replace(/^\s*-\s*/, '').trim(); return `<div style="margin-bottom: 1px;">• ${cleanLine}</div>`; }).join('') : ''}
                   </div>
                 </div>
               `).join('')}
@@ -252,7 +256,7 @@ export default function ResumeEditorPage({ params }) {
                       <div style="font-size: 10px;">${entry.location || ''}</div>
                     </div>
                     <div style="font-size: 9px; margin-left: 16px;">
-                      ${entry.description ? entry.description.split('\n').filter(line => line.trim()).map(line => `<div style="margin-bottom: 1px;">• ${line.trim()}</div>`).join('') : ''}
+                      ${entry.description ? entry.description.split('\n').filter(line => line.trim()).map(line => { let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').replace(/^\s*-\s*/, '').trim(); return `<div style="margin-bottom: 1px;">• ${cleanLine}</div>`; }).join('') : ''}
                     </div>
                   </div>
                 `).join('')}
@@ -460,31 +464,33 @@ export default function ResumeEditorPage({ params }) {
       // Create document sections
       const children = [];
 
-      // Header section - Centered like Harvard template
-      if (form.firstName) {
-        // Name - 18pt font, bold, centered
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `${form.firstName} ${form.lastName || ''}`,
-                size: 18 * 2, // Convert pt to docx units (1pt = 2 units)
-                bold: true,
-                font: 'Times New Roman',
-              }),
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 240 }, // 12px margin-bottom
-          })
-        );
+      // Header section - show if we have any name or contact
+      const hasPersonal = form.firstName || form.lastName || form.phone || form.email || form.tagline || form.city || form.country;
+      if (hasPersonal) {
+        const fullName = `${form.firstName ?? ''} ${form.lastName ?? ''}`.trim();
+        if (fullName) {
+          children.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: fullName,
+                  size: 18 * 2,
+                  bold: true,
+                  font: 'Times New Roman',
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 240 },
+            })
+          );
+        }
 
-        // Tagline - 11pt font, normal weight, centered
         if (form.tagline) {
           children.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: form.tagline,
+                  text: String(form.tagline),
                   size: 11 * 2,
                   bold: false,
                   color: '333333',
@@ -492,18 +498,17 @@ export default function ResumeEditorPage({ params }) {
                 }),
               ],
               alignment: AlignmentType.CENTER,
-              spacing: { after: 240 }, // 12px margin-bottom
+              spacing: { after: 240 },
             })
           );
         }
 
-        // Contact info - 10pt font, centered
         const contactInfo = [
           form.phone,
           form.email,
           form.linkedin,
           form.city && form.country ? `${form.city}, ${form.country}` : form.city || form.country
-        ].filter(Boolean).join(' • ');
+        ].filter(Boolean).map(String).join(' • ');
 
         if (contactInfo) {
           children.push(
@@ -517,7 +522,7 @@ export default function ResumeEditorPage({ params }) {
                 }),
               ],
               alignment: AlignmentType.CENTER,
-              spacing: { after: 360 }, // 18px margin-bottom for section spacing
+              spacing: { after: 360 },
             })
           );
         }
@@ -566,7 +571,8 @@ export default function ResumeEditorPage({ params }) {
           );
         }
 
-            if (section === 'employment' && form.employment && form.employment[0].jobTitle) {
+            const hasEmployment = form.employment && form.employment.some(j => j && (j.jobTitle || j.company || j.desc));
+            if (section === 'employment' && hasEmployment) {
           // Section title
           children.push(
             new Paragraph({
@@ -579,7 +585,7 @@ export default function ResumeEditorPage({ params }) {
                   allCaps: true,
                 }),
               ],
-              spacing: { before: 240, after: 120 }, // 12px margin-bottom, 6px after title
+              spacing: { before: 240, after: 120 },
               border: {
                 bottom: {
                   color: '000000',
@@ -591,63 +597,72 @@ export default function ResumeEditorPage({ params }) {
             })
           );
 
-          form.employment.forEach(job => {
+          form.employment.filter(j => j && (j.jobTitle || j.company || j.desc)).forEach(job => {
+            const title = String(job.jobTitle ?? '');
+            const company = String(job.company ?? '');
+            const location = String(job.location ?? '');
+            const start = String(job.start ?? '');
+            const end = String(job.end ?? '');
             // Job title and dates - flex layout with space-between, dates pushed to far right
             children.push(
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: job.jobTitle,
+                    text: title,
                     size: 11 * 2,
                     bold: true,
                     font: 'Times New Roman',
                   }),
                   new TextRun({
-                    text: '\t', // Tab for spacing
+                    text: '\t',
                     size: 11 * 2,
                   }),
                   new TextRun({
-                    text: `${job.start}${job.start && job.end ? ' - ' : ''}${job.end}`,
+                    text: `${start}${start && end ? ' - ' : ''}${end}`,
                     size: 11 * 2,
                     font: 'Times New Roman',
                   }),
                 ],
-                spacing: { before: 120, after: 40 }, // 6px margin-top, 2px after
-                tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
+                spacing: { before: 120, after: 40 },
+                tabStops: [{ type: TabStopType.RIGHT, position: 12000 }],
               })
             );
 
             // Company and location - flex layout with space-between, location pushed to far right
-            if (job.company || job.location) {
+            if (company || location) {
               children.push(
                 new Paragraph({
                   children: [
                     new TextRun({
-                      text: job.company || '',
+                      text: company,
                       size: 11 * 2,
                       italics: true,
                       font: 'Times New Roman',
                     }),
                     new TextRun({
-                      text: '\t', // Tab for spacing
+                      text: '\t',
                       size: 11 * 2,
                     }),
                     new TextRun({
-                      text: job.location || '',
+                      text: location,
                       size: 11 * 2,
                       font: 'Times New Roman',
                     }),
                   ],
-                  spacing: { after: 120 }, // 6px margin-bottom
-                  tabStops: [{ type: TabStopType.RIGHT, position: 12000 }], // Push to far right edge
+                  spacing: { after: 120 },
+                  tabStops: [{ type: TabStopType.RIGHT, position: 12000 }],
                 })
               );
             }
 
             // Job description bullets - 11pt, indented
-            if (job.desc) {
-              const lines = job.desc.split('\n').filter(line => line.trim());
+            const descStr = String(job.desc ?? '');
+            if (descStr) {
+              const lines = descStr.split('\n').filter(line => line.trim());
               lines.forEach(line => {
+                // Remove any existing bullet points and extra " - " before adding our own
+                let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').trim();
+                cleanLine = cleanLine.replace(/^\s*-\s*/, '').trim();
                 children.push(
                   new Paragraph({
                     children: [
@@ -657,7 +672,7 @@ export default function ResumeEditorPage({ params }) {
                         font: 'Times New Roman',
                       }),
                       new TextRun({
-                        text: line.trim(),
+                        text: cleanLine,
                         size: 11 * 2,
                         font: 'Times New Roman',
                       }),
@@ -753,6 +768,7 @@ export default function ResumeEditorPage({ params }) {
             if (edu.desc) {
               const lines = edu.desc.split('\n').filter(line => line.trim());
               lines.forEach(line => {
+                let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').replace(/^\s*-\s*/, '').trim();
                 children.push(
                   new Paragraph({
                     children: [
@@ -762,7 +778,7 @@ export default function ResumeEditorPage({ params }) {
                         font: 'Times New Roman',
                       }),
                       new TextRun({
-                        text: line.trim(),
+                        text: cleanLine,
                         size: 11 * 2,
                         font: 'Times New Roman',
                       }),
@@ -956,6 +972,7 @@ export default function ResumeEditorPage({ params }) {
             if (proj.desc) {
               const lines = proj.desc.split('\n').filter(line => line.trim());
               lines.forEach(line => {
+                let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').replace(/^\s*-\s*/, '').trim();
                 children.push(
                   new Paragraph({
                     children: [
@@ -965,7 +982,7 @@ export default function ResumeEditorPage({ params }) {
                         font: 'Arial',
                       }),
                       new TextRun({
-                        text: line.trim(),
+                        text: cleanLine,
                         size: 12 * 2,
                         font: 'Arial',
                       }),
@@ -1157,6 +1174,7 @@ export default function ResumeEditorPage({ params }) {
                   if (entry.description) {
                     const lines = entry.description.split('\n').filter(line => line.trim());
                     lines.forEach(line => {
+                      let cleanLine = line.trim().replace(/^[•·▪▫◦‣⁃]\s*/, '').replace(/^\s*-\s*/, '').trim();
                       children.push(
                         new Paragraph({
                           children: [
@@ -1166,7 +1184,7 @@ export default function ResumeEditorPage({ params }) {
                               font: 'Times New Roman',
                             }),
                             new TextRun({
-                              text: line.trim(),
+                              text: cleanLine,
                               size: 11 * 2,
                               font: 'Times New Roman',
                             }),

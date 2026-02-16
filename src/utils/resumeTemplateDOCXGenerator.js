@@ -55,29 +55,33 @@ export async function generateResumeDOCX(form, sections = ["personal", "summary"
 async function generateTemplate1(form, sections, customSections) {
     const children = [];
 
-    // Header section
-    if (form.firstName) {
-        children.push(
-            new Paragraph({
-                children: [
-                    new TextRun({
-                        text: `${form.firstName} ${form.lastName || ''}`,
-                        size: 18 * 2,
-                        bold: true,
-                        font: 'Times New Roman',
-                    }),
-                ],
-                alignment: AlignmentType.CENTER,
-                spacing: { after: 240 },
-            })
-        );
+    // Header section - show if we have any name or contact
+    const hasPersonal = form.firstName || form.lastName || form.phone || form.email || form.tagline || form.city || form.country;
+    if (hasPersonal) {
+        const fullName = `${form.firstName ?? ''} ${form.lastName ?? ''}`.trim();
+        if (fullName) {
+            children.push(
+                new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: fullName,
+                            size: 18 * 2,
+                            bold: true,
+                            font: 'Times New Roman',
+                        }),
+                    ],
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 240 },
+                })
+            );
+        }
 
         if (form.tagline) {
             children.push(
                 new Paragraph({
                     children: [
                         new TextRun({
-                            text: form.tagline,
+                            text: String(form.tagline),
                             size: 11 * 2,
                             color: '333333',
                             font: 'Times New Roman',
@@ -94,7 +98,7 @@ async function generateTemplate1(form, sections, customSections) {
             form.email,
             form.linkedin,
             form.city && form.country ? `${form.city}, ${form.country}` : form.city || form.country
-        ].filter(Boolean).join(' • ');
+        ].filter(Boolean).map(String).join(' • ');
 
         if (contactInfo) {
             children.push(
@@ -155,7 +159,8 @@ async function generateTemplate1(form, sections, customSections) {
             );
         }
 
-        if (section === 'employment' && form.employment && form.employment[0]?.jobTitle) {
+        const hasEmployment = form.employment && form.employment.some(j => j && (j.jobTitle || j.company || j.desc));
+        if (section === 'employment' && hasEmployment) {
             children.push(
                 new Paragraph({
                     children: [
@@ -178,15 +183,19 @@ async function generateTemplate1(form, sections, customSections) {
                     },
                 })
             );
+            
+            form.employment.filter(j => j && (j.jobTitle || j.company || j.desc)).forEach(job => {
+                const title = String(job.jobTitle ?? '');
+                const company = String(job.company ?? '');
+                const location = String(job.location ?? '');
+                const start = String(job.start ?? '');
+                const end = String(job.end ?? '');
 
-            form.employment.forEach(job => {
-                if (!job.jobTitle) return;
-                
                 children.push(
                     new Paragraph({
                         children: [
                             new TextRun({
-                                text: job.jobTitle,
+                                text: title,
                                 size: 11 * 2,
                                 bold: true,
                                 font: 'Times New Roman',
@@ -196,7 +205,7 @@ async function generateTemplate1(form, sections, customSections) {
                                 size: 11 * 2,
                             }),
                             new TextRun({
-                                text: `${job.start}${job.start && job.end ? ' - ' : ''}${job.end}`,
+                                text: `${start}${start && end ? ' - ' : ''}${end}`,
                                 size: 11 * 2,
                                 font: 'Times New Roman',
                             }),
@@ -206,12 +215,12 @@ async function generateTemplate1(form, sections, customSections) {
                     })
                 );
 
-                if (job.company || job.location) {
+                if (company || location) {
                     children.push(
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: job.company || '',
+                                    text: company,
                                     size: 11 * 2,
                                     italics: true,
                                     font: 'Times New Roman',
@@ -221,7 +230,7 @@ async function generateTemplate1(form, sections, customSections) {
                                     size: 11 * 2,
                                 }),
                                 new TextRun({
-                                    text: job.location || '',
+                                    text: location,
                                     size: 11 * 2,
                                     font: 'Times New Roman',
                                 }),

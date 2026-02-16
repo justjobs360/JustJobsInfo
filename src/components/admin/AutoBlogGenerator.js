@@ -6,6 +6,7 @@ export default function AutoBlogGenerator({ onBlogsGenerated }) {
   const [titles, setTitles] = useState(['']);
   const [isGenerating, setIsGenerating] = useState(false);
   const [results, setResults] = useState(null);
+  const [variant, setVariant] = useState('template-one');
 
   const handleTitleChange = (index, value) => {
     const newTitles = [...titles];
@@ -42,7 +43,7 @@ export default function AutoBlogGenerator({ onBlogsGenerated }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ titles: validTitles }),
+        body: JSON.stringify({ titles: validTitles, variant }),
       });
 
       const data = await response.json();
@@ -115,6 +116,50 @@ export default function AutoBlogGenerator({ onBlogsGenerated }) {
 
       {/* Blog Titles Section */}
       <div style={{ marginBottom: '32px' }}>
+        {/* Variant selector */}
+        <div style={{ 
+          marginBottom: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
+        }}>
+          <label style={{ 
+            fontSize: '15px', 
+            fontWeight: '600', 
+            color: 'var(--color-heading-1)'
+          }}>
+            Blog Structure
+          </label>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#374151' }}>
+              <input
+                type="radio"
+                name="blog-variant"
+                value="template-one"
+                checked={variant === 'template-one'}
+                onChange={() => setVariant('template-one')}
+              />
+              <span>
+                <strong>Prompt 1 – Template layout</strong> (intro, quote, checklist sections)
+              </span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#374151' }}>
+              <input
+                type="radio"
+                name="blog-variant"
+                value="standard"
+                checked={variant === 'standard'}
+                onChange={() => setVariant('standard')}
+              />
+              <span>
+                <strong>Prompt 2 – Standard blog</strong> (intro, subheadings, paragraphs)
+              </span>
+            </label>
+          </div>
+          <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
+            Use Prompt 1 for your existing visual template style, or Prompt 2 for a more traditional long-form blog layout so posts don&apos;t all look the same.
+          </p>
+        </div>
         <label style={{ 
           display: 'block', 
           fontSize: '16px', 

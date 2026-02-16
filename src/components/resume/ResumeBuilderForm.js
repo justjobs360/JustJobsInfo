@@ -104,8 +104,8 @@ export default function ResumeBuilderForm({ onFormChange, onProgressChange, onSe
     
     if (initialFormData && Object.keys(initialFormData).length > 0) {
       // Check if initialFormData has meaningful content (not just empty defaults)
-      const hasInitialData = initialFormData.firstName || initialFormData.lastName || initialFormData.summary || 
-        (initialFormData.employment && initialFormData.employment[0]?.jobTitle) ||
+      const hasInitialData = initialFormData.firstName || initialFormData.lastName || initialFormData.phone || initialFormData.email || initialFormData.summary ||
+        (initialFormData.employment && initialFormData.employment.some(e => e && (e.jobTitle || e.company || e.desc))) ||
         (initialFormData.education && initialFormData.education[0]?.degree);
       
       if (hasInitialData && !hasLoadedInitialData) {

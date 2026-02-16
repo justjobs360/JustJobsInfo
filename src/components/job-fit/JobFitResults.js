@@ -39,18 +39,20 @@ export default function JobFitResults({ analysisData, onNewAnalysis, tailoredCVD
     };
 
     const getScoreColor = (score) => {
-        if (score >= 80) return '#10b981'; // Green
-        if (score >= 60) return '#f59e0b'; // Yellow
-        if (score >= 40) return '#f97316'; // Orange
-        return '#ef4444'; // Red
+        if (score >= 85) return '#10b981'; // Green
+        if (score >= 80) return '#f59e0b'; // Yellow/Amber
+        if (score >= 60) return '#f97316'; // Orange
+        if (score >= 40) return '#ef4444'; // Red
+        return '#dc2626'; // Dark Red
     };
 
     const getScoreLabel = (score) => {
         if (fitLevel) return fitLevel;
-        if (score >= 80) return 'Excellent Fit';
-        if (score >= 60) return 'Good Fit';
-        if (score >= 40) return 'Moderate Fit';
-        return 'Weak Fit';
+        if (score >= 85) return 'Excellent Fit';
+        if (score >= 80) return 'Good Fit';
+        if (score >= 60) return 'Moderate Fit';
+        if (score >= 40) return 'Weak Fit';
+        return 'Poor Fit';
     };
 
     const getScoreDescription = (score) => {
@@ -96,10 +98,11 @@ ${atsOptimization && atsOptimization.length > 0 ? atsOptimization.map((tip, inde
 5. Save your resume as a .docx file for optimal ATS compatibility`}
 
 FIT SCORE GUIDE:
-- 80-100: Excellent/Strong Fit - Meets or exceeds most requirements
-- 60-79: Good/Partial Fit - Has transferable skills with some gaps
-- 40-59: Moderate Fit - Significant gaps but potential with development
-- 0-39: Weak Fit - Major misalignment with role requirements
+- 85-100: Excellent/Strong Fit - Meets or exceeds most requirements
+- 80-84: Good Fit - Strong alignment with most requirements, minor gaps may exist
+- 60-79: Moderate Fit - Has transferable skills but significant gaps exist
+- 40-59: Weak Fit - Major gaps and misalignment with role requirements
+- 0-39: Poor Fit - Severe misalignment with role requirements
 
 Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
         `.trim();

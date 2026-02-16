@@ -80,10 +80,11 @@ class JobFitService {
     }
 
     static formatFitScore(score) {
-        if (score >= 80) return { label: 'Excellent Fit', color: '#10b981' };
-        if (score >= 60) return { label: 'Good Fit', color: '#f59e0b' };
-        if (score >= 40) return { label: 'Moderate Fit', color: '#f97316' };
-        return { label: 'Poor Fit', color: '#ef4444' };
+        if (score >= 85) return { label: 'Excellent Fit', color: '#10b981' };
+        if (score >= 80) return { label: 'Good Fit', color: '#f59e0b' };
+        if (score >= 60) return { label: 'Moderate Fit', color: '#f97316' };
+        if (score >= 40) return { label: 'Weak Fit', color: '#ef4444' };
+        return { label: 'Poor Fit', color: '#dc2626' };
     }
 
     static async tailorCV(formData, user) {

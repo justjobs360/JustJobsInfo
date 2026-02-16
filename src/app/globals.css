@@ -125,6 +125,86 @@
     }
 }
 
+/* Standard blog layout (Prompt 2 / auto-generate) – tighter spacing */
+.standard-blog {
+    width: 100%;
+    max-width: 100%;
+    color: #1f2937;
+}
+
+.standard-blog * {
+    box-sizing: border-box;
+}
+
+.standard-blog__intro {
+    margin-bottom: 4px !important;
+}
+
+.standard-blog__intro .standard-blog__p:first-child {
+    margin-top: 0;
+}
+
+.standard-blog__image-wrap {
+    margin: 4px 0 !important;
+    width: 100%;
+    overflow: hidden;
+}
+
+.standard-blog__section {
+    margin-bottom: 6px !important;
+}
+
+.standard-blog__section:last-of-type {
+    margin-bottom: 0;
+}
+
+.standard-blog__h2 {
+    margin: 0 0 2px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    line-height: 1.3 !important;
+}
+
+.standard-blog__section .standard-blog__p {
+    margin: 0 0 2px !important;
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+    color: #374151 !important;
+}
+
+.standard-blog__section .standard-blog__p:first-of-type {
+    margin-top: 0 !important;
+}
+
+.standard-blog__list {
+    margin: 2px 0 2px !important;
+    padding-left: 20px !important;
+}
+
+.standard-blog__list li {
+    margin: 0 0 2px !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+    color: #374151 !important;
+}
+
+.standard-blog__conclusion {
+    margin-top: 4px !important;
+}
+
+.standard-blog__conclusion .standard-blog__p {
+    margin: 0 0 2px !important;
+}
+
+.standard-blog__conclusion .standard-blog__p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.standard-blog__tags {
+    margin-top: 6px !important;
+}
+
 /* Blog content (HTML editor output) */
 .blog-content-images img {
     width: 100% !important;

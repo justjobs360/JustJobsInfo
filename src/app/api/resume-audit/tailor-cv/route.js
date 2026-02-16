@@ -74,10 +74,25 @@ export async function POST(request) {
             }, { status: 400 });
         }
 
-        // Step 1: Parse resume to extract structured data
-        console.log('📄 Parsing resume...');
-        const resumeData = await parseResume(resumeContent);
-        console.log('✅ Resume parsed successfully');
+        // Step 1: Parse resume to extract structured data (with fallback if parsing fails)
+        let resumeData;
+        try {
+            console.log('📄 Parsing resume...');
+            resumeData = await parseResume(resumeContent);
+            console.log('✅ Resume parsed successfully');
+        } catch (parseError) {
+            // Audit already used this content successfully; use raw text for tailoring
+            console.warn('⚠️ Resume parser failed, using raw content for tailoring:', parseError?.message);
+            resumeData = {
+                personalInfo: {},
+                summary: resumeContent.trim().substring(0, 500) || '',
+                education: [],
+                experience: [{ jobTitle: '', company: '', location: '', startDate: '', endDate: '', description: resumeContent }],
+                skills: { technical: [], soft: [], languages: [], certifications: [] },
+                projects: [],
+                additionalInfo: {}
+            };
+        }
 
         // Step 2: Use OpenAI to tailor the CV based on audit recommendations
         console.log('🤖 Tailoring CV based on audit recommendations...');
@@ -144,11 +159,13 @@ CRITICAL IMPROVEMENT REQUIREMENTS:
    - Make it ATS-friendly
 
 6. ENHANCE WORK EXPERIENCE:
+   - CRITICAL: You MUST include ALL experiences from the original resume. Count them carefully - if the original has 8 experiences, your response MUST have 8 experiences. Do NOT omit any experiences, including volunteer work, internships, part-time jobs, or older positions. Every single experience entry must be included.
    - Improve descriptions to be more impactful and specific
    - Add quantifiable achievements where possible
    - Use action verbs and industry keywords
    - Ensure proper formatting for ATS
    - Address any issues mentioned in annotations
+   - CRITICAL FORMATTING: (1) Each achievement/responsibility MUST be on its own separate line with a bullet point. (2) Use newlines (\n) between EVERY bullet point. (3) DO NOT put multiple achievements in one bullet point separated by periods. (4) Each sentence/achievement gets its own bullet. Format as: "• First achievement\n• Second achievement\n• Third achievement" NOT "• First achievement. Second achievement. Third achievement."
 
 7. OPTIMIZE SKILLS SECTION:
    - Ensure skills are properly categorized
@@ -183,7 +200,9 @@ Return a JSON object with this EXACT structure:
             "location": "Original location (keep exact)",
             "startDate": "Original start date (keep exact)",
             "endDate": "Original end date (keep exact)",
-            "description": "IMPROVED description addressing audit recommendations. Fix formatting issues, add quantifiable achievements, use action verbs, ensure ATS compatibility, and address any specific issues mentioned in annotations."
+            "description": "IMPROVED description addressing audit recommendations. CRITICAL FORMATTING RULES: (1) Each achievement/responsibility MUST be on its own separate line with a bullet point. (2) Use newlines (\\n) between EVERY bullet point. (3) DO NOT put multiple achievements in one bullet point separated by periods. (4) Each sentence/achievement gets its own bullet. Example CORRECT format: \"• First improvement with metrics\\n• Second improvement with action verbs\\n• Third improvement addressing annotations\". Example WRONG format: \"• First improvement. Second improvement. Third improvement.\" Fix formatting issues, add quantifiable achievements, use action verbs, ensure ATS compatibility, and address any specific issues mentioned in annotations."
+        }
+    ],
         }
     ],
     "education": [
@@ -220,6 +239,7 @@ CRITICAL RULES:
 - IMPLEMENT all suggestions from annotations
 - MAINTAIN all strengths identified in the audit
 - IMPROVE formatting, clarity, and impact throughout
+- CRITICAL: You MUST return ALL experiences from the original resume. Do NOT omit any experiences, including volunteer work, internships, or older positions. Every single experience entry must be included in your response.
 - The resume should be significantly better after these improvements
 - Return ONLY valid JSON, no additional text or explanations
         `;
@@ -323,16 +343,120 @@ CRITICAL RULES:
         
         console.log('✅ CV tailored successfully based on audit recommendations');
 
+        // Helper function to normalize bullet point formatting
+        // This function is idempotent - can be called multiple times safely
+        const normalizeBulletPoints = (text) => {
+            if (!text || typeof text !== 'string') return text;
+            
+            const bulletChars = ['•', '·', '▪', '▫', '◦', '‣', '⁃'];
+            const defaultBullet = '•';
+            
+            // Helper function to remove all leading bullets and return clean content
+            const removeLeadingBullets = (str) => {
+                let cleaned = str.trim();
+                while (bulletChars.some(char => cleaned.startsWith(char))) {
+                    cleaned = cleaned.substring(1).trim();
+                }
+                return cleaned;
+            };
+            
+            // NOTE: We DON'T add bullets here because templates add their own bullets
+            // We just ensure proper line breaks for splitting
+            
+            // Process text line by line
+            const lines = text.split('\n');
+            const processedLines = [];
+            
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (!trimmedLine) {
+                    processedLines.push(line);
+                    continue;
+                }
+                
+                // First, remove ALL leading bullets to get clean content
+                const cleanContent = removeLeadingBullets(trimmedLine);
+                
+                if (!cleanContent) {
+                    processedLines.push(line);
+                    continue;
+                }
+                
+                // Check if content has multiple sentences that should be split
+                const sentenceCount = cleanContent.split(/(?<=[.!?])\s+(?=[A-Z])/).filter(s => s.trim()).length;
+                const shouldSplit = sentenceCount > 1 && cleanContent.length > 100;
+                
+                if (shouldSplit) {
+                    // Split into multiple bullets
+                    let sentences = cleanContent.split(/(?<=[.!?])\s+(?=[A-Z])/).filter(s => s.trim());
+                    
+                    // If that didn't work, try more aggressive splitting
+                    if (sentences.length <= 1 && cleanContent.length > 80) {
+                        sentences = cleanContent.split(/(?<=[.!?])\s+/).filter(s => s.trim() && s.length > 20);
+                    }
+                    
+                    if (sentences.length <= 1 && cleanContent.length > 150) {
+                        const parts = cleanContent.split(/\.\s+/);
+                        if (parts.length > 1) {
+                            sentences = parts
+                                .map((part, index) => {
+                                    const trimmed = part.trim();
+                                    if (index < parts.length - 1 && !trimmed.match(/[.!?]$/)) {
+                                        return trimmed + '.';
+                                    }
+                                    return trimmed;
+                                })
+                                .filter(s => s.trim().length > 20);
+                        }
+                    }
+                    
+                    // Filter sentences - don't add bullets, templates will add them
+                    sentences = sentences
+                        .filter(s => s.trim().length > 15)
+                        .map(s => removeLeadingBullets(s.trim()));
+                    
+                    if (sentences.length > 1) {
+                        // Join with newlines - templates will add bullets to each line
+                        processedLines.push(sentences.join('\n'));
+                    } else if (sentences.length === 1) {
+                        processedLines.push(sentences[0]);
+                    } else {
+                        processedLines.push(removeLeadingBullets(cleanContent));
+                    }
+                } else {
+                    // Single sentence or short content - just clean, don't add bullet
+                    processedLines.push(removeLeadingBullets(cleanContent));
+                }
+            }
+            
+            return processedLines.join('\n');
+        };
+
         // Step 3: Merge tailored content with original personal info
         const normalizeExperience = (exp) => {
             if (!exp) return null;
+            let description = typeof exp.description === 'string' 
+                ? exp.description 
+                : Array.isArray(exp.description) 
+                    ? exp.description.join('\n')
+                    : String(exp.description || '');
+            
+            // Log before normalization for debugging
+            if (description && description.length > 100) {
+                console.log('🔍 Before normalization:', description.substring(0, 200) + '...');
+            }
+            
+            // Normalize bullet points
+            description = normalizeBulletPoints(description);
+            
+            // Log after normalization for debugging
+            if (description && description.length > 100) {
+                console.log('✅ After normalization:', description.substring(0, 200) + '...');
+            }
+            
             return {
                 ...exp,
-                description: typeof exp.description === 'string' 
-                    ? exp.description 
-                    : Array.isArray(exp.description) 
-                        ? exp.description.join('\n')
-                        : String(exp.description || '')
+                description
             };
         };
 
@@ -360,14 +484,70 @@ CRITICAL RULES:
             };
         };
 
+        // Merge tailored experiences with original ones to ensure ALL experiences are preserved
+        // Create a map of tailored experiences by jobTitle+company+startDate for matching
+        const tailoredExpMap = new Map();
+        if (tailoredData.experience && tailoredData.experience.length > 0) {
+            tailoredData.experience.forEach(exp => {
+                const key = `${(exp.jobTitle || '').toLowerCase().trim()}_${(exp.company || '').toLowerCase().trim()}_${(exp.startDate || '').toLowerCase().trim()}`;
+                tailoredExpMap.set(key, exp);
+            });
+        }
+        
+        // Merge: use tailored version if available, otherwise use original
+        const originalExperiences = (resumeData.experience || []).map(normalizeExperience).filter(Boolean);
+        const mergedExperiences = originalExperiences.map(origExp => {
+            const key = `${(origExp.jobTitle || '').toLowerCase().trim()}_${(origExp.company || '').toLowerCase().trim()}_${(origExp.startDate || '').toLowerCase().trim()}`;
+            const tailoredExp = tailoredExpMap.get(key);
+            if (tailoredExp) {
+                // Use tailored version (with improved description)
+                return normalizeExperience(tailoredExp);
+            }
+            // Keep original if not in tailored data
+            return origExp;
+        });
+        
+        // Also add any new experiences from tailored data that weren't in original (shouldn't happen, but safety check)
+        const originalKeys = new Set(originalExperiences.map(exp => 
+            `${(exp.jobTitle || '').toLowerCase().trim()}_${(exp.company || '').toLowerCase().trim()}_${(exp.startDate || '').toLowerCase().trim()}`
+        ));
+        tailoredData.experience?.forEach(exp => {
+            const key = `${(exp.jobTitle || '').toLowerCase().trim()}_${(exp.company || '').toLowerCase().trim()}_${(exp.startDate || '').toLowerCase().trim()}`;
+            if (!originalKeys.has(key)) {
+                mergedExperiences.push(normalizeExperience(exp));
+            }
+        });
+        
+        // Convert volunteer work from additionalInfo to experience entries if not already included
+        if (resumeData.additionalInfo?.volunteerWork && Array.isArray(resumeData.additionalInfo.volunteerWork)) {
+            resumeData.additionalInfo.volunteerWork.forEach(volunteer => {
+                // Check if this volunteer work is already in experiences
+                const volunteerLower = (volunteer || '').toLowerCase();
+                const isAlreadyIncluded = mergedExperiences.some(exp => {
+                    const expText = `${exp.jobTitle || ''} ${exp.company || ''} ${exp.description || ''}`.toLowerCase();
+                    return expText.includes(volunteerLower) || volunteerLower.includes(exp.jobTitle?.toLowerCase() || '');
+                });
+                
+                if (!isAlreadyIncluded && volunteer && volunteer.trim()) {
+                    // Add as a new experience entry
+                    mergedExperiences.push(normalizeExperience({
+                        jobTitle: volunteer.includes('Volunteer') ? volunteer : `Volunteer - ${volunteer}`,
+                        company: 'Volunteer Organization',
+                        location: '',
+                        startDate: '',
+                        endDate: '',
+                        description: volunteer
+                    }));
+                }
+            });
+        }
+
         const finalCVData = {
             personalInfo: resumeData.personalInfo || {},
             summary: typeof tailoredData.summary === 'string' 
                 ? tailoredData.summary 
                 : (resumeData.summary || ''),
-            experience: (tailoredData.experience && tailoredData.experience.length > 0) 
-                ? tailoredData.experience.map(normalizeExperience).filter(Boolean)
-                : (resumeData.experience || []).map(normalizeExperience).filter(Boolean),
+            experience: mergedExperiences,
             education: (tailoredData.education && tailoredData.education.length > 0)
                 ? tailoredData.education.map(normalizeEducation).filter(Boolean)
                 : (resumeData.education || []).map(normalizeEducation).filter(Boolean),
@@ -385,10 +565,17 @@ CRITICAL RULES:
 
         // Log tailoring summary for debugging
         console.log('📊 Tailoring Summary:');
+        console.log(`   - Original experiences: ${(resumeData.experience || []).length}`);
+        console.log(`   - Tailored experiences returned: ${(tailoredData.experience || []).length}`);
+        console.log(`   - Final merged experiences: ${finalCVData.experience.length}`);
         console.log(`   - Summary improved: ${!!tailoredData.summary}`);
-        console.log(`   - Experience items: ${finalCVData.experience.length}`);
         console.log(`   - Skills improved: ${!!tailoredData.skills}`);
         console.log(`   - Projects improved: ${finalCVData.projects.length}`);
+        
+        // Warn if experiences were lost
+        if (finalCVData.experience.length < (resumeData.experience || []).length) {
+            console.warn(`⚠️ WARNING: Some experiences may have been lost. Original: ${(resumeData.experience || []).length}, Final: ${finalCVData.experience.length}`);
+        }
 
         // Step 4: Map tailored CV data to resume builder form structure
         console.log('📝 Mapping CV data to resume form...');

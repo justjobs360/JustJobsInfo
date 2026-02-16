@@ -302,8 +302,8 @@ function generateSlug(title) {
         .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
-// Generate blog content using OpenAI following Template One structure
-async function generateBlogContent(title, styleExamples) {
+// Generate blog content using OpenAI following Template One structure (Prompt 1)
+async function generateBlogContentTemplateOne(title, styleExamples) {
     try {
         const styleContext = styleExamples && styleExamples.length > 0
             ? `\n\nSTYLE EXAMPLES FROM EXISTING BLOGS:\n${JSON.stringify(styleExamples, null, 2)}\n\n`
@@ -583,7 +583,266 @@ Return ONLY valid JSON, no additional text or explanations.`;
             tags
         };
     } catch (error) {
-        console.error('Error generating blog content:', error);
+        console.error('Error generating Template One blog content:', error);
+        throw error;
+    }
+}
+
+// Generate blog content using a standard blog layout (Prompt 2)
+async function generateBlogContentStandard(title, styleExamples) {
+    try {
+        const styleContext = styleExamples && styleExamples.length > 0
+            ? `\n\nSTYLE EXAMPLES FROM EXISTING BLOGS:\n${JSON.stringify(styleExamples, null, 2)}\n\n`
+            : '';
+
+        const prompt = `You are an expert blog writer for JustJobsInfo, a career and job search platform. Write a comprehensive, engaging blog post using a STANDARD blog layout (intro, subheadings, paragraphs), not a visual template structure.
+
+${styleContext}
+
+BLOG TITLE: ${title}
+
+STRUCTURE REQUIREMENTS (STANDARD BLOG):
+1. INTRODUCTION:
+   - 1–2 paragraphs. Each paragraph must be SUBSTANTIAL: at least 5–8 sentences (or 80–120 words). Clearly introduce the topic and why it matters to job seekers or career professionals. Do not write short, thin paragraphs.
+
+2. MAIN SECTIONS:
+   - Create between 3 and 5 main sections.
+   - Each section must have a clear heading (5–10 words) and 1–3 supporting paragraphs. Every paragraph must be SUBSTANTIAL: at least 5–8 sentences (or 80–120 words). Develop one idea fully per paragraph; avoid one- or two-sentence paragraphs.
+   - At least ONE of the sections should contain a short bullet list of 3–6 concise, practical tips.
+
+3. CONCLUSION:
+   - 1–2 paragraphs. Each paragraph should be substantial (at least 4–6 sentences). Summarise key takeaways and give a clear call to action (e.g., update your CV, prepare for interviews, explore roles, etc.).
+
+4. TAGS:
+   - Generate EXACTLY 3 relevant tags (single words or short phrases, comma-separated). Tags should be related to the blog topic and useful for categorisation. Examples: "Career Advice", "Job Search", "Resume Tips", "Interview Skills", "Career Growth", "Professional Development".
+
+PARAGRAPH LENGTH (IMPORTANT):
+- Every paragraph in intro, sections, and conclusion must contain enough text to feel like a real blog block: typically 5–8 sentences or 80–120 words.
+- Do not output short 1–3 sentence paragraphs. If in doubt, write more rather than less.
+
+WRITING STYLE:
+- Professional yet conversational tone
+- Practical, actionable advice for job seekers and career professionals
+- Use specific examples and real-world scenarios
+- Engaging and SEO-friendly
+- Total word count: 1,200–1,800 words across all sections (aim for rich, detailed content)
+${styleExamples && styleExamples.length > 0 
+    ? '- Match the writing style and tone of the existing blog examples provided above.'
+    : ''
+}
+
+OUTPUT FORMAT - Return a JSON object with this EXACT structure:
+{
+  "intro": [
+    "First intro paragraph...",
+    "Second intro paragraph (optional)..."
+  ],
+  "sections": [
+    {
+      "heading": "Section heading",
+      "paragraphs": [
+        "Paragraph 1 for this section...",
+        "Paragraph 2 for this section..."
+      ],
+      "bullets": [
+        "Optional bullet 1 (if relevant)",
+        "Optional bullet 2"
+      ]
+    }
+  ],
+  "conclusion": [
+    "First conclusion paragraph...",
+    "Second conclusion paragraph (optional)..."
+  ],
+  "tags": "tag1, tag2, tag3"
+}
+
+CRITICAL:
+- The "sections" array must contain between 3 and 5 entries.
+- Each section must have a non-empty "heading" and at least one paragraph.
+- Every paragraph (intro, sections, conclusion) must be LONG: 5–8 sentences or 80–120 words. No short 1–3 sentence paragraphs.
+- Bullets are optional but recommended in at least one section.
+- The "tags" field MUST contain exactly 3 tags, comma-separated.`;
+
+        // Use JSON mode where possible
+        let completion;
+        try {
+            completion = await openai.chat.completions.create({
+                model: "gpt-4o",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are an expert blog writer specialising in standard long-form articles for career advice, job search, and professional development. You always return ONLY valid JSON without markdown or extra text."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                max_tokens: 4000,
+                temperature: 0.7,
+                response_format: { type: "json_object" }
+            });
+        } catch (jsonModeError) {
+            if (jsonModeError.message && jsonModeError.message.includes('response_format')) {
+                console.log('⚠️ JSON mode not supported for standard layout, falling back to regular mode');
+                completion = await openai.chat.completions.create({
+                    model: "gpt-4",
+                    messages: [
+                        {
+                            role: "system",
+                            content: "You are an expert blog writer specialising in standard long-form articles for career advice, job search, and professional development. You always return ONLY valid JSON without markdown or extra text. Your response must start with { and end with }."
+                        },
+                        {
+                            role: "user",
+                            content: prompt
+                        }
+                    ],
+                    max_tokens: 4000,
+                    temperature: 0.7
+                });
+            } else {
+                throw jsonModeError;
+            }
+        }
+
+        let responseText = completion.choices[0].message.content.trim();
+        responseText = responseText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+
+        let templateData;
+        try {
+            templateData = JSON.parse(responseText);
+        } catch (parseError) {
+            const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                templateData = JSON.parse(jsonMatch[0]);
+            } else {
+                throw new Error('Failed to parse standard blog data from OpenAI response');
+            }
+        }
+
+        // Basic validation
+        if (!Array.isArray(templateData.intro) || !Array.isArray(templateData.sections) || templateData.sections.length === 0) {
+            throw new Error('Generated standard blog content missing required sections');
+        }
+
+        // Fetch images (same as Prompt 1 – Pexels/Pixabay/Picsum)
+        const imageKeywords = generateImageKeywords(title);
+        console.log(`🖼️ [Prompt 2] Fetching images for:`, imageKeywords);
+        const [image1, image2, image3] = await Promise.all([
+            fetchBlogImage([...imageKeywords, 'business', 'professional'], 'standard-1'),
+            fetchBlogImage([...imageKeywords, 'career', 'success'], 'standard-2'),
+            fetchBlogImage([...imageKeywords, 'teamwork', 'office'], 'standard-3')
+        ]);
+        console.log(`✅ [Prompt 2] Fetched images:`, { image1, image2, image3 });
+
+        // Helpers (duplicated here for isolation)
+        const escapeHtml = (text = '') =>
+            String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
+        const formatParagraph = (value, fallback = '') => escapeHtml(value && value.trim() ? value.trim() : fallback);
+        const formatText = (value, fallback = '') => escapeHtml(value && value.trim() ? value.trim() : fallback);
+        const formatAttribute = (value, fallback = '') => (value && value.trim() ? value.trim() : fallback).replace(/"/g, '&quot;');
+        const imgUrl = (url, fallback) => (url && url.trim() ? url.trim() : fallback || '/assets/images/blog/d-lg-01.jpg');
+
+        // Parse and validate tags
+        let tags = [];
+        if (templateData.tags) {
+            if (typeof templateData.tags === 'string') {
+                tags = templateData.tags.split(',').map(t => t.trim()).filter(t => t);
+            } else if (Array.isArray(templateData.tags)) {
+                tags = templateData.tags.map(t => String(t).trim()).filter(t => t);
+            }
+        }
+
+        while (tags.length < 3) {
+            const defaultTags = ['Career Advice', 'Job Search', 'Professional Development', 'Career Tips', 'Job Market', 'Career Growth'];
+            const availableTags = defaultTags.filter(tag => !tags.some(existing => existing.toLowerCase().includes(tag.toLowerCase())));
+            if (availableTags.length > 0) {
+                tags.push(availableTags[0]);
+            } else {
+                tags.push('Career', 'Jobs', 'Advice');
+                break;
+            }
+        }
+        tags = tags.slice(0, 3);
+
+        const tagChipsHTML = tags.length > 0 ? `
+  <div class="standard-blog__tags" style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">
+    ${tags.map(tag => `<span style="background:#e0f7fa;color:#00796b;padding:5px 10px;border-radius:5px;font-size:12px;">${formatText(tag, '')}</span>`).join('')}
+  </div>` : '';
+
+        const pStyle = 'margin:0 0 2px;font-size:16px;line-height:1.55;color:#374151;';
+        const introHtml = (templateData.intro || [])
+            .filter(p => p && p.trim())
+            .map((p, i) => `<p class="standard-blog__p" style="${pStyle}${i === 0 ? '' : ' margin-top:0;'}">${formatParagraph(p, '')}</p>`)
+            .join('');
+
+        const sectionBlocks = (templateData.sections || []).slice(0, 5).map(section => {
+            const heading = formatText(section.heading || '', '');
+            const paragraphs = (section.paragraphs || [])
+                .filter(p => p && p.trim())
+                .map(p => `<p class="standard-blog__p" style="${pStyle}">${formatParagraph(p, '')}</p>`)
+                .join('');
+            const bullets = Array.isArray(section.bullets) ? section.bullets.filter(b => b && b.trim()) : [];
+            const bulletsHtml = bullets.length > 0
+                ? `<ul class="standard-blog__list" style="margin:2px 0 2px;padding-left:20px;list-style:disc;"><li style="margin:0 0 2px;font-size:15px;line-height:1.5;color:#374151;">${bullets.map(b => formatParagraph(b, '')).join('</li><li style="margin:0 0 2px;font-size:15px;line-height:1.5;color:#374151;">')}</li></ul>`
+                : '';
+            return { heading, paragraphs, bulletsHtml };
+        });
+
+        const imgBlock = (src, alt = 'Blog image') =>
+            `<div class="standard-blog__image-wrap" style="margin:4px 0;width:100%;overflow:hidden;"><img src="${formatAttribute(imgUrl(src), '')}" alt="${formatAttribute(alt, '')}" loading="lazy" style="width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;" /></div>`;
+
+        const singleSectionHtml = (block) => `
+  <section class="standard-blog__section" style="margin-bottom:6px;">
+    ${block.heading ? `<h2 class="standard-blog__h2" style="margin:0 0 2px;font-size:20px;font-weight:700;color:#111827;line-height:1.3;">${block.heading}</h2>` : ''}
+    ${block.paragraphs}
+    ${block.bulletsHtml}
+  </section>`;
+
+        let sectionsHtml = '';
+        sectionBlocks.forEach((block, i) => {
+            sectionsHtml += singleSectionHtml(block);
+            if (i === 0) sectionsHtml += '\n  ' + imgBlock(image2, 'Career and professional development');
+        });
+
+        const conclusionHtml = (templateData.conclusion || [])
+            .filter(p => p && p.trim())
+            .map(p => `<p class="standard-blog__p" style="${pStyle}">${formatParagraph(p, '')}</p>`)
+            .join('');
+
+        const content = `
+<section class="standard-blog" style="font-family:var(--font-primary,Inter,sans-serif);max-width:100%;">
+  <div class="standard-blog__intro" style="margin-bottom:4px;">
+    ${introHtml}
+  </div>
+  ${imgBlock(image1, 'Career and job search')}
+  ${sectionsHtml}
+  ${imgBlock(image3, 'Professional growth')}
+  <div class="standard-blog__conclusion" style="margin-top:4px;">
+    ${conclusionHtml}
+  </div>${tagChipsHTML}
+</section>`.trim();
+
+        const allIntroText = (templateData.intro || []).join(' ');
+        const description = formatParagraph(allIntroText || '', '').substring(0, 200).trim() +
+            (formatParagraph(allIntroText || '', '').length > 200 ? '...' : '');
+
+        console.log(`📋 Generated standard blog tags for "${title}":`, tags);
+
+        return {
+            content,
+            description,
+            tags
+        };
+    } catch (error) {
+        console.error('Error generating standard blog content:', error);
         throw error;
     }
 }
@@ -592,7 +851,7 @@ Return ONLY valid JSON, no additional text or explanations.`;
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { titles } = body;
+        const { titles, variant } = body;
 
         if (!titles || !Array.isArray(titles) || titles.length === 0) {
             return NextResponse.json({
@@ -624,10 +883,13 @@ export async function POST(request) {
             }
 
             try {
-                console.log(`📝 Generating blog ${i + 1}/${titles.length}: "${title}"`);
+                console.log(`📝 Generating blog ${i + 1}/${titles.length}: "${title}" using variant "${variant || 'template-one'}"`);
                 
-                // Generate content
-                const { content, description, tags } = await generateBlogContent(title, styleExamples);
+                // Generate content (Prompt 1 = template-one, Prompt 2 = standard)
+                const useVariant = variant || 'template-one';
+                const { content, description, tags } = useVariant === 'standard'
+                    ? await generateBlogContentStandard(title, styleExamples)
+                    : await generateBlogContentTemplateOne(title, styleExamples);
                 
                 // Validate tags
                 if (!tags || tags.length === 0) {

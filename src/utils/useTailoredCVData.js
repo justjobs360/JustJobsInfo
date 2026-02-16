@@ -13,9 +13,11 @@ export function useTailoredCVData() {
     if (typeof window !== 'undefined' && !hasLoadedInitialData) {
       const urlParams = new URLSearchParams(window.location.search);
       const tailored = urlParams.get('tailored');
+      const importFlag = urlParams.get('import');
       const dataKey = urlParams.get('dataKey');
-      
-      if (tailored === 'true' && dataKey) {
+      const hasTailoredOrImportData = (tailored === 'true' || importFlag === 'true') && dataKey;
+
+      if (hasTailoredOrImportData) {
         try {
           const storageKey = `tailored_cv_${dataKey}`;
           const storedData = sessionStorage.getItem(storageKey);
@@ -24,20 +26,16 @@ export function useTailoredCVData() {
             const formData = parsedData.form || {};
             const sections = parsedData.sections || null;
             
-            // Only set if we have meaningful data
             if (formData && Object.keys(formData).length > 0) {
               setInitialFormData(formData);
               if (sections && sections.length > 0) {
                 setInitialSections(sections);
               }
-              setHasLoadedInitialData(true);
-              
-              // Clear the data from sessionStorage after reading
-              sessionStorage.removeItem(storageKey);
-              // Clean up URL
-              const newUrl = window.location.pathname;
-              window.history.replaceState({}, '', newUrl);
             }
+            setHasLoadedInitialData(true);
+            sessionStorage.removeItem(storageKey);
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, '', newUrl);
           } else {
             // No data found, mark as loaded to prevent infinite waiting
             setHasLoadedInitialData(true);
