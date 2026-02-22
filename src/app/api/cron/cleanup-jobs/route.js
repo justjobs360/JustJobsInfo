@@ -4,7 +4,10 @@ import { markExpired, purgeOld } from '@/utils/ingestedJobsService';
 export async function GET(request) {
   try {
     const authHeader = request.headers.get('authorization');
-    if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    const userAgent = request.headers.get('user-agent') || '';
+    const isValidToken = authHeader === `Bearer ${process.env.CRON_SECRET}`;
+    const isVercelCron = userAgent.includes('vercel-cron');
+    if (!isValidToken && !isVercelCron) {
       return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
     }
 
