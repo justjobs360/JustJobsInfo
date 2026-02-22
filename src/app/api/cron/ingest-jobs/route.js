@@ -10,6 +10,8 @@ const JSEARCH_API_HOST = 'jsearch.p.rapidapi.com';
 
 const DEFAULT_SEED_QUERIES = ['developer', 'software engineer', 'marketing', 'sales', 'remote'];
 
+const DEFAULT_SEED_LOCATIONS = ['', 'United Kingdom'];
+
 function getSeedQueries() {
   try {
     const raw = process.env.JOB_INGEST_SEED_QUERIES;
@@ -21,6 +23,19 @@ function getSeedQueries() {
     console.warn('JOB_INGEST_SEED_QUERIES parse error, using defaults:', e.message);
   }
   return DEFAULT_SEED_QUERIES;
+}
+
+function getSeedLocations() {
+  try {
+    const raw = process.env.JOB_INGEST_SEED_LOCATIONS;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.warn('JOB_INGEST_SEED_LOCATIONS parse error, using defaults:', e.message);
+  }
+  return DEFAULT_SEED_LOCATIONS;
 }
 
 async function fetchJSearchPage(query, location, page = 1, numPages = 5) {
@@ -61,7 +76,7 @@ export async function GET(request) {
     }
 
     const seedQueries = getSeedQueries();
-    const seedLocations = ['', 'United Kingdom'];
+    const seedLocations = getSeedLocations();
     let ingested = 0;
     let updated = 0;
     const errors = [];
