@@ -3,21 +3,15 @@ import { getCachedValue, setCachedValue } from '@/utils/cacheService';
 import { generateSalaryEstimate } from '@/utils/salaryEstimate';
 import { isNearMonthlyLimit, recordUpstreamCall, getQueryCount } from '@/utils/usageService';
 import { searchAdminJobs, listAdminJobs } from '@/utils/adminJobsService';
+import { searchIngestedJobs } from '@/utils/ingestedJobsService';
 
 const JSEARCH_API_KEY = process.env.JSEARCH_API_KEY;
 const JSEARCH_API_HOST = 'jsearch.p.rapidapi.com';
 
+const DB_PAGE_SIZE = 25;
+
 export async function GET(request) {
   try {
-    // Check if API key is configured
-    if (!JSEARCH_API_KEY) {
-      console.error('JSEARCH_API_KEY is not configured');
-      return NextResponse.json({
-        success: false,
-        error: 'API configuration error. Please contact support.'
-      }, { status: 500 });
-    }
-
     const { searchParams } = new URL(request.url);
     // Extract search parameters
     const query = searchParams.get('query') || '';
@@ -28,6 +22,84 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page')) || 1;
     const requestedNumPages = parseInt(searchParams.get('num_pages')) || 1;
     const numPages = Math.min(Math.max(requestedNumPages, 1), 5); // allow up to 5 pages per request
+
+    // DB-first: try ingested jobs before cache/API
+    try {
+      const dbResult = await searchIngestedJobs({
+        query,
+        location,
+        employmentTypes,
+        remoteJobsOnly,
+        datePosted,
+        page,
+        limit: DB_PAGE_SIZE
+      });
+      if (dbResult.jobs && dbResult.jobs.length > 0) {
+        const [adminJobsMatching, adminJobsFeatured] = await Promise.all([
+          searchAdminJobs({ query, location, limit: 50 }),
+          listAdminJobs({ status: 'active', featured: true, limit: 50 })
+        ]);
+        const seenIds = new Set();
+        const adminJobs = [...adminJobsFeatured, ...adminJobsMatching].filter(j => {
+          if (seenIds.has(j.id)) return false;
+          seenIds.add(j.id);
+          return true;
+        });
+        const normalizedAdmin = adminJobs.map((j) => ({
+          id: `admin_${j.id}`,
+          job_title: j.title,
+          company_name: j.company,
+          location: j.location,
+          employment_type: j.type,
+          job_description: j.description,
+          posted_at: j.posted_at || j.createdAt,
+          salary_min: j.salary_min,
+          salary_max: j.salary_max,
+          is_remote: (j.location || '').toLowerCase().includes('remote'),
+          company_logo: j.logo || null,
+          apply_link: j.apply_link || '#',
+          benefits: [],
+          experience_level: 'Mid-level',
+          quality_score: 'high',
+          source: 'Admin',
+          job_country: undefined,
+          job_state: undefined,
+          job_city: undefined,
+          job_highlights: {},
+          estimated_salaries: [],
+          featured: !!j.featured
+        }));
+        const featuredAdmin = normalizedAdmin.filter(j => j.featured);
+        const nonFeaturedAdmin = normalizedAdmin.filter(j => !j.featured);
+        const externalFromDb = dbResult.jobs.filter(item => !String(item.id).startsWith('admin_'));
+        const combined = [...featuredAdmin, ...nonFeaturedAdmin, ...externalFromDb];
+        const hasMore = dbResult.hasMore;
+        return NextResponse.json({
+          success: true,
+          data: combined,
+          total: combined.length,
+          page,
+          hasMore,
+          query_info: {
+            original_query: query,
+            location,
+            filters_applied: { employment_types: employmentTypes, remote_only: remoteJobsOnly, date_posted: datePosted }
+          },
+          cache: { hit: false, source: 'ingested_db' }
+        });
+      }
+    } catch (dbErr) {
+      console.warn('Ingested jobs search failed, falling through to cache/API:', dbErr.message);
+    }
+
+    // Check if API key is configured (needed for cache miss / API fallback)
+    if (!JSEARCH_API_KEY) {
+      console.error('JSEARCH_API_KEY is not configured');
+      return NextResponse.json({
+        success: false,
+        error: 'API configuration error. Please contact support.'
+      }, { status: 500 });
+    }
 
     // Build cache key
     const cacheKey = `jobs:v1:query=${(query || '').toLowerCase().trim()}|location=${(location || '').toLowerCase().trim()}|employment_types=${employmentTypes}|remote=${remoteJobsOnly}|date_posted=${datePosted}|page=${page}|num_pages=${numPages}`;

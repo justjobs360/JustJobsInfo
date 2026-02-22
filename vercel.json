@@ -7,11 +7,23 @@
     {
       "path": "/api/cron/job-alerts",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/ingest-jobs",
+      "schedule": "0 1,9,17 * *"
+    },
+    {
+      "path": "/api/cron/cleanup-jobs",
+      "schedule": "0 3 * * *"
     }
   ],
   "functions": {
     "src/app/api/**/*.js": {
       "maxDuration": 60,
+      "memory": 1024
+    },
+    "src/app/api/cron/ingest-jobs/route.js": {
+      "maxDuration": 300,
       "memory": 1024
     },
     "src/app/api/blogs/auto-generate/route.js": {
