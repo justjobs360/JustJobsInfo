@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/prewarm",
-      "schedule": "0 10 */2 * *" 
+      "schedule": "0 10 * * *" 
     },
     {
       "path": "/api/cron/job-alerts",
@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/ingest-jobs",
-      "schedule": "0 1,9,17 * *"
+      "schedule": "0 1,9,17 * * *"
     },
     {
       "path": "/api/cron/cleanup-jobs",
