@@ -94,11 +94,10 @@ export default function JobListingPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]); // Run when URL search params change (industry navigation)
 
-    // Trigger search when filters change
+    // Fetch jobs on mount (shows global jobs immediately) and whenever filters change
     useEffect(() => {
-        if (searchFilters.query || searchFilters.location) {
-            searchJobs(true);
-        }
+        searchJobs(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchFilters.query, searchFilters.location, searchFilters.employmentType, searchFilters.remoteOnly, searchFilters.datePosted]);
 
 
