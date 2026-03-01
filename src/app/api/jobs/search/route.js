@@ -23,22 +23,22 @@ export async function GET(request) {
     const requestedNumPages = parseInt(searchParams.get('num_pages')) || 1;
     const numPages = Math.min(Math.max(requestedNumPages, 1), 5); // allow up to 5 pages per request
 
-    // DB-first: try ingested jobs before cache/API
+    // DB-first: try ingested jobs before cache/API (fetch ingested + admin in parallel for speed)
     try {
-      const dbResult = await searchIngestedJobs({
-        query,
-        location,
-        employmentTypes,
-        remoteJobsOnly,
-        datePosted,
-        page,
-        limit: DB_PAGE_SIZE
-      });
+      const [dbResult, adminJobsMatching, adminJobsFeatured] = await Promise.all([
+        searchIngestedJobs({
+          query,
+          location,
+          employmentTypes,
+          remoteJobsOnly,
+          datePosted,
+          page,
+          limit: DB_PAGE_SIZE
+        }),
+        searchAdminJobs({ query, location, limit: 50 }),
+        listAdminJobs({ status: 'active', featured: true, limit: 50 })
+      ]);
       if (dbResult.jobs && dbResult.jobs.length > 0) {
-        const [adminJobsMatching, adminJobsFeatured] = await Promise.all([
-          searchAdminJobs({ query, location, limit: 50 }),
-          listAdminJobs({ status: 'active', featured: true, limit: 50 })
-        ]);
         const seenIds = new Set();
         const adminJobs = [...adminJobsFeatured, ...adminJobsMatching].filter(j => {
           if (seenIds.has(j.id)) return false;
@@ -74,19 +74,26 @@ export async function GET(request) {
         const externalFromDb = dbResult.jobs.filter(item => !String(item.id).startsWith('admin_'));
         const combined = [...featuredAdmin, ...nonFeaturedAdmin, ...externalFromDb];
         const hasMore = dbResult.hasMore;
-        return NextResponse.json({
-          success: true,
-          data: combined,
-          total: combined.length,
-          page,
-          hasMore,
-          query_info: {
-            original_query: query,
-            location,
-            filters_applied: { employment_types: employmentTypes, remote_only: remoteJobsOnly, date_posted: datePosted }
+        return NextResponse.json(
+          {
+            success: true,
+            data: combined,
+            total: combined.length,
+            page,
+            hasMore,
+            query_info: {
+              original_query: query,
+              location,
+              filters_applied: { employment_types: employmentTypes, remote_only: remoteJobsOnly, date_posted: datePosted }
+            },
+            cache: { hit: false, source: 'ingested_db' }
           },
-          cache: { hit: false, source: 'ingested_db' }
-        });
+          {
+            headers: {
+              'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120'
+            }
+          }
+        );
       }
     } catch (dbErr) {
       console.warn('Ingested jobs search failed, falling through to cache/API:', dbErr.message);
