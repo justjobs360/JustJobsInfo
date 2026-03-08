@@ -1,6 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import HeaderOne from "@/components/header/HeaderOne";
 import Link from "next/link";
 
@@ -504,38 +504,9 @@ export default function BlogDetails() {
     );
   }
 
-  // If no blog post is found, display an error
+  // If no blog post is found, trigger 404 so Google gets proper status
   if (!blogPost) {
-    return (
-      <div className="">
-        <HeaderOne />
-        <div className="career-single-banner-area ptb--70 blog-page">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="career-page-single-banner blog-page">
-                  <h1 className="title">Blog Post Not Found</h1>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="rts-blog-list-area">
-          <div className="container">
-            <div className="row">
-              <div className="col-12 text-center">
-                <p>The blog post you&apos;re looking for doesn&apos;t exist.</p>
-                <Link href="/blogs" className="rts-btn btn-primary">
-                  Back to Blogs
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-        <FooterOneDynamic />
-        <BackToTop />
-      </div>
-    );
+    notFound();
   }
 
   return (

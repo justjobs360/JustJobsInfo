@@ -3,11 +3,9 @@ import { NextResponse } from 'next/server';
 /**
  * Middleware to handle legacy/permanent redirects and hostname canonicalization.
  * - /posts/:slug  -> /blogs/:slug
- * - /job/:slug    -> /job-listing?query=:slug  (best-effort mapping)
  * - www.justjobs.info -> justjobs.info (canonical)
  *
- * This prevents crawlers (and users) from getting 404s for legacy paths
- * while we clean up the sitemap and external links.
+ * /job/:slug is no longer redirected; those URLs return 404 so Google can drop them.
  */
 export function middleware(request) {
   try {
@@ -44,18 +42,6 @@ export function middleware(request) {
       const slug = pathname.replace('/posts/', '');
       const redirectUrl = url.clone();
       redirectUrl.pathname = `/blogs/${slug}`;
-      return NextResponse.redirect(redirectUrl, 301);
-    }
-
-    // /job/:slug -> /job-listing?query=:slug
-    // We can't reliably map old slug -> internal job id here, so point users to
-    // the job listing with a query that helps them find it. This is better than 404.
-    if (pathname.startsWith('/job/')) {
-      const slug = pathname.replace('/job/', '');
-      const redirectUrl = url.clone();
-      redirectUrl.pathname = '/job-listing';
-      // add the slug as a query param so users/search can attempt to surface it
-      redirectUrl.searchParams.set('query', slug);
       return NextResponse.redirect(redirectUrl, 301);
     }
 

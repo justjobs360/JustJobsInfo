@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import HeaderTwo from "@/components/header/HeaderTwo";
 
 
@@ -22,9 +22,9 @@ export default function BlogDetails() {
     comment: "",
   });
 
-  // If no blog post is found, display an error
+  // If no blog post is found, trigger 404 so Google gets proper status
   if (!blogPost) {
-    return <div>Post not found Man!</div>;
+    notFound();
   }
 
   // Handle input changes
