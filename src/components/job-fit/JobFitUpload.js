@@ -134,7 +134,7 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
             <div className="container container-job-fit">
                 {!isProcessing ? (
                     <form onSubmit={handleSubmit}>
-                        <div className="row align-items-start">
+                        <div className="row align-items-start job-fit-upload-row">
                             {/* Left Column: 70% width - Title, Paragraph, Job Description */}
                             <div className="col-lg-8 col-md-12 job-fit-upload-left">
                                 <div className="banner-wrapper-one banner-wrapper-one-job-fit">

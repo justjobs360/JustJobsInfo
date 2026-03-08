@@ -113,11 +113,13 @@
     margin: 0 auto;
 }
 
-/* Main Content Area */
+/* Main Content Area - stable layout to avoid misalignment on switch (e.g. "Analyze Another Job") */
 .analysis-main-content {
     max-width: 1400px;
     margin: 0 auto 80px;
     padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Upload Section Styles */
@@ -659,6 +661,32 @@
         padding: 32px 20px;
         max-width: 100%;
     }
+}
+
+/* Job Fit Upload: stable row/column alignment (initial load + "Analyze Another Job") */
+.job-fit-page .container-job-fit .row.job-fit-upload-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.job-fit-page .container-job-fit .row.job-fit-upload-row > [class*="col-"] {
+    align-self: flex-start;
+}
+.job-fit-page .container-job-fit .job-fit-upload-left {
+    min-width: 0; /* allow flex item to shrink so layout doesn't overflow */
+}
+.job-fit-page .container-job-fit .upload-section {
+    align-self: flex-start;
+}
+/* Prevent right column (upload box) from stretching or shifting */
+.job-fit-page .container-job-fit .row.job-fit-upload-row .col-lg-4 {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.job-fit-page .container-job-fit .row.job-fit-upload-row .col-lg-4 > .upload-section {
+    width: 100%;
+    flex: 0 0 auto;
 }
 
 /* Job Fit Upload left column alignment (scoped) */
