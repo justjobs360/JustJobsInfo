@@ -711,6 +711,9 @@
 .job-fit-upload-left .banner-wrapper-one-job-fit .title {
     margin-right: 0;
 }
+.job-fit-upload-left .banner-wrapper-one-job-fit p {
+    padding-right: 2rem;
+}
 .job-fit-upload-left .form-label,
 .job-fit-upload-left .form-textarea {
     margin-left: 0;
