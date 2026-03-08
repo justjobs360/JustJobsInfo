@@ -203,7 +203,7 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
                                             width: '100%',
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            alignItems: 'center',
+                                            alignItems: 'flex-start',
                                             justifyContent: 'center',
                                             padding: '32px 24px',
                                             boxSizing: 'border-box',
@@ -243,7 +243,7 @@ export default function JobFitUpload({ onAnalysisSubmit, isProcessing }) {
                                             onChange={handleFileChange}
                                             style={{ display: 'none' }}
                                         />
-                                        <div style={{ color: '#6B7280', fontSize: 16, marginTop: 4, fontWeight: 500, textAlign: 'center' }}>DOCX or DOC, up to 5MB</div>
+                                        <div style={{ color: '#6B7280', fontSize: 16, marginTop: 4, fontWeight: 500, textAlign: 'left' }}>DOCX or DOC, up to 5MB</div>
                                         {uploadError && (
                                             <div className="upload-error" style={{ marginTop: 16, fontSize: 14, background: 'rgba(220, 53, 69, 0.1)', color: '#dc3545', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(220, 53, 69, 0.2)', width: '100%', textAlign: 'center' }}>
                                                 ⚠️ {uploadError}
