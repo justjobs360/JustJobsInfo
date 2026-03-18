@@ -12,6 +12,13 @@ export function middleware(request) {
     const url = request.nextUrl.clone();
     const pathname = url.pathname || '';
 
+    // Never modify sitemap/robots responses (Google expects "plain" files).
+    // We still allow host/proto redirects below when needed.
+    const isSpecialSeoFile =
+      pathname === '/sitemap.xml' ||
+      pathname === '/sitemap.xml.gz' ||
+      pathname === '/robots.txt';
+
     // Ensure HTTPS: redirect http requests to https (use x-forwarded-proto when behind a proxy)
     // NOTE: During local development (localhost, 127.0.0.1) we should not force HTTPS
     // because the dev server typically doesn't serve TLS and that causes browsers
@@ -35,6 +42,11 @@ export function middleware(request) {
       const redirectUrl = url.clone();
       redirectUrl.hostname = 'justjobs.info';
       return NextResponse.redirect(redirectUrl, 301);
+    }
+
+    // For sitemap/robots, do not add canonical Link header or other modifications.
+    if (isSpecialSeoFile) {
+      return NextResponse.next();
     }
 
     // /posts/:slug  -> /blogs/:slug
