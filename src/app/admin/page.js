@@ -389,13 +389,6 @@ export default function AdminDashboard() {
                                     permission={ADMIN_PERMISSIONS.MANAGE_META_TAGS}
                                 />
                                 <QuickAction
-                                    title="Sitemap"
-                                    description="Manage XML sitemap"
-                                    icon="🗺️"
-                                    href="/admin/seo/sitemap"
-                                    permission={ADMIN_PERMISSIONS.MANAGE_SITEMAP}
-                                />
-                                <QuickAction
                                     title="Robots.txt"
                                     description="Manage robots.txt file"
                                     icon="🤖"

@@ -56,12 +56,6 @@ const AdminLayout = ({ children }) => {
             permission: ADMIN_PERMISSIONS.MANAGE_META_TAGS
         },
         {
-            name: 'Sitemap',
-            href: '/admin/seo/sitemap',
-            icon: '🗺️',
-            permission: ADMIN_PERMISSIONS.MANAGE_SITEMAP
-        },
-        {
             name: 'Robots.txt',
             href: '/admin/seo/robots',
             icon: '🤖',

@@ -89,35 +89,86 @@ async function generateSitemap() {
         const db = client.db(DB_NAME);
 
         const today = new Date();
-        let entries = [];
+        // Static sitemap pages (single source of truth; no DB-managed sitemap config).
+        // This avoids intermittent runtime errors and keeps /sitemap.xml stable on Vercel.
+        let entries = [
+            { loc: `${SITE_URL}/`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 1.0 },
 
-        // Fetch static pages from sitemap_config collection
-        try {
-            console.log('📄 Fetching static pages...');
-            const sitemapCollection = db.collection('sitemap_config');
-            const staticPages = await sitemapCollection.find({}).sort({ priority: -1 }).toArray();
+            // Core product pages
+            { loc: `${SITE_URL}/job-alerts`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 0.9 },
+            { loc: `${SITE_URL}/job-fit`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 0.9 },
+            { loc: `${SITE_URL}/job-listing`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 0.9 },
+            { loc: `${SITE_URL}/resume-audit`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 0.9 },
+            { loc: `${SITE_URL}/resume-builder`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 0.9 },
 
-            if (staticPages.length > 0) {
-                entries = staticPages.map(page => ({
-                    loc: `${SITE_URL}${page.url}`,
-                    lastmod: page.lastmod ? new Date(page.lastmod).toISOString() : today.toISOString(),
-                    changefreq: page.changefreq || 'monthly',
-                    priority: parseFloat(page.priority) || 0.5
-                }));
-                console.log(`✅ Found ${staticPages.length} static pages`);
-            } else {
-                // Fallback to default pages if collection is empty
-                console.log('⚠️  No static pages found, using defaults');
-                entries = [
-                    { loc: `${SITE_URL}/`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 1.0 },
-                    { loc: `${SITE_URL}/about`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
-                    { loc: `${SITE_URL}/contact`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
-                ];
-            }
-        } catch (err) {
-            console.warn('⚠️  Error fetching static pages:', err.message);
-            // Continue with empty entries
-        }
+            // Resume templates (static routes)
+            ...Array.from({ length: 15 }, (_, i) => i + 1).map((n) => ({
+                loc: `${SITE_URL}/resume-builder/template/${n}`,
+                lastmod: today.toISOString(),
+                changefreq: 'weekly',
+                priority: 0.9
+            })),
+
+            // Services
+            { loc: `${SITE_URL}/service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/service-single`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/ai-learning-service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/cyber-security-service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/development-service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/it-consulting-service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/management-service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+            { loc: `${SITE_URL}/technologies-service`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.8 },
+
+            // Blog hubs
+            { loc: `${SITE_URL}/blogs`, lastmod: today.toISOString(), changefreq: 'daily', priority: 0.7 },
+            { loc: `${SITE_URL}/blog-list`, lastmod: today.toISOString(), changefreq: 'daily', priority: 0.7 },
+            { loc: `${SITE_URL}/blog-grid-two`, lastmod: today.toISOString(), changefreq: 'daily', priority: 0.7 },
+            { loc: `${SITE_URL}/blog-grid-four`, lastmod: today.toISOString(), changefreq: 'daily', priority: 0.7 },
+            { loc: `${SITE_URL}/blog-masonry`, lastmod: today.toISOString(), changefreq: 'daily', priority: 0.7 },
+
+            // Company & legal
+            { loc: `${SITE_URL}/about`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/contact`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/privacy-policy`, lastmod: today.toISOString(), changefreq: 'yearly', priority: 0.5 },
+            { loc: `${SITE_URL}/terms-of-use`, lastmod: today.toISOString(), changefreq: 'yearly', priority: 0.5 },
+            { loc: `${SITE_URL}/cookies-policy`, lastmod: today.toISOString(), changefreq: 'yearly', priority: 0.5 },
+
+            // Other content pages
+            { loc: `${SITE_URL}/faq`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/important-links`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/downloadable-resources`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+
+            // Auth / account flows (kept as-is; remove if you don't want them indexed)
+            { loc: `${SITE_URL}/login`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/register`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/forgot-password`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/verify-email`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/account`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+
+            // Misc marketing pages
+            { loc: `${SITE_URL}/apply`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/askgenie`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/award`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/career`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/career-single`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/case-studies`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/case-studies-single`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/coming-soon`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/free-consultation`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/partner`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/team`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/team-single`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/travel-industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/logistic-industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/construction-industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/ecommerce-industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/fintech-industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/healthcare-industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/it-innovations`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/it-strategies`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+            { loc: `${SITE_URL}/why-choose-us`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
+        ];
 
         // Fetch blog posts
         try {

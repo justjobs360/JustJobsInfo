@@ -494,7 +494,6 @@ For complete SEO management documentation, see **[SEO-GUIDE.md](./SEO-GUIDE.md)*
 **SEO Admin Panels:**
 - Dashboard: `/admin/seo/dashboard`
 - Meta Tags: `/admin/seo/meta-tags`
-- Sitemap: `/admin/seo/sitemap`
 - Robots.txt: `/admin/seo/robots`
 - Settings: `/admin/seo/settings`
 

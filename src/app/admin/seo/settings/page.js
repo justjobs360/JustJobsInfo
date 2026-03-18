@@ -171,23 +171,6 @@ export default function SEOSettingsPage() {
                             🏷️ Manage Meta Tags
                         </a>
                         <a 
-                            href="/admin/seo/sitemap"
-                            style={{
-                                padding: '8px 16px',
-                                backgroundColor: 'var(--color-secondary)',
-                                color: '#fff',
-                                textDecoration: 'none',
-                                borderRadius: '4px',
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                            }}
-                        >
-                            🗺️ Manage Sitemap
-                        </a>
-                        <a 
                             href="/admin/seo/robots"
                             style={{
                                 padding: '8px 16px',

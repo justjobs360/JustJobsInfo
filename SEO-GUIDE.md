@@ -108,7 +108,6 @@ The central hub for all SEO management tasks.
 
 **Quick Actions:**
 - Manage Meta Tags
-- Regenerate Sitemap
 - Edit Robots.txt
 - Configure Analytics
 - View SEO Settings
@@ -119,7 +118,6 @@ The central hub for all SEO management tasks.
 |------|-----|---------|
 | **SEO Dashboard** | `/admin/seo/dashboard` | Overview & quick access |
 | **Meta Tags** | `/admin/seo/meta-tags` | Manage page meta tags |
-| **Sitemap** | `/admin/seo/sitemap` | Generate & manage sitemap |
 | **Robots.txt** | `/admin/seo/robots` | Edit robots.txt content |
 | **Settings** | `/admin/seo/settings` | Analytics & general settings |
 
@@ -209,21 +207,9 @@ Go to: `/admin/seo/meta-tags`
 
 ## Sitemap & Robots.txt
 
-### Sitemap Management (`/admin/seo/sitemap`)
+### Sitemap
 
-Your sitemap is automatically generated from meta tags in the database.
-
-**Features:**
-- Auto-includes all active meta tags
-- Assigns priorities based on page category
-- Sets appropriate change frequencies
-- Updates lastmod dates automatically
-
-**To Regenerate Sitemap:**
-1. Go to `/admin/seo/sitemap`
-2. Click "Regenerate Sitemap"
-3. View the generated URLs
-4. Sitemap is immediately live at `/sitemap.xml`
+The sitemap is served at `/sitemap.xml` as a **static file** and is generated at **build time** on Vercel (via the `prebuild` step). There is no admin “sitemap management” page anymore—this keeps the sitemap stable and prevents Google Search Console fetch/read issues.
 
 **Sitemap Priority Guide:**
 - **1.0**: Homepage
@@ -495,17 +481,15 @@ src/
 │   │   ├── admin/
 │   │   │   ├── seo-settings/route.js
 │   │   │   ├── robots-txt/route.js
-│   │   │   ├── sitemap-config/route.js
 │   │   │   └── meta-tags/
 │   │   │       ├── route.js
 │   │   │       ├── bulk-import/route.js
 │   │   │       └── [id]/route.js
 │   │   ├── robots.txt/route.js (public)
-│   │   └── sitemap.xml/route.js (public)
+│   │   └── (sitemap.xml served as static file from public/)
 │   ├── admin/seo/
 │   │   ├── dashboard/page.js
 │   │   ├── meta-tags/page.js
-│   │   ├── sitemap/page.js
 │   │   ├── robots/page.js
 │   │   └── settings/page.js
 │   └── layout.js (GA + Search Console integration)
@@ -538,22 +522,6 @@ src/
   _id: ObjectId,
   content: String,              // robots.txt content
   updatedAt: Date
-}
-```
-
-#### Collection: `sitemap_config`
-```javascript
-{
-  _id: ObjectId,
-  lastGenerated: Date,
-  urls: [{
-    loc: String,                // Full URL
-    lastmod: String,            // ISO date
-    changefreq: String,         // daily, weekly, monthly, yearly
-    priority: Number            // 0.0 to 1.0
-  }],
-  status: String,               // generated, pending, error
-  totalUrls: Number
 }
 ```
 
@@ -607,12 +575,6 @@ src/
 **PUT** `/api/admin/robots-txt`
 - Update robots.txt content
 
-**GET** `/api/admin/sitemap-config`
-- Fetch sitemap configuration
-
-**POST** `/api/admin/sitemap-config`
-- Generate/update sitemap
-
 #### Public Routes
 
 **GET** `/robots.txt`
@@ -620,7 +582,7 @@ src/
 - Content-Type: text/plain
 
 **GET** `/sitemap.xml`
-- Serves dynamically generated sitemap
+- Serves static sitemap file from `public/sitemap.xml`
 - Content-Type: application/xml
 
 ---
@@ -756,10 +718,9 @@ npm run dev
 
 **Solutions:**
 ```bash
-# Regenerate sitemap
-1. Go to /admin/seo/sitemap
-2. Click "Regenerate Sitemap"
-3. Verify URLs appear
+# Trigger a new deployment (sitemap is generated at build time)
+# - Vercel Dashboard -> Deployments -> Redeploy
+# - or push a commit to trigger a new build
 
 # Check meta tags
 1. Ensure meta tags are marked as "Active"

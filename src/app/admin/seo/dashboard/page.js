@@ -10,7 +10,6 @@ export default function SEODashboardPage() {
     const { hasPermission } = useAuth();
     const [dashboardData, setDashboardData] = useState({
         metaTags: { total: 0, active: 0, inactive: 0 },
-        sitemap: { totalPages: 0, lastGenerated: null, status: 'inactive' },
         robotsTxt: { exists: false, lastUpdated: null },
         seoSettings: { configured: false }
     });
@@ -28,10 +27,6 @@ export default function SEODashboardPage() {
             const metaTagsResponse = await fetch('/api/admin/meta-tags');
             const metaTagsResult = await metaTagsResponse.json();
             
-            // Fetch sitemap data
-            const sitemapResponse = await fetch('/api/admin/sitemap-config');
-            const sitemapResult = await sitemapResponse.json();
-            
             // Fetch robots.txt data
             const robotsResponse = await fetch('/api/admin/robots-txt');
             const robotsResult = await robotsResponse.json();
@@ -47,13 +42,6 @@ export default function SEODashboardPage() {
                 inactive: metaTagsResult.success ? metaTagsResult.data.filter(t => t.status === 'inactive').length : 0
             };
             
-            // Process sitemap
-            const sitemap = {
-                totalPages: sitemapResult.success ? sitemapResult.data.totalPages : 0,
-                lastGenerated: sitemapResult.success ? sitemapResult.data.lastGenerated : null,
-                status: sitemapResult.success && sitemapResult.data.totalPages > 0 ? 'active' : 'inactive'
-            };
-            
             // Process robots.txt
             const robotsTxt = {
                 exists: robotsResult.success && robotsResult.data.content && robotsResult.data.content.length > 0,
@@ -67,7 +55,6 @@ export default function SEODashboardPage() {
             
             setDashboardData({
                 metaTags,
-                sitemap,
                 robotsTxt,
                 seoSettings
             });
@@ -163,46 +150,6 @@ export default function SEODashboardPage() {
                                 </div>
                             </div>
 
-                            {/* Sitemap Status */}
-                            <div className="activity-card">
-                                <div style={{ padding: '24px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                                        <span style={{ fontSize: '32px', marginRight: '12px' }}>🗺️</span>
-                                        <div>
-                                            <h3 style={{ fontSize: '16px', fontWeight: '500', margin: '0 0 4px 0' }}>Sitemap</h3>
-                                            <p style={{ fontSize: '12px', color: 'var(--color-body)', margin: 0 }}>XML Sitemap</p>
-                                        </div>
-                                    </div>
-                                    <div style={{ marginBottom: '12px' }}>
-                                        <div style={{ fontSize: '36px', fontWeight: 'bold', color: 'var(--color-heading-1)' }}>
-                                            {dashboardData.sitemap.totalPages}
-                                        </div>
-                                        <div style={{ fontSize: '14px', color: 'var(--color-body)' }}>
-                                            URLs in Sitemap
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                        <span style={{
-                                            fontSize: '12px',
-                                            padding: '4px 8px',
-                                            borderRadius: '12px',
-                                            backgroundColor: getStatusColor(dashboardData.sitemap.status),
-                                            color: '#fff'
-                                        }}>
-                                            {dashboardData.sitemap.status}
-                                        </span>
-                                        {dashboardData.sitemap.lastGenerated && (
-                                            <span style={{ fontSize: '12px', color: 'var(--color-body)' }}>
-                                                Updated: {new Date(dashboardData.sitemap.lastGenerated).toLocaleDateString()}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <Link href="/admin/seo/sitemap" style={{ display: 'block', color: 'var(--color-primary)', textDecoration: 'none', fontSize: '14px' }}>
-                                        Manage Sitemap →
-                                    </Link>
-                                </div>
-                            </div>
-
                             {/* Robots.txt Status */}
                             <div className="activity-card">
                                 <div style={{ padding: '24px' }}>
@@ -276,10 +223,6 @@ export default function SEODashboardPage() {
                                         status={dashboardData.robotsTxt.exists ? 'complete' : 'incomplete'}
                                     />
                                     <ChecklistItem 
-                                        label="XML Sitemap is generated and accessible"
-                                        status={dashboardData.sitemap.status === 'active' ? 'complete' : 'incomplete'}
-                                    />
-                                    <ChecklistItem 
                                         label="Site-wide SEO settings configured"
                                         status={dashboardData.seoSettings.configured ? 'complete' : 'incomplete'}
                                     />
@@ -310,15 +253,6 @@ export default function SEODashboardPage() {
                                         <div style={{ fontSize: '24px', marginBottom: '8px' }}>🏷️</div>
                                         <div style={{ fontSize: '14px', fontWeight: '500' }}>Add Meta Tags</div>
                                         <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>Create or edit page meta tags</div>
-                                    </Link>
-                                    
-                                    <Link href="/admin/seo/sitemap" style={{ padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px', textDecoration: 'none', color: 'inherit', transition: 'background 0.2s' }}
-                                        onMouseOver={e => e.currentTarget.style.backgroundColor = '#e9ecef'}
-                                        onMouseOut={e => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                                    >
-                                        <div style={{ fontSize: '24px', marginBottom: '8px' }}>🗺️</div>
-                                        <div style={{ fontSize: '14px', fontWeight: '500' }}>Generate Sitemap</div>
-                                        <div style={{ fontSize: '12px', color: 'var(--color-body)' }}>Update XML sitemap</div>
                                     </Link>
                                     
                                     <Link href="/admin/seo/robots" style={{ padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px', textDecoration: 'none', color: 'inherit', transition: 'background 0.2s' }}

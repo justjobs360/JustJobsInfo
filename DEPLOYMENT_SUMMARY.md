@@ -20,17 +20,11 @@ Added:
 - `output: 'standalone'` for optimized Vercel deployment
 - `experimental.outputFileTracingExcludes` to exclude large files from function bundles
 
-### 2. Fixed Sitemap "Write to Disk" Error
+### 2. Made Sitemap Stable (No Runtime Generation)
 
-#### `src/utils/generateSitemap.js` (UPDATED)
-- Detects serverless environment (Vercel, AWS Lambda, Netlify)
-- Returns XML content instead of attempting disk write in serverless
-- Provides helpful warning messages instead of errors
-
-#### `src/app/api/admin/sitemap-config/route.js` (UPDATED)
-- Handles sitemap generation warnings gracefully
-- Returns detailed response including sitemap status
-- No longer treats disk write failures as errors
+- `/sitemap.xml` is now served as a **static file** from `public/sitemap.xml`
+- It is generated **at build time** on Vercel via the `prebuild` script
+- All admin/API endpoints for “sitemap management” were removed to eliminate intermittent fetch/read errors in Google Search Console
 
 ## How to Deploy
 
@@ -82,8 +76,7 @@ curl https://justjobs.info/sitemap.xml
 ## Important Notes
 
 ⚠️ **Sitemap updates require redeployment** - The sitemap is generated at build time, not runtime. To update the sitemap:
-1. Update sitemap config in admin panel (saves to MongoDB)
-2. Trigger a new deployment (redeploys with fresh sitemap)
+1. Trigger a new deployment (redeploys with fresh sitemap)
 
 ✅ **Video files work perfectly** - They're served as static assets by Vercel CDN, not through serverless functions
 
@@ -94,8 +87,8 @@ curl https://justjobs.info/sitemap.xml
 - `.vercelignore` (created)
 - `vercel.json` (updated)
 - `next.config.mjs` (updated)
-- `src/utils/generateSitemap.js` (updated)
-- `src/app/api/admin/sitemap-config/route.js` (updated)
+- `scripts/generate-sitemap-build.mjs` (updated)
+- Admin sitemap page/API routes removed
 - `VERCEL_DEPLOYMENT_FIXES.md` (created - detailed documentation)
 
 ## Ready to Deploy! 🚀
