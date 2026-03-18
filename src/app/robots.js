@@ -1,5 +1,3 @@
-import { getCollection } from '@/utils/mongodb';
-
 /**
  * Next.js 13+ Robots.txt Generation
  * This file automatically generates robots.txt at /robots.txt
@@ -10,6 +8,8 @@ export default async function robots() {
         console.log('🤖 Generating robots.txt...');
         
         // Try to fetch custom robots.txt from database
+        // Import lazily so missing/invalid env vars can't crash the whole route at module-load time.
+        const { getCollection } = await import('@/utils/mongodb');
         const collection = await getCollection('robots_txt');
         const robotsTxt = await collection.findOne({});
         

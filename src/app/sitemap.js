@@ -1,5 +1,3 @@
-import { getCollection } from '@/utils/mongodb';
-
 const SITE_URL = 'https://justjobs.info';
 
 /** Default URLs when DB is empty or unavailable (sitemap must not be empty) */
@@ -20,6 +18,9 @@ export default async function sitemap() {
   let entries = [];
 
   try {
+    // Import lazily so missing/invalid env vars can't crash the whole route at module-load time.
+    const { getCollection } = await import('@/utils/mongodb');
+
     const sitemapCollection = await getCollection('sitemap_config');
     const staticPages = await sitemapCollection.find({}).sort({ priority: -1 }).toArray();
 
