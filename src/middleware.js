@@ -40,7 +40,7 @@ export function middleware(request) {
     // declares the canonical URL (helps crawlers pick the canonical)
     const response = NextResponse.next();
     try {
-      const canonicalHost = 'https://justjobs.info';
+      const canonicalHost = 'https://www.justjobs.info';
       const canonical = `${canonicalHost}${url.pathname}${url.search}`;
       // Set the Link header with rel=canonical
       // Note: If other middleware or framework code sets Link already, this will replace it.

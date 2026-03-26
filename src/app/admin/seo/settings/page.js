@@ -57,7 +57,7 @@ export default function SEOSettingsPage() {
                 siteTitle: 'JustJobsInfo - Professional Resume and Career Services',
                 siteDescription: 'Professional resume writing services, career guidance, and job search resources',
                 siteLogo: '/images/logo/justjobslogo.png',
-                siteUrl: 'https://justjobs.info',
+                siteUrl: 'https://www.justjobs.info',
                 googleAnalyticsId: '',
                 googleSearchConsole: '',
                 socialMedia: {

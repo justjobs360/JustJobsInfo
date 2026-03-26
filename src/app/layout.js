@@ -14,7 +14,7 @@ const cabin = Cabin({
 });
 
 export const metadata = {
-  metadataBase: new URL('https://justjobs.info'),
+  metadataBase: new URL('https://www.justjobs.info'),
   title: {
     default: "JustJobsInfo - Professional Resume and Career Services",
     template: "%s | JustJobsInfo"
@@ -30,7 +30,7 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://justjobs.info/',
+    url: 'https://www.justjobs.info/',
     siteName: 'JustJobsInfo',
     title: 'JustJobsInfo - Professional Resume and Career Services',
     description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',

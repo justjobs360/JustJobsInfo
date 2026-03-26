@@ -59,7 +59,7 @@ export async function GET(request, { params }) {
                     title: 'JustJobsInfo - Professional Resume and Career Services',
                     description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',
                     keywords: 'resume writing, career services, job search, professional development',
-                    ogImage: 'https://justjobs.info/assets/images/og-images/og-home.webp',
+                    ogImage: 'https://www.justjobs.info/assets/images/og-images/og-home.webp',
                     author: 'JustJobsInfo Team',
                     publishDate: new Date().toISOString(),
                     ogType: 'website',
@@ -77,7 +77,7 @@ export async function GET(request, { params }) {
             keywords: metaTag.keywords || '',
             ogImage: metaTag.ogImage?.startsWith('http') 
                 ? metaTag.ogImage 
-                : `https://justjobs.info${metaTag.ogImage || '/assets/images/og-images/og-home.webp'}`,
+                : `https://www.justjobs.info${metaTag.ogImage || '/assets/images/og-images/og-home.webp'}`,
             author: metaTag.author || 'JustJobsInfo Team',
             publishDate: metaTag.publishDate || metaTag.createdAt || new Date().toISOString(),
             modifiedDate: metaTag.updatedAt || new Date().toISOString(),
@@ -106,7 +106,7 @@ export async function GET(request, { params }) {
                 title: 'JustJobsInfo - Professional Resume and Career Services',
                 description: 'Professional resume writing services, career guidance, and job search resources.',
                 keywords: 'resume writing, career services, job search',
-                ogImage: 'https://justjobs.info/assets/images/og-images/og-home.webp',
+                ogImage: 'https://www.justjobs.info/assets/images/og-images/og-home.webp',
                 author: 'JustJobsInfo Team',
                 publishDate: new Date().toISOString(),
                 ogType: 'website',

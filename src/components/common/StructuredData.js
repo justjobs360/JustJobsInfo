@@ -61,13 +61,13 @@ export default function StructuredData({ type = 'page', pageData = {}, customBre
         // Add WebPage schema for all pages
         const currentUrl = typeof window !== 'undefined' 
             ? window.location.href 
-            : `https://justjobs.info${pathname}`;
+            : `https://www.justjobs.info${pathname}`;
 
         const webPageSchema = generateWebPageSchema({
             title: pageData.title || document.title,
             description: pageData.description || 'Professional resume and career services',
             url: currentUrl,
-            image: pageData.image || 'https://justjobs.info/assets/images/og-images/og-home.webp',
+            image: pageData.image || 'https://www.justjobs.info/assets/images/og-images/og-home.webp',
             datePublished: pageData.datePublished,
             dateModified: pageData.dateModified
         });

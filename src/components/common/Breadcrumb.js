@@ -20,7 +20,7 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
         
         const paths = pathname.split('/').filter(Boolean);
         const breadcrumbs = [
-            { name: 'Home', url: 'https://justjobs.info/' }
+            { name: 'Home', url: 'https://www.justjobs.info/' }
         ];
         
         let currentPath = '';
@@ -51,7 +51,7 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
             
             breadcrumbs.push({
                 name: name,
-                url: `https://justjobs.info${currentPath}`,
+                url: `https://www.justjobs.info${currentPath}`,
                 isLast: index === paths.length - 1
             });
         });
@@ -92,7 +92,7 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
                         {!crumb.isLast ? (
                             <>
                                 <Link 
-                                    href={crumb.url.replace('https://justjobs.info', '')} 
+                                    href={crumb.url.replace('https://www.justjobs.info', '')} 
                                     itemProp="item"
                                     className="breadcrumb-link"
                                 >

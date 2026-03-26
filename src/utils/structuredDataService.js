@@ -12,10 +12,10 @@ export const generateOrganizationSchema = () => {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "JustJobsInfo",
-        "url": "https://justjobs.info",
+        "url": "https://www.justjobs.info",
         "logo": {
             "@type": "ImageObject",
-            "url": "https://justjobs.info/assets/images/logo/logo-dark.png",
+            "url": "https://www.justjobs.info/assets/images/logo/logo-dark.png",
             "width": "200",
             "height": "60"
         },
@@ -46,21 +46,21 @@ export const generateWebSiteSchema = () => {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "JustJobsInfo",
-        "url": "https://justjobs.info",
+        "url": "https://www.justjobs.info",
         "description": "Professional resume writing services, career guidance, and job search resources",
         "publisher": {
             "@type": "Organization",
             "name": "JustJobsInfo",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://justjobs.info/assets/images/logo/logo-dark.png"
+                "url": "https://www.justjobs.info/assets/images/logo/logo-dark.png"
             }
         },
         "potentialAction": {
             "@type": "SearchAction",
             "target": {
                 "@type": "EntryPoint",
-                "urlTemplate": "https://justjobs.info/job-listing?q={search_term_string}"
+                "urlTemplate": "https://www.justjobs.info/job-listing?q={search_term_string}"
             },
             "query-input": "required name=search_term_string"
         }
@@ -90,7 +90,7 @@ export const generateWebPageSchema = ({ title, description, url, image, datePubl
             "name": "JustJobsInfo",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://justjobs.info/assets/images/logo/logo-dark.png"
+                "url": "https://www.justjobs.info/assets/images/logo/logo-dark.png"
             }
         }
     };
@@ -161,7 +161,7 @@ export const generateServiceSchema = ({ name, description, url, image, serviceTy
         "provider": provider || {
             "@type": "Organization",
             "name": "JustJobsInfo",
-            "url": "https://justjobs.info"
+            "url": "https://www.justjobs.info"
         }
     };
     
@@ -207,7 +207,7 @@ export const generateBlogPostingSchema = ({ title, description, url, image, date
             "name": "JustJobsInfo",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://justjobs.info/assets/images/logo/logo-dark.png"
+                "url": "https://www.justjobs.info/assets/images/logo/logo-dark.png"
             }
         }
     };
@@ -380,7 +380,7 @@ export const generateBreadcrumbsFromPath = (pathname, customNames = {}) => {
     
     const paths = pathname.split('/').filter(Boolean);
     const breadcrumbs = [
-        { name: 'Home', url: 'https://justjobs.info/' }
+        { name: 'Home', url: 'https://www.justjobs.info/' }
     ];
     
     let currentPath = '';
@@ -396,7 +396,7 @@ export const generateBreadcrumbsFromPath = (pathname, customNames = {}) => {
         
         breadcrumbs.push({
             name: name,
-            url: `https://justjobs.info${currentPath}`
+            url: `https://www.justjobs.info${currentPath}`
         });
     });
     

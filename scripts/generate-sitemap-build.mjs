@@ -13,7 +13,7 @@ dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 // MongoDB connection configuration
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = 'resumeCollection';
-const SITE_URL = 'https://justjobs.info';
+const SITE_URL = 'https://www.justjobs.info';
 
 function escapeXml(unsafe) {
     if (!unsafe) return '';
@@ -138,13 +138,6 @@ async function generateSitemap() {
             { loc: `${SITE_URL}/important-links`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/downloadable-resources`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
 
-            // Auth / account flows (kept as-is; remove if you don't want them indexed)
-            { loc: `${SITE_URL}/login`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
-            { loc: `${SITE_URL}/register`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
-            { loc: `${SITE_URL}/forgot-password`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
-            { loc: `${SITE_URL}/verify-email`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
-            { loc: `${SITE_URL}/account`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
-
             // Misc marketing pages
             { loc: `${SITE_URL}/apply`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/askgenie`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
@@ -153,7 +146,6 @@ async function generateSitemap() {
             { loc: `${SITE_URL}/career-single`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/case-studies`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/case-studies-single`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
-            { loc: `${SITE_URL}/coming-soon`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/free-consultation`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/industry`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },
             { loc: `${SITE_URL}/partner`, lastmod: today.toISOString(), changefreq: 'monthly', priority: 0.5 },

@@ -33,7 +33,7 @@ export default function Home() {
                                     </div>
                                     <div className="mid-content" style={{marginBottom: 0,  paddingBottom: 0}}>
                                         <p className="disc">
-                                            These terms and conditions outline the rules and regulations for the use of justjobs&apos;s Website, located at https://justjobs.info.
+                                            These terms and conditions outline the rules and regulations for the use of justjobs&apos;s Website, located at https://www.justjobs.info.
                                         </p>
                                         <p className="disc">
                                             By accessing this website we assume you accept these terms and conditions. Do not continue to use justjobs.info if you do not agree to take all of the terms and conditions stated on this page.

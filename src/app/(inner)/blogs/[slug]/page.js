@@ -517,20 +517,20 @@ export default function BlogDetails() {
           pageData={{
             title: blogPost.title,
             description: blogPost.metaDescription || blogPost.description || blogPost.title,
-            image: blogPost.bannerImg ? (blogPost.bannerImg.startsWith('http') ? blogPost.bannerImg : `https://justjobs.info${getImageUrl(blogPost.bannerImg)}`) : 'https://justjobs.info/assets/images/og-images/og-blog.webp',
+            image: blogPost.bannerImg ? (blogPost.bannerImg.startsWith('http') ? blogPost.bannerImg : `https://www.justjobs.info${getImageUrl(blogPost.bannerImg)}`) : 'https://www.justjobs.info/assets/images/og-images/og-blog.webp',
             datePublished: blogPost.publishedDate,
             dateModified: blogPost.updatedAt || blogPost.publishedDate
           }}
           customSchema={generateBlogPostingSchema({
             title: blogPost.title,
             description: blogPost.metaDescription || blogPost.description || blogPost.title,
-            url: `https://justjobs.info/blogs/${slug}`,
-            image: blogPost.bannerImg ? (blogPost.bannerImg.startsWith('http') ? blogPost.bannerImg : `https://justjobs.info${getImageUrl(blogPost.bannerImg)}`) : 'https://justjobs.info/assets/images/og-images/og-blog.webp',
+            url: `https://www.justjobs.info/blogs/${slug}`,
+            image: blogPost.bannerImg ? (blogPost.bannerImg.startsWith('http') ? blogPost.bannerImg : `https://www.justjobs.info${getImageUrl(blogPost.bannerImg)}`) : 'https://www.justjobs.info/assets/images/og-images/og-blog.webp',
             datePublished: blogPost.publishedDate,
             dateModified: blogPost.updatedAt || blogPost.publishedDate,
             author: {
               name: blogPost.author || 'JustJobsInfo Team',
-              url: blogPost.authorUrl || 'https://justjobs.info/about'
+              url: blogPost.authorUrl || 'https://www.justjobs.info/about'
             }
           })}
         />

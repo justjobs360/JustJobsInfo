@@ -24,7 +24,7 @@ export default function About() {
                 pageData={{
                     title: 'About JustJobsInfo - Our Story and Mission',
                     description: 'Learn about JustJobsInfo and our mission to help professionals succeed in their careers through expert resume services.',
-                    image: 'https://justjobs.info/assets/images/og-images/og-about.webp'
+                    image: 'https://www.justjobs.info/assets/images/og-images/og-about.webp'
                 }}
             />
             <div className='#'>

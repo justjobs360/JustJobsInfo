@@ -64,7 +64,7 @@ export async function POST(request) {
                                         description: tag.description,
                                         keywords: tag.keywords || '',
                                         ogImage: tag.ogImage || '',
-                                        canonicalUrl: tag.canonicalUrl || `https://justjobs.info${tag.page}`,
+                                        canonicalUrl: tag.canonicalUrl || `https://www.justjobs.info${tag.page}`,
                                         status: tag.status || 'active',
                                         updatedAt: new Date()
                                     }
@@ -87,7 +87,7 @@ export async function POST(request) {
                     description: tag.description.trim(),
                     keywords: tag.keywords?.trim() || '',
                     ogImage: tag.ogImage?.trim() || '/assets/images/logo/logo-dark.png',
-                    canonicalUrl: tag.canonicalUrl || `https://justjobs.info${tag.page}`,
+                    canonicalUrl: tag.canonicalUrl || `https://www.justjobs.info${tag.page}`,
                     status: tag.status || 'active',
                     createdAt: new Date(),
                     updatedAt: new Date()

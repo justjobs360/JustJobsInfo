@@ -26,7 +26,7 @@ export default async function robots() {
                         disallow: ['/admin/', '/api/'],
                     },
                 ],
-                sitemap: 'https://justjobs.info/sitemap.xml',
+                sitemap: 'https://www.justjobs.info/sitemap.xml',
             };
         } else {
             console.log('⚠️ No robots.txt found in database, using default');
@@ -49,8 +49,8 @@ export default async function robots() {
                 allow: ['/api/blogs/', '/api/jobs/'],
             },
         ],
-        sitemap: 'https://justjobs.info/sitemap.xml',
-        host: 'https://justjobs.info',
+        sitemap: 'https://www.justjobs.info/sitemap.xml',
+        host: 'https://www.justjobs.info',
     };
 }
 

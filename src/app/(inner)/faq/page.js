@@ -44,7 +44,7 @@ export default function Home() {
                 pageData={{
                     title: 'Frequently Asked Questions - JustJobsInfo',
                     description: 'Find answers to common questions about our AI resume auditor and career services.',
-                    image: 'https://justjobs.info/assets/images/og-images/og-faq.webp'
+                    image: 'https://www.justjobs.info/assets/images/og-images/og-faq.webp'
                 }}
                 customSchema={generateFAQSchema(faqs)}
             />

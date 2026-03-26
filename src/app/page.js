@@ -76,7 +76,7 @@ export default function Home() {
         pageData={{
           title: 'JustJobsInfo - Professional Resume and Career Services',
           description: 'Professional resume writing services, career guidance, and job search resources to help you land your dream job.',
-          image: 'https://justjobs.info/assets/images/og-images/og-home.webp'
+          image: 'https://www.justjobs.info/assets/images/og-images/og-home.webp'
         }}
       />
       <main>

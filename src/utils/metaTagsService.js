@@ -37,7 +37,7 @@ export const getMetaTagsForPage = async (pageName) => {
 
 // Get default meta tags for fallback
 export const getDefaultMetaTags = (pageName = 'Home') => {
-    const baseUrl = 'https://justjobs.info';
+    const baseUrl = 'https://www.justjobs.info';
     const currentDate = new Date().toISOString();
     
     const defaults = {
@@ -491,14 +491,14 @@ export const updateDocumentMeta = (metaTags) => {
             document.title = metaTags.title;
         }
         
-        // Get current URL for canonical and og:url (force https non-www, drop query/hash)
+        // Get current URL for canonical and og:url (force https www, drop query/hash)
         const parsed = new URL(metaTags.canonicalUrl || window.location.href);
-        const hostname = parsed.hostname === 'www.justjobs.info' ? 'justjobs.info' : parsed.hostname;
+        const hostname = parsed.hostname === 'justjobs.info' ? 'www.justjobs.info' : parsed.hostname;
         const origin = `https://${hostname}`;
         const currentUrl = `${origin}${parsed.pathname}`;
         const fullImageUrl = metaTags.ogImage?.startsWith('http') 
             ? metaTags.ogImage 
-            : `https://justjobs.info${metaTags.ogImage}`;
+            : `https://www.justjobs.info${metaTags.ogImage}`;
         
         // Update or create meta tags with enhanced Open Graph
         const metaUpdates = [
