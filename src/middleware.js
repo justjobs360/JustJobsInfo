@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 
 /**
- * Middleware to handle legacy/permanent redirects and hostname canonicalization.
+ * Middleware to handle legacy/permanent redirects.
  * - /posts/:slug  -> /blogs/:slug
- * - www.justjobs.info -> justjobs.info (canonical)
  *
  * /job/:slug is no longer redirected; those URLs return 404 so Google can drop them.
  */
@@ -19,30 +18,10 @@ export function middleware(request) {
       pathname === '/sitemap.xml.gz' ||
       pathname === '/robots.txt';
 
-    // Ensure HTTPS: redirect http requests to https (use x-forwarded-proto when behind a proxy)
-    // NOTE: During local development (localhost, 127.0.0.1) we should not force HTTPS
-    // because the dev server typically doesn't serve TLS and that causes browsers
-    // to attempt https://localhost:3000 which will result in ERR_CONNECTION_REFUSED.
-    const protoHeader = request.headers.get('x-forwarded-proto');
-    const proto = protoHeader || (url.protocol ? url.protocol.replace(':', '') : '');
-    const hostname = url.hostname || '';
-    const isProdHost = hostname === 'justjobs.info' || hostname === 'www.justjobs.info';
-    if ((proto === 'http' || proto === 'http:') && isProdHost) {
-      const redirectUrl = url.clone();
-      redirectUrl.protocol = 'https:';
-      // canonicalize host to non-www
-      redirectUrl.hostname = redirectUrl.hostname === 'www.justjobs.info' ? 'justjobs.info' : redirectUrl.hostname;
-      // Ensure full origin uses https
-      const target = `https://${redirectUrl.hostname}${redirectUrl.pathname}${redirectUrl.search}`;
-      return NextResponse.redirect(target, 301);
-    }
-
-    // Canonicalize www -> non-www for the production host only
-    if (url.hostname === 'www.justjobs.info') {
-      const redirectUrl = url.clone();
-      redirectUrl.hostname = 'justjobs.info';
-      return NextResponse.redirect(redirectUrl, 301);
-    }
+    // IMPORTANT:
+    // Do not apply host/protocol canonical redirects in middleware.
+    // Vercel domain configuration already handles domain redirects and can
+    // conflict with middleware redirects, causing redirect loops.
 
     // For sitemap/robots, do not add canonical Link header or other modifications.
     if (isSpecialSeoFile) {
