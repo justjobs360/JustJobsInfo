@@ -26,6 +26,14 @@ export function middleware(request) {
 
     // For sitemap/robots, do not add canonical Link header or other modifications.
     if (isSpecialSeoFile) {
+      // Drop conditional validators so static serving returns 200 + body instead of 304
+      // (helps crawlers that submit /sitemap.xml without going through a redirect first).
+      if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
+        const requestHeaders = new Headers(request.headers);
+        requestHeaders.delete('if-none-match');
+        requestHeaders.delete('if-modified-since');
+        return NextResponse.next({ request: { headers: requestHeaders } });
+      }
       return NextResponse.next();
     }
 
