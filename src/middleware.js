@@ -11,29 +11,33 @@ export function middleware(request) {
     const url = request.nextUrl.clone();
     const pathname = url.pathname || '';
 
-    // Never modify sitemap/robots responses (Google expects "plain" files).
-    // We still allow host/proto redirects below when needed.
-    const isSpecialSeoFile =
-      pathname === '/sitemap.xml' ||
-      pathname === '/sitemap.xml/' ||
-      pathname === '/sitemap.xml.gz' ||
-      pathname === '/robots.txt';
-
     // IMPORTANT:
     // Do not apply host/protocol canonical redirects in middleware.
     // Vercel domain configuration already handles domain redirects and can
     // conflict with middleware redirects, causing redirect loops.
 
-    // For sitemap/robots, do not add canonical Link header or other modifications.
+    // Trailing-slash sitemap URL: rewrite internally to /sitemap.xml so the browser
+    // stays on .../sitemap.xml/ (200 + XML) — same Mongo cache as generate/regenerate.
+    if (pathname === '/sitemap.xml/') {
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.delete('if-none-match');
+      requestHeaders.delete('if-modified-since');
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = '/sitemap.xml';
+      return NextResponse.rewrite(rewriteUrl, { request: { headers: requestHeaders } });
+    }
+
+    if (pathname === '/sitemap.xml') {
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.delete('if-none-match');
+      requestHeaders.delete('if-modified-since');
+      return NextResponse.next({ request: { headers: requestHeaders } });
+    }
+
+    const isSpecialSeoFile =
+      pathname === '/sitemap.xml.gz' || pathname === '/robots.txt';
+
     if (isSpecialSeoFile) {
-      // Drop conditional validators so static serving returns 200 + body instead of 304
-      // (helps crawlers that submit /sitemap.xml without going through a redirect first).
-      if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
-        const requestHeaders = new Headers(request.headers);
-        requestHeaders.delete('if-none-match');
-        requestHeaders.delete('if-modified-since');
-        return NextResponse.next({ request: { headers: requestHeaders } });
-      }
       return NextResponse.next();
     }
 
