@@ -61,7 +61,12 @@ const AdminLayout = ({ children }) => {
             icon: '🤖',
             permission: ADMIN_PERMISSIONS.MANAGE_ROBOTS_TXT
         },
-        
+        {
+            name: 'Sitemap',
+            href: '/admin/seo/sitemap',
+            icon: '🗺️',
+            permission: ADMIN_PERMISSIONS.MANAGE_SEO
+        },
 
         {
             name: 'Resume Audit Stats',
