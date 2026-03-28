@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/sitemap.xml/",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    }
+  ],
   "crons": [
     {
       "path": "/api/cron/prewarm",

@@ -15,6 +15,7 @@ export function middleware(request) {
     // We still allow host/proto redirects below when needed.
     const isSpecialSeoFile =
       pathname === '/sitemap.xml' ||
+      pathname === '/sitemap.xml/' ||
       pathname === '/sitemap.xml.gz' ||
       pathname === '/robots.txt';
 
