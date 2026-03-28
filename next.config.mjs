@@ -27,7 +27,16 @@ const nextConfig = {
   
   // Power optimizations
   poweredByHeader: false,
-  
+
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/sitemap-static.xml',
+      },
+    ];
+  },
+
   // Exclude large files from serverless functions
   experimental: {
     outputFileTracingExcludes: {

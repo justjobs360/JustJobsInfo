@@ -50,7 +50,9 @@ async function writeSitemap(entries) {
 
     // Write to public directory
     const publicDir = path.join(__dirname, '..', 'public');
-    const outPath = path.join(publicDir, 'sitemap.xml');
+    // Written as sitemap-static.xml; next.config.mjs rewrites /sitemap.xml → this file
+    // so crawlers get a plain static response (no App Router RSC Vary headers).
+    const outPath = path.join(publicDir, 'sitemap-static.xml');
 
     console.log('💾 Writing sitemap to:', outPath);
     await fs.mkdir(publicDir, { recursive: true });
@@ -90,7 +92,7 @@ async function generateSitemap() {
 
         const today = new Date();
         // Static sitemap pages (single source of truth; no DB-managed sitemap config).
-        // This avoids intermittent runtime errors and keeps /sitemap.xml stable on Vercel.
+        // This avoids intermittent runtime errors; canonical URL stays /sitemap.xml via rewrite.
         let entries = [
             { loc: `${SITE_URL}/`, lastmod: today.toISOString(), changefreq: 'weekly', priority: 1.0 },
 

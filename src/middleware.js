@@ -16,6 +16,7 @@ export function middleware(request) {
     const isSpecialSeoFile =
       pathname === '/sitemap.xml' ||
       pathname === '/sitemap.xml/' ||
+      pathname === '/sitemap-static.xml' ||
       pathname === '/sitemap.xml.gz' ||
       pathname === '/robots.txt';
 
