@@ -19,6 +19,13 @@ export function getSiteUrl() {
   );
 }
 
+function toValidIsoLastmod(raw, fallbackDate) {
+  if (raw == null || raw === '') return fallbackDate.toISOString();
+  const d = raw instanceof Date ? raw : new Date(raw);
+  if (Number.isNaN(d.getTime())) return fallbackDate.toISOString();
+  return d.toISOString();
+}
+
 export function escapeXml(unsafe) {
   if (!unsafe) return '';
   return String(unsafe).replace(/[<>&'"]/g, (c) => {
@@ -146,30 +153,44 @@ export async function collectSitemapEntries(db, siteUrl) {
   const today = new Date();
   let entries = getStaticSitemapEntries(base, today);
 
+  const collectionName =
+    typeof BLOG_COLLECTION === 'string' && BLOG_COLLECTION
+      ? BLOG_COLLECTION
+      : 'Blogs';
+
   try {
-    const blogsCollection = db.collection(BLOG_COLLECTION);
+    const blogsCollection = db.collection(collectionName);
+    // Include published and legacy docs with no status; exclude draft/archived only.
     const blogs = await blogsCollection
-      .find({ status: 'published' })
+      .find({
+        $or: [
+          { status: 'published' },
+          { status: { $exists: false } },
+          { status: null },
+        ],
+      })
       .sort({ createdAt: -1 })
       .limit(1000)
       .toArray();
 
-    if (blogs?.length > 0) {
-      const blogEntries = blogs.map((blog) => {
-        const raw =
-          blog.publishedDate ?? blog.updatedAt ?? blog.createdAt ?? today;
-        const lastmod = new Date(raw).toISOString();
-        return {
-          loc: `${base}/blogs/${blog.slug}`,
-          lastmod,
-          changefreq: 'monthly',
-          priority: 0.6,
-        };
+    const blogEntries = [];
+    for (const blog of blogs) {
+      const slug = blog.slug != null ? String(blog.slug).trim() : '';
+      if (!slug) continue;
+      const raw = blog.publishedDate ?? blog.updatedAt ?? blog.createdAt ?? today;
+      const lastmod = toValidIsoLastmod(raw, today);
+      blogEntries.push({
+        loc: `${base}/blogs/${slug}`,
+        lastmod,
+        changefreq: 'monthly',
+        priority: 0.6,
       });
+    }
+    if (blogEntries.length > 0) {
       entries = [...entries, ...blogEntries];
     }
   } catch (err) {
-    console.warn('Sitemap: error fetching blogs:', err.message);
+    console.error('Sitemap: error fetching blogs:', err?.message || err, err?.stack);
   }
 
   return entries;
