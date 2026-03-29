@@ -16,18 +16,15 @@ export function middleware(request) {
     // Vercel domain configuration already handles domain redirects and can
     // conflict with middleware redirects, causing redirect loops.
 
-    // Canonical sitemap URL is /sitemap.xml/ (trailing slash). Non-canonical returns 301.
-    if (pathname === '/sitemap.xml') {
-      const dest = request.nextUrl.clone();
-      dest.pathname = '/sitemap.xml/';
-      return NextResponse.redirect(dest, 301);
-    }
-
-    // Browser URL stays .../sitemap.xml/; internally serve the route handler at /sitemap.xml.
-    if (pathname === '/sitemap.xml/') {
+    // Sitemap: always 200 + XML (no 301). Google Search Console often fails sitemap reads on redirects.
+    // /sitemap.xml — direct route. /sitemap.xml/ — rewrite internally to the same handler.
+    if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
       const requestHeaders = new Headers(request.headers);
       requestHeaders.delete('if-none-match');
       requestHeaders.delete('if-modified-since');
+      if (pathname === '/sitemap.xml') {
+        return NextResponse.next({ request: { headers: requestHeaders } });
+      }
       const rewriteUrl = request.nextUrl.clone();
       rewriteUrl.pathname = '/sitemap.xml';
       return NextResponse.rewrite(rewriteUrl, { request: { headers: requestHeaders } });
