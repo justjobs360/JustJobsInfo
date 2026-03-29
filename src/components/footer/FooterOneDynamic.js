@@ -82,6 +82,7 @@ function FooterOneDynamic() {
                     { id: 'terms', text: 'Terms of Use', href: '/terms-of-use' },
                     { id: 'privacy', text: 'Privacy Policy', href: '/privacy-policy' },
                     { id: 'cookies', text: 'Cookie Policy', href: '/cookies-policy' },
+                    { id: 'refund', text: 'Refund Policy', href: '/refund-policy' },
                     { id: 'faq', text: 'FAQ', href: '/faq' },
                     { id: 'support', text: 'Help & Support', href: '/contact' },
                     { id: 'contact-us', text: 'Contact Us', href: '/contact' }

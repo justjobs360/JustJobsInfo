@@ -80,7 +80,7 @@ function page() {
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     Business Solution <i className="far fa-long-arrow-right" />
                                                 </a>
                                             </li>
@@ -89,7 +89,7 @@ function page() {
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     Strategy Growth
                                                     <i className="far fa-long-arrow-right" />
                                                 </a>
@@ -99,7 +99,7 @@ function page() {
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     Finance Solution
                                                     <i className="far fa-long-arrow-right" />
                                                 </a>
@@ -109,7 +109,7 @@ function page() {
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     Investment Policy
                                                     <i className="far fa-long-arrow-right" />
                                                 </a>
@@ -119,7 +119,7 @@ function page() {
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     Tax Managment
                                                     <i className="far fa-long-arrow-right" />
                                                 </a>
@@ -138,7 +138,7 @@ function page() {
                                         {/* recent-post */}
                                         <div className="recent-post-single">
                                             <div className="thumbnail">
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/01.jpg" alt="Blog_post" />
                                                 </a>
                                             </div>
@@ -147,7 +147,7 @@ function page() {
                                                     <i className="fal fa-clock" />
                                                     <span>15 Jan, 2023</span>
                                                 </div>
-                                                <a className="post-title" href="/blog-details">
+                                                <a className="post-title" href="/blogs">
                                                     <h6 className="title">
                                                         We would love to share a similar experience
                                                     </h6>
@@ -158,7 +158,7 @@ function page() {
                                         {/* recent-post */}
                                         <div className="recent-post-single">
                                             <div className="thumbnail">
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/02.jpg" alt="Blog_post" />
                                                 </a>
                                             </div>
@@ -167,7 +167,7 @@ function page() {
                                                     <i className="fal fa-clock" />
                                                     <span>15 Jan, 2023</span>
                                                 </div>
-                                                <a className="post-title" href="/blog-details">
+                                                <a className="post-title" href="/blogs">
                                                     <h6 className="title">
                                                         We would love to share a similar experience
                                                     </h6>
@@ -178,7 +178,7 @@ function page() {
                                         {/* recent-post */}
                                         <div className="recent-post-single">
                                             <div className="thumbnail">
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/03.jpg" alt="Blog_post" />
                                                 </a>
                                             </div>
@@ -187,7 +187,7 @@ function page() {
                                                     <i className="fal fa-clock" />
                                                     <span>15 Jan, 2023</span>
                                                 </div>
-                                                <a className="post-title" href="/blog-details">
+                                                <a className="post-title" href="/blogs">
                                                     <h6 className="title">
                                                         We would love to share a similar experience
                                                     </h6>
@@ -206,24 +206,24 @@ function page() {
                                     <div className="wized-body">
                                         <div className="gallery-inner">
                                             <div className="row-1 single-row">
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/04.jpg" alt="Gallery" />
                                                 </a>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/05.jpg" alt="Gallery" />
                                                 </a>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/06.jpg" alt="Gallery" />
                                                 </a>
                                             </div>
                                             <div className="row-2 single-row">
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/07.jpg" alt="Gallery" />
                                                 </a>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/08.jpg" alt="Gallery" />
                                                 </a>
-                                                <a href="/blog-details">
+                                                <a href="/blogs">
                                                     <img src="assets/images/blog/sm/09.jpg" alt="Gallery" />
                                                 </a>
                                             </div>
@@ -238,15 +238,15 @@ function page() {
                                     </div>
                                     <div className="wized-body">
                                         <div className="tags-wrapper">
-                                            <a href="/blog-details">Services</a>
-                                            <a href="/blog-details">Business</a>
-                                            <a href="/blog-details">Growth</a>
-                                            <a href="/blog-details">Finance</a>
-                                            <a href="/blog-details">UI/UX Design</a>
-                                            <a href="/blog-details">Solution</a>
-                                            <a href="/blog-details">Speed</a>
-                                            <a href="/blog-details">Strategy</a>
-                                            <a href="/blog-details">Technology</a>
+                                            <a href="/blogs">Services</a>
+                                            <a href="/blogs">Business</a>
+                                            <a href="/blogs">Growth</a>
+                                            <a href="/blogs">Finance</a>
+                                            <a href="/blogs">UI/UX Design</a>
+                                            <a href="/blogs">Solution</a>
+                                            <a href="/blogs">Speed</a>
+                                            <a href="/blogs">Strategy</a>
+                                            <a href="/blogs">Technology</a>
                                         </div>
                                     </div>
                                 </div>

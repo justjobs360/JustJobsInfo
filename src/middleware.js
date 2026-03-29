@@ -37,6 +37,13 @@ export function middleware(request) {
       return NextResponse.next();
     }
 
+    // Legacy template URL (no page); canonical blog index is /blogs
+    if (pathname === '/blog-details') {
+      const redirectUrl = url.clone();
+      redirectUrl.pathname = '/blogs';
+      return NextResponse.redirect(redirectUrl, 301);
+    }
+
     // /posts/:slug  -> /blogs/:slug
     if (pathname.startsWith('/posts/')) {
       const slug = pathname.replace('/posts/', '');

@@ -115,6 +115,7 @@ export function getStaticSitemapEntries(siteUrl, today = new Date()) {
     { loc: `${base}/privacy-policy`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
     { loc: `${base}/terms-of-use`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
     { loc: `${base}/cookies-policy`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
+    { loc: `${base}/refund-policy`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
 
     { loc: `${base}/faq`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
     { loc: `${base}/important-links`, lastmod: t, changefreq: 'monthly', priority: 0.5 },

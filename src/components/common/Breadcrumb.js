@@ -47,6 +47,7 @@ export default function Breadcrumb({ customNames = {}, className = '' }) {
             if (path === 'privacy-policy') name = 'Privacy Policy';
             if (path === 'terms-of-use') name = 'Terms of Use';
             if (path === 'cookies-policy') name = 'Cookies Policy';
+            if (path === 'refund-policy') name = 'Refund Policy';
             if (path === 'why-choose-us') name = 'Why Choose Us';
             
             breadcrumbs.push({
