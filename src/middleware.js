@@ -22,7 +22,7 @@ function canonicalLinkHref(url) {
  * Middleware to handle legacy/permanent redirects.
  * - /posts/:slug  -> /blogs/:slug
  *
- * /job/:slug is no longer redirected; those URLs return 404 so Google can drop them.
+ * /job/:slug -> /job-listing?query=:slug (legacy share URLs).
  */
 export function middleware(request) {
   try {
@@ -72,11 +72,39 @@ export function middleware(request) {
       return NextResponse.redirect(redirectUrl, 301);
     }
 
-    // /posts/:slug  -> /blogs/:slug
+    // Legacy job detail URLs (/job/title-shortid) -> listing with same search slug (page uses ?query=)
+    if (pathname === '/job' || pathname === '/job/') {
+      const redirectUrl = url.clone();
+      redirectUrl.pathname = '/job-listing';
+      redirectUrl.search = '';
+      return NextResponse.redirect(redirectUrl, 301);
+    }
+    if (pathname.startsWith('/job/')) {
+      let slug = pathname.slice('/job/'.length).replace(/\/+$/, '');
+      if (slug && /^[a-z0-9._-]+$/i.test(slug) && slug.length <= 400) {
+        const redirectUrl = url.clone();
+        redirectUrl.pathname = '/job-listing';
+        redirectUrl.search = `?query=${encodeURIComponent(slug)}`;
+        return NextResponse.redirect(redirectUrl, 301);
+      }
+      const fallback = url.clone();
+      fallback.pathname = '/job-listing';
+      fallback.search = '';
+      return NextResponse.redirect(fallback, 301);
+    }
+
+    // /posts/:slug -> /blogs/:slug
     if (pathname.startsWith('/posts/')) {
-      const slug = pathname.replace('/posts/', '');
+      const slug = pathname.slice('/posts/'.length).replace(/\/+$/, '');
+      if (!slug) {
+        const redirectUrl = url.clone();
+        redirectUrl.pathname = '/blogs';
+        redirectUrl.search = '';
+        return NextResponse.redirect(redirectUrl, 301);
+      }
       const redirectUrl = url.clone();
       redirectUrl.pathname = `/blogs/${slug}`;
+      redirectUrl.search = '';
       return NextResponse.redirect(redirectUrl, 301);
     }
 

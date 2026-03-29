@@ -23,7 +23,7 @@ export default async function robots() {
                     {
                         userAgent: '*',
                         allow: '/',
-                        disallow: ['/admin/', '/api/'],
+                        disallow: ['/admin/', '/api/', '/_next/'],
                     },
                 ],
                 sitemap: 'https://www.justjobs.info/sitemap.xml',
@@ -42,7 +42,7 @@ export default async function robots() {
             {
                 userAgent: '*',
                 allow: '/',
-                disallow: ['/admin/', '/api/'],
+                disallow: ['/admin/', '/api/', '/_next/'],
             },
             {
                 userAgent: '*',

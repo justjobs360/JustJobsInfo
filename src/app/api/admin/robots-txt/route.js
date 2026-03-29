@@ -19,6 +19,9 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+# Next.js build assets — not useful as standalone indexed URLs
+Disallow: /_next/
+
 # Allow specific paths
 Allow: /api/blogs/
 Allow: /api/jobs/

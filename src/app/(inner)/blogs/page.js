@@ -85,6 +85,20 @@ function BlogsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
+    // Listing index canonical is always /blogs (no ?search= / ?category=). Matches middleware Link header
+    // and prevents mixed signals for GSC "Alternate page with proper canonical tag".
+    useEffect(() => {
+        const href = 'https://www.justjobs.info/blogs';
+        const link = document.createElement('link');
+        link.setAttribute('rel', 'canonical');
+        link.setAttribute('href', href);
+        link.setAttribute('data-ji-blog-listing', '1');
+        document.head.appendChild(link);
+        return () => {
+            document.querySelector('link[data-ji-blog-listing="1"]')?.remove();
+        };
+    }, []);
+
     // Debounce search term to avoid too many API calls
     useEffect(() => {
         const timer = setTimeout(() => {
