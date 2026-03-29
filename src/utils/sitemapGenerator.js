@@ -3,6 +3,8 @@
  * Used by prebuild script (dynamic import), admin API, and public /sitemap.xml route.
  */
 
+import { BLOG_COLLECTION } from './blogConstants.js';
+
 export const SITEMAP_CACHE_COLLECTION = 'sitemap_cache';
 
 export const SITEMAP_RESPONSE_HEADERS = {
@@ -145,22 +147,25 @@ export async function collectSitemapEntries(db, siteUrl) {
   let entries = getStaticSitemapEntries(base, today);
 
   try {
-    const blogsCollection = db.collection('blogs');
+    const blogsCollection = db.collection(BLOG_COLLECTION);
     const blogs = await blogsCollection
       .find({ status: 'published' })
-      .sort({ publishedDate: -1 })
+      .sort({ createdAt: -1 })
       .limit(1000)
       .toArray();
 
     if (blogs?.length > 0) {
-      const blogEntries = blogs.map((blog) => ({
-        loc: `${base}/blogs/${blog.slug}`,
-        lastmod: blog.publishedDate
-          ? new Date(blog.publishedDate).toISOString()
-          : today.toISOString(),
-        changefreq: 'monthly',
-        priority: 0.6,
-      }));
+      const blogEntries = blogs.map((blog) => {
+        const raw =
+          blog.publishedDate ?? blog.updatedAt ?? blog.createdAt ?? today;
+        const lastmod = new Date(raw).toISOString();
+        return {
+          loc: `${base}/blogs/${blog.slug}`,
+          lastmod,
+          changefreq: 'monthly',
+          priority: 0.6,
+        };
+      });
       entries = [...entries, ...blogEntries];
     }
   } catch (err) {

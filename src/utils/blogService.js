@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { getCollection, getDatabase } from './mongodb';
+import { BLOG_COLLECTION } from './blogConstants.js';
 
 // Convert markdown-like content to HTML for blog rendering
 function convertMarkdownToHTML(content) {
@@ -34,8 +35,6 @@ function convertMarkdownToHTML(content) {
     // Convert line breaks
     .replace(/\n/g, '<br>');
 }
-
-const BLOG_COLLECTION = 'Blogs';
 
 // Get blog collection instance
 async function getBlogCollection() {

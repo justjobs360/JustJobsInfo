@@ -107,9 +107,9 @@ export default function AdminSitemapPage() {
             XML Sitemap
           </h1>
           <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>
-            Generate and store the sitemap in MongoDB. <code>/sitemap.xml</code> and{' '}
-            <code>/sitemap.xml/</code> both return the same file; use the trailing-slash URL in Search Console if
-            that fetches reliably for you.
+            Generate and store the sitemap in MongoDB. The canonical public URL is{' '}
+            <code>/sitemap.xml/</code>; <code>/sitemap.xml</code> responds with a 301 redirect to that URL. Submit
+            the trailing-slash URL in Search Console.
           </p>
         </div>
 

@@ -16,8 +16,14 @@ export function middleware(request) {
     // Vercel domain configuration already handles domain redirects and can
     // conflict with middleware redirects, causing redirect loops.
 
-    // Trailing-slash sitemap URL: rewrite internally to /sitemap.xml so the browser
-    // stays on .../sitemap.xml/ (200 + XML) — same Mongo cache as generate/regenerate.
+    // Canonical sitemap URL is /sitemap.xml/ (trailing slash). Non-canonical returns 301.
+    if (pathname === '/sitemap.xml') {
+      const dest = request.nextUrl.clone();
+      dest.pathname = '/sitemap.xml/';
+      return NextResponse.redirect(dest, 301);
+    }
+
+    // Browser URL stays .../sitemap.xml/; internally serve the route handler at /sitemap.xml.
     if (pathname === '/sitemap.xml/') {
       const requestHeaders = new Headers(request.headers);
       requestHeaders.delete('if-none-match');
@@ -25,13 +31,6 @@ export function middleware(request) {
       const rewriteUrl = request.nextUrl.clone();
       rewriteUrl.pathname = '/sitemap.xml';
       return NextResponse.rewrite(rewriteUrl, { request: { headers: requestHeaders } });
-    }
-
-    if (pathname === '/sitemap.xml') {
-      const requestHeaders = new Headers(request.headers);
-      requestHeaders.delete('if-none-match');
-      requestHeaders.delete('if-modified-since');
-      return NextResponse.next({ request: { headers: requestHeaders } });
     }
 
     const isSpecialSeoFile =
