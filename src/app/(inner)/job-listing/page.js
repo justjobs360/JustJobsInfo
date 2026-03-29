@@ -35,13 +35,54 @@ export default function JobListingPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    // Canonical is always the main listing; filters are noindex (see middleware X-Robots-Tag).
     useEffect(() => {
-        // Handle industry parameter from URL (on every navigation)
-        if (searchParams && searchParams.get('industry')) {
-            const industry = searchParams.get('industry');
-            // Always update the query when industry parameter changes
-            setSearchFilters(prev => ({ ...prev, query: industry }));
-            // Reset the search trigger flag to allow new search
+        const href = 'https://www.justjobs.info/job-listing';
+        const link = document.createElement('link');
+        link.setAttribute('rel', 'canonical');
+        link.setAttribute('href', href);
+        link.setAttribute('data-ji-job-listing-canonical', '1');
+        document.head.appendChild(link);
+        return () => {
+            document.querySelector('link[data-ji-job-listing-canonical="1"]')?.remove();
+        };
+    }, []);
+
+    const listingSeoKey = searchParams?.toString() ?? '';
+
+    useEffect(() => {
+        if (typeof document === 'undefined') return;
+        const sp = new URLSearchParams(listingSeoKey);
+        const nz = (k) => (sp.get(k) ?? '').trim().length > 0;
+        const needsNoIndex = nz('query') || nz('industry') || nz('job') || nz('q');
+        if (!needsNoIndex) {
+            document.querySelector('meta[data-ji-job-listing-robots="1"]')?.remove();
+            return;
+        }
+        let meta = document.querySelector('meta[data-ji-job-listing-robots="1"]');
+        if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', 'robots');
+            meta.setAttribute('data-ji-job-listing-robots', '1');
+            document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', 'noindex, follow');
+        return () => {
+            document.querySelector('meta[data-ji-job-listing-robots="1"]')?.remove();
+        };
+    }, [listingSeoKey]);
+
+    useEffect(() => {
+        // Sync URL params into search (legacy /job/… redirects use ?query=; industry hub uses ?industry=)
+        if (!searchParams) return;
+        const urlQuery = searchParams.get('query');
+        const industry = searchParams.get('industry');
+
+        if (urlQuery) {
+            setSearchFilters((prev) => ({ ...prev, query: urlQuery }));
+            initialSearchTriggered.current = false;
+        } else if (industry) {
+            setSearchFilters((prev) => ({ ...prev, query: industry }));
             initialSearchTriggered.current = false;
         }
         
@@ -716,9 +757,10 @@ export default function JobListingPage() {
                                 }}>
                                     <i className="fas fa-search"></i>
                                 </div>
-                                <h4 style={{color: '#495057', marginBottom: '1rem'}}>No Jobs Found</h4>
+                                <h4 style={{color: '#495057', marginBottom: '1rem'}}>No matching roles for this search</h4>
                                 <p style={{color: '#6c757d', marginBottom: '2rem', fontSize: '1.1rem'}}>
-                                    Don&apos;t worry! Let&apos;s try some alternatives to help you find the perfect opportunity.
+                                    Listings update often — the role may have closed or titles may not match our index yet.
+                                    Adjust your keywords, clear filters, or browse all open jobs from the main job listing page.
                                 </p>
                                 
                                 <div className="suggestions-grid" style={{

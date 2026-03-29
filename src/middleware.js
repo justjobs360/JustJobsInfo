@@ -116,6 +116,16 @@ export function middleware(request) {
       // Set the Link header with rel=canonical
       // Note: If other middleware or framework code sets Link already, this will replace it.
       response.headers.set('Link', `<${canonical}>; rel="canonical"`);
+
+      // Filter / deeplink job listing URLs often show "no matching jobs" for expired listings;
+      // Google flags that as soft 404. Do not index these URL variants — canonical is /job-listing only.
+      if (pathname === '/job-listing') {
+        const sp = url.searchParams;
+        const nz = (k) => (sp.get(k) ?? '').trim().length > 0;
+        if (nz('query') || nz('industry') || nz('job') || nz('q')) {
+          response.headers.set('X-Robots-Tag', 'noindex, follow');
+        }
+      }
     } catch (e) {
       // silently continue if header setting fails
       console.error('Failed to set canonical Link header in middleware:', e);
