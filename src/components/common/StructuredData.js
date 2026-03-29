@@ -58,10 +58,18 @@ export default function StructuredData({ type = 'page', pageData = {}, customBre
             }
         }
 
-        // Add WebPage schema for all pages
-        const currentUrl = typeof window !== 'undefined' 
-            ? window.location.href 
-            : `https://www.justjobs.info${pathname}`;
+        // WebPage URL: match HTTP Link canonical (middleware) — listing filter queries are not unique URLs for SEO.
+        const currentUrl = (() => {
+            const base = 'https://www.justjobs.info';
+            if (typeof window === 'undefined') {
+                return `${base}${pathname}`;
+            }
+            const p = window.location.pathname || pathname || '';
+            if (p === '/blogs' || p === '/job-listing') {
+                return `${base}${p}`;
+            }
+            return window.location.href;
+        })();
 
         const webPageSchema = generateWebPageSchema({
             title: pageData.title || document.title,

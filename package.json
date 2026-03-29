@@ -2,6 +2,9 @@
   "name": "luminos-next",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/generate-sitemap-build.mjs",
@@ -48,7 +51,6 @@
     "redis": "^5.6.0",
     "rellax": "^1.12.1",
     "swiper": "^11.1.15",
-    "textract": "^2.5.0",
     "validator": "^13.15.15"
   },
   "devDependencies": {

@@ -1,5 +1,23 @@
 import { NextResponse } from 'next/server';
 
+const CANONICAL_ORIGIN = 'https://www.justjobs.info';
+
+/**
+ * Default listing/filter URLs with query params are thin duplicates; canonical = path only (HTTPS www).
+ * Avoids "Duplicate, Google chose different canonical than user" for ?search=, ?query=, ?industry=, etc.
+ */
+function canonicalLinkHref(url) {
+  const pathname = url.pathname || '';
+  const search = url.search || '';
+  const hasQuery = search.length > 1;
+
+  if (hasQuery && (pathname === '/blogs' || pathname === '/job-listing')) {
+    return `${CANONICAL_ORIGIN}${pathname}`;
+  }
+
+  return `${CANONICAL_ORIGIN}${pathname}${search}`;
+}
+
 /**
  * Middleware to handle legacy/permanent redirects.
  * - /posts/:slug  -> /blogs/:slug
@@ -37,6 +55,16 @@ export function middleware(request) {
       return NextResponse.next();
     }
 
+    // Legacy PHP front-controller URL (site is Next.js — no PHP). Crawlers often got 403 here.
+    // Exact path only; strip query on redirect to avoid reflecting untrusted URLs (open redirect).
+    const pathTrimmed = pathname.replace(/\/+$/, '') || '/';
+    if (pathTrimmed.toLowerCase() === '/index.php') {
+      const home = request.nextUrl.clone();
+      home.pathname = '/';
+      home.search = '';
+      return NextResponse.redirect(home, 301);
+    }
+
     // Legacy template URL (no page); canonical blog index is /blogs
     if (pathname === '/blog-details') {
       const redirectUrl = url.clone();
@@ -56,8 +84,7 @@ export function middleware(request) {
     // declares the canonical URL (helps crawlers pick the canonical)
     const response = NextResponse.next();
     try {
-      const canonicalHost = 'https://www.justjobs.info';
-      const canonical = `${canonicalHost}${url.pathname}${url.search}`;
+      const canonical = canonicalLinkHref(url);
       // Set the Link header with rel=canonical
       // Note: If other middleware or framework code sets Link already, this will replace it.
       response.headers.set('Link', `<${canonical}>; rel="canonical"`);

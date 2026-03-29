@@ -28,25 +28,23 @@ const nextConfig = {
   // Power optimizations
   poweredByHeader: false,
 
-  // Exclude large files from serverless functions
-  experimental: {
-    outputFileTracingExcludes: {
-      '*': [
-        'public/assets/images/**',
-        'public/justjobinfo2.mp4',
-        'public/justjobsinfo.mp4',
-        'public/assets/fonts/**',
-        'public/uploads/**',
-        'public/assets/css/**',
-        'public/assets/js/**',
-        'public/assets/resumes/**',
-        'node_modules/@swc/core-linux-x64-gnu',
-        'node_modules/@swc/core-linux-x64-musl',
-        'node_modules/@esbuild/linux-x64',
-      ],
-    },
+  // Exclude large files from serverless output traces (Next.js 15+ top-level key)
+  outputFileTracingExcludes: {
+    '*': [
+      'public/assets/images/**',
+      'public/justjobinfo2.mp4',
+      'public/justjobsinfo.mp4',
+      'public/assets/fonts/**',
+      'public/uploads/**',
+      'public/assets/css/**',
+      'public/assets/js/**',
+      'public/assets/resumes/**',
+      'node_modules/@swc/core-linux-x64-gnu',
+      'node_modules/@swc/core-linux-x64-musl',
+      'node_modules/@esbuild/linux-x64',
+    ],
   },
-  
+
   async headers() {
     return [
       {

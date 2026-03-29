@@ -1,6 +1,7 @@
 "use client";
 import BackToTop from "@/components/common/BackToTop";
 import Breadcrumb from "@/components/common/Breadcrumb";
+import Link from "next/link";
 import React from "react";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
@@ -80,49 +81,49 @@ function page() {
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     Business Solution <i className="far fa-long-arrow-right" />
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                         {/* single categoris End */}
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     Strategy Growth
                                                     <i className="far fa-long-arrow-right" />
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                         {/* single categoris End */}
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     Finance Solution
                                                     <i className="far fa-long-arrow-right" />
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                         {/* single categoris End */}
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     Investment Policy
                                                     <i className="far fa-long-arrow-right" />
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                         {/* single categoris End */}
                                         {/* single categoris */}
                                         <ul className="single-categories">
                                             <li>
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     Tax Managment
                                                     <i className="far fa-long-arrow-right" />
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                         {/* single categoris End */}
@@ -138,60 +139,60 @@ function page() {
                                         {/* recent-post */}
                                         <div className="recent-post-single">
                                             <div className="thumbnail">
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/01.jpg" alt="Blog_post" />
-                                                </a>
+                                                </Link>
                                             </div>
                                             <div className="content-area">
                                                 <div className="user">
                                                     <i className="fal fa-clock" />
                                                     <span>15 Jan, 2023</span>
                                                 </div>
-                                                <a className="post-title" href="/blogs">
+                                                <Link className="post-title" href="/blogs">
                                                     <h6 className="title">
                                                         We would love to share a similar experience
                                                     </h6>
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                         {/* recent-post End */}
                                         {/* recent-post */}
                                         <div className="recent-post-single">
                                             <div className="thumbnail">
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/02.jpg" alt="Blog_post" />
-                                                </a>
+                                                </Link>
                                             </div>
                                             <div className="content-area">
                                                 <div className="user">
                                                     <i className="fal fa-clock" />
                                                     <span>15 Jan, 2023</span>
                                                 </div>
-                                                <a className="post-title" href="/blogs">
+                                                <Link className="post-title" href="/blogs">
                                                     <h6 className="title">
                                                         We would love to share a similar experience
                                                     </h6>
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                         {/* recent-post End */}
                                         {/* recent-post */}
                                         <div className="recent-post-single">
                                             <div className="thumbnail">
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/03.jpg" alt="Blog_post" />
-                                                </a>
+                                                </Link>
                                             </div>
                                             <div className="content-area">
                                                 <div className="user">
                                                     <i className="fal fa-clock" />
                                                     <span>15 Jan, 2023</span>
                                                 </div>
-                                                <a className="post-title" href="/blogs">
+                                                <Link className="post-title" href="/blogs">
                                                     <h6 className="title">
                                                         We would love to share a similar experience
                                                     </h6>
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                         {/* recent-post End */}
@@ -206,26 +207,26 @@ function page() {
                                     <div className="wized-body">
                                         <div className="gallery-inner">
                                             <div className="row-1 single-row">
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/04.jpg" alt="Gallery" />
-                                                </a>
-                                                <a href="/blogs">
+                                                </Link>
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/05.jpg" alt="Gallery" />
-                                                </a>
-                                                <a href="/blogs">
+                                                </Link>
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/06.jpg" alt="Gallery" />
-                                                </a>
+                                                </Link>
                                             </div>
                                             <div className="row-2 single-row">
-                                                <a href="/blogs">
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/07.jpg" alt="Gallery" />
-                                                </a>
-                                                <a href="/blogs">
+                                                </Link>
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/08.jpg" alt="Gallery" />
-                                                </a>
-                                                <a href="/blogs">
+                                                </Link>
+                                                <Link href="/blogs">
                                                     <img src="assets/images/blog/sm/09.jpg" alt="Gallery" />
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>
@@ -238,15 +239,15 @@ function page() {
                                     </div>
                                     <div className="wized-body">
                                         <div className="tags-wrapper">
-                                            <a href="/blogs">Services</a>
-                                            <a href="/blogs">Business</a>
-                                            <a href="/blogs">Growth</a>
-                                            <a href="/blogs">Finance</a>
-                                            <a href="/blogs">UI/UX Design</a>
-                                            <a href="/blogs">Solution</a>
-                                            <a href="/blogs">Speed</a>
-                                            <a href="/blogs">Strategy</a>
-                                            <a href="/blogs">Technology</a>
+                                            <Link href="/blogs">Services</Link>
+                                            <Link href="/blogs">Business</Link>
+                                            <Link href="/blogs">Growth</Link>
+                                            <Link href="/blogs">Finance</Link>
+                                            <Link href="/blogs">UI/UX Design</Link>
+                                            <Link href="/blogs">Solution</Link>
+                                            <Link href="/blogs">Speed</Link>
+                                            <Link href="/blogs">Strategy</Link>
+                                            <Link href="/blogs">Technology</Link>
                                         </div>
                                     </div>
                                 </div>
