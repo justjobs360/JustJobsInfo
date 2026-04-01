@@ -1,6 +1,25 @@
 import { NextResponse } from 'next/server';
 
 const CANONICAL_ORIGIN = 'https://www.justjobs.info';
+const INDEXABLE_EXACT_PATHS = new Set([
+  '/',
+  '/about',
+  '/contact',
+  '/blogs',
+  '/job-listing',
+  '/privacy-policy',
+  '/terms-of-use',
+  '/cookies-policy',
+  '/refund-policy',
+  '/advertising-disclosure',
+  '/faq',
+  '/career',
+  '/resume-builder',
+  '/resume-audit',
+  '/job-fit',
+  '/job-alerts',
+]);
+const INDEXABLE_PREFIX_PATHS = ['/blogs/'];
 
 /**
  * Default listing/filter URLs with query params are thin duplicates; canonical = path only (HTTPS www).
@@ -16,6 +35,26 @@ function canonicalLinkHref(url) {
   }
 
   return `${CANONICAL_ORIGIN}${pathname}${search}`;
+}
+
+function normalizePath(pathname) {
+  if (!pathname) return '/';
+  return pathname.replace(/\/+$/, '') || '/';
+}
+
+function isPublicHtmlPath(pathname) {
+  if (!pathname) return false;
+  if (pathname.startsWith('/_next/')) return false;
+  if (pathname.startsWith('/api/')) return false;
+  // Any file-like URL such as .xml, .txt, .js, images, etc.
+  if (/\.[a-z0-9]+$/i.test(pathname)) return false;
+  return true;
+}
+
+function isIndexablePath(pathname) {
+  const normalized = normalizePath(pathname);
+  if (INDEXABLE_EXACT_PATHS.has(normalized)) return true;
+  return INDEXABLE_PREFIX_PATHS.some((prefix) => normalized.startsWith(prefix));
 }
 
 /**
@@ -57,7 +96,7 @@ export function middleware(request) {
 
     // Legacy PHP front-controller URL (site is Next.js — no PHP). Crawlers often got 403 here.
     // Exact path only; strip query on redirect to avoid reflecting untrusted URLs (open redirect).
-    const pathTrimmed = pathname.replace(/\/+$/, '') || '/';
+    const pathTrimmed = normalizePath(pathname);
     if (pathTrimmed.toLowerCase() === '/index.php') {
       const home = request.nextUrl.clone();
       home.pathname = '/';
@@ -125,6 +164,11 @@ export function middleware(request) {
         if (nz('query') || nz('industry') || nz('job') || nz('q')) {
           response.headers.set('X-Robots-Tag', 'noindex, follow');
         }
+      }
+
+      // Keep thin or placeholder marketing/template pages out of index until content is expanded.
+      if (!response.headers.get('X-Robots-Tag') && isPublicHtmlPath(pathname) && !isIndexablePath(pathname)) {
+        response.headers.set('X-Robots-Tag', 'noindex, follow');
       }
     } catch (e) {
       // silently continue if header setting fails

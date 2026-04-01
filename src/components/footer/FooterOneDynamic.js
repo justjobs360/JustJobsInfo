@@ -14,21 +14,69 @@ function FooterOneDynamic() {
         loadFooterData();
     }, []);
 
+    const normalizeFooterData = (data) => {
+        if (!data) return data;
+
+        const normalized = { ...data };
+        const sections = Array.isArray(normalized.sections) ? [...normalized.sections] : [];
+
+        normalized.sections = sections.map((section) => {
+            const links = Array.isArray(section.links) ? [...section.links] : [];
+
+            if (section.id === 'services') {
+                return {
+                    ...section,
+                    links: links.map((link) => {
+                        if (link.id === 'lms' || link.href === '/LearningManagementSystem') {
+                            return { ...link, href: '/coming-soon' };
+                        }
+                        return link;
+                    })
+                };
+            }
+
+            if (section.id === 'legal') {
+                const hasDisclosureLink = links.some((link) => link.href === '/advertising-disclosure' || link.id === 'ads-disclosure');
+                return {
+                    ...section,
+                    links: hasDisclosureLink
+                        ? links
+                        : [...links, { id: 'ads-disclosure', text: 'Advertising Disclosure', href: '/advertising-disclosure' }]
+                };
+            }
+
+            return section;
+        });
+
+        const socialLinks = Array.isArray(normalized.social_links) ? [...normalized.social_links] : [];
+        normalized.social_links = socialLinks.map((link) => {
+            if (link.id === 'youtube' && (link.href === '/#' || link.href === '#')) {
+                return { ...link, href: 'https://www.youtube.com/@justjobsinfo' };
+            }
+            if (link.id === 'instagram' && (link.href === '/#' || link.href === '#')) {
+                return { ...link, href: 'https://www.instagram.com/justjobsinfo/' };
+            }
+            return link;
+        });
+
+        return normalized;
+    };
+
     const loadFooterData = async () => {
         try {
             const response = await fetch('/api/footer');
             const data = await response.json();
             
             if (data.success) {
-                setFooterData(data.data);
+                setFooterData(normalizeFooterData(data.data));
             } else {
                 // Fallback to default data if API fails
-                setFooterData(getDefaultFooterData());
+                setFooterData(normalizeFooterData(getDefaultFooterData()));
             }
         } catch (error) {
             console.error('Error loading footer data:', error);
             // Fallback to default data
-            setFooterData(getDefaultFooterData());
+            setFooterData(normalizeFooterData(getDefaultFooterData()));
         } finally {
             setLoading(false);
         }
@@ -48,7 +96,7 @@ function FooterOneDynamic() {
                     { id: 'job-listing', text: 'Job Listings', href: '/job-listing' },
                     { id: 'resources', text: 'Resources', href: '/service' },
                     { id: 'askgenie', text: 'Ask Genie', href: '/askgenie' },
-                    { id: 'lms', text: 'LMS (Coming Soon)', href: '/LearningManagementSystem' }
+                    { id: 'lms', text: 'LMS (Coming Soon)', href: '/coming-soon' }
                 ]
             },
             {
@@ -82,6 +130,7 @@ function FooterOneDynamic() {
                     { id: 'terms', text: 'Terms of Use', href: '/terms-of-use' },
                     { id: 'privacy', text: 'Privacy Policy', href: '/privacy-policy' },
                     { id: 'cookies', text: 'Cookie Policy', href: '/cookies-policy' },
+                    { id: 'ads-disclosure', text: 'Advertising Disclosure', href: '/advertising-disclosure' },
                     { id: 'refund', text: 'Refund Policy', href: '/refund-policy' },
                     { id: 'faq', text: 'FAQ', href: '/faq' },
                     { id: 'support', text: 'Help & Support', href: '/contact' },
@@ -92,9 +141,9 @@ function FooterOneDynamic() {
         social_links: [
             { id: 'facebook', name: 'Facebook', icon: 'fa-brands fa-facebook-f', href: 'https://www.facebook.com/justjobsinfos/', aria_label: 'Visit our Facebook page' },
             { id: 'x', name: 'X (Twitter)', icon: 'custom-x', href: 'https://x.com/justjobs_info', aria_label: 'Follow us on X' },
-            { id: 'youtube', name: 'YouTube', icon: 'fa-brands fa-youtube', href: '/#', aria_label: 'Subscribe to our YouTube channel' },
+            { id: 'youtube', name: 'YouTube', icon: 'fa-brands fa-youtube', href: 'https://www.youtube.com/@justjobsinfo', aria_label: 'Subscribe to our YouTube channel' },
             { id: 'linkedin', name: 'LinkedIn', icon: 'fa-brands fa-linkedin', href: 'https://www.linkedin.com/company/justjobsng-com/', aria_label: 'Connect with us on LinkedIn' },
-            { id: 'instagram', name: 'Instagram', icon: 'fa-brands fa-instagram', href: '/#', aria_label: 'Follow us on Instagram' }
+            { id: 'instagram', name: 'Instagram', icon: 'fa-brands fa-instagram', href: 'https://www.instagram.com/justjobsinfo/', aria_label: 'Follow us on Instagram' }
         ]
     });
 

@@ -88,8 +88,8 @@ function FooterOneDynamic() {
                                             </li>
                                             <li>
                                                 <Link 
-                                                    href="/LearningManagementSystem"
-                                                    style={isActive('/LearningManagementSystem') ? { color: 'var(--color-primary)' } : {}}
+                                                    href="/coming-soon"
+                                                    style={isActive('/coming-soon') ? { color: 'var(--color-primary)' } : {}}
                                                 >
                                                     LMS (Coming Soon)
                                                 </Link>
@@ -237,6 +237,14 @@ function FooterOneDynamic() {
                                                 </Link>
                                             </li>
                                             <li>
+                                                <Link
+                                                    href="/advertising-disclosure"
+                                                    style={isActive('/advertising-disclosure') ? { color: 'var(--color-primary)' } : {}}
+                                                >
+                                                    Advertising Disclosure
+                                                </Link>
+                                            </li>
+                                            <li>
                                                 <Link 
                                                     href="/faq"
                                                     style={isActive('/faq') ? { color: 'var(--color-primary)' } : {}}
@@ -306,7 +314,7 @@ function FooterOneDynamic() {
                                             </Link>
                                         </li>
                                         <li aria-label="Subscribe to our YouTube channel">
-                                            <Link href="/#">
+                                            <Link href="https://www.youtube.com/@justjobsinfo" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-youtube" />
                                             </Link>
                                         </li>
@@ -316,7 +324,7 @@ function FooterOneDynamic() {
                                             </Link>
                                         </li>
                                         <li aria-label="Follow us on Instagram">
-                                            <Link href="/#">
+                                            <Link href="https://www.instagram.com/justjobsinfo/" target="_blank" rel="noopener noreferrer">
                                                 <i className="fa-brands fa-instagram" />
                                             </Link>
                                         </li>

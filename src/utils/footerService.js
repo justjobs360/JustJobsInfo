@@ -50,7 +50,7 @@ const defaultFooterData = {
         { id: 'job-listing', text: 'Job Listings', href: '/job-listing' },
         { id: 'resources', text: 'Resources', href: '/service' },
         { id: 'askgenie', text: 'Ask Genie', href: '/askgenie' },
-        { id: 'lms', text: 'LMS (Coming Soon)', href: '/LearningManagementSystem' }
+        { id: 'lms', text: 'LMS (Coming Soon)', href: '/coming-soon' }
       ]
     },
     {
@@ -84,6 +84,7 @@ const defaultFooterData = {
         { id: 'terms', text: 'Terms of Use', href: '/terms-of-use' },
         { id: 'privacy', text: 'Privacy Policy', href: '/privacy-policy' },
         { id: 'cookies', text: 'Cookie Policy', href: '/cookies-policy' },
+        { id: 'ads-disclosure', text: 'Advertising Disclosure', href: '/advertising-disclosure' },
         { id: 'faq', text: 'FAQ', href: '/faq' },
         { id: 'support', text: 'Help & Support', href: '/contact' },
         { id: 'contact-us', text: 'Contact Us', href: '/contact' }
@@ -93,9 +94,9 @@ const defaultFooterData = {
   social_links: [
     { id: 'facebook', name: 'Facebook', icon: 'fa-brands fa-facebook-f', href: 'https://www.facebook.com/justjobsinfos/', aria_label: 'Visit our Facebook page' },
     { id: 'x', name: 'X (Twitter)', icon: 'custom-x', href: 'https://x.com/justjobs_info', aria_label: 'Follow us on X' },
-    { id: 'youtube', name: 'YouTube', icon: 'fa-brands fa-youtube', href: '/#', aria_label: 'Subscribe to our YouTube channel' },
+    { id: 'youtube', name: 'YouTube', icon: 'fa-brands fa-youtube', href: 'https://www.youtube.com/@justjobsinfo', aria_label: 'Subscribe to our YouTube channel' },
     { id: 'linkedin', name: 'LinkedIn', icon: 'fa-brands fa-linkedin', href: 'https://www.linkedin.com/company/justjobsng-com/', aria_label: 'Connect with us on LinkedIn' },
-    { id: 'instagram', name: 'Instagram', icon: 'fa-brands fa-instagram', href: '/#', aria_label: 'Follow us on Instagram' }
+    { id: 'instagram', name: 'Instagram', icon: 'fa-brands fa-instagram', href: 'https://www.instagram.com/justjobsinfo/', aria_label: 'Follow us on Instagram' }
   ],
   createdAt: new Date(),
   updatedAt: new Date()

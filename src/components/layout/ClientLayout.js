@@ -32,6 +32,33 @@ function GoogleAnalytics({ gaId }) {
   );
 }
 
+function GoogleAdSense({ publisherId, enabled }) {
+  if (!publisherId || !enabled) return null;
+
+  return (
+    <>
+      <Script
+        id="google-adsense"
+        async
+        strategy="afterInteractive"
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
+        crossOrigin="anonymous"
+      />
+      <Script id="google-adsense-init" strategy="afterInteractive">
+        {`
+          window.adsbygoogle = window.adsbygoogle || [];
+          try {
+            (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: '${publisherId}',
+              enable_page_level_ads: true
+            });
+          } catch (e) {}
+        `}
+      </Script>
+    </>
+  );
+}
+
 // Search Console Verification Component
 function SearchConsoleVerification({ verificationCode }) {
   useEffect(() => {
@@ -57,6 +84,7 @@ function SearchConsoleVerification({ verificationCode }) {
 
 export default function ClientLayout({ children }) {
   const [seoSettings, setSeoSettings] = useState(null);
+  const [adConsent, setAdConsent] = useState(false);
   
   useEffect(() => {
     // Fetch SEO settings for Google Analytics and Search Console - defer to avoid blocking
@@ -84,6 +112,26 @@ export default function ClientLayout({ children }) {
     
     fetchSeoSettings();
   }, []);
+
+  useEffect(() => {
+    const readConsent = () => {
+      try {
+        const raw = localStorage.getItem('gdpr-consent');
+        if (!raw) {
+          setAdConsent(false);
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        setAdConsent(!!parsed.advertising);
+      } catch (error) {
+        setAdConsent(false);
+      }
+    };
+
+    readConsent();
+    window.addEventListener('gdpr-consent-updated', readConsent);
+    return () => window.removeEventListener('gdpr-consent-updated', readConsent);
+  }, []);
   
   return (
     <>
@@ -91,6 +139,7 @@ export default function ClientLayout({ children }) {
       {seoSettings?.googleAnalyticsId && (
         <GoogleAnalytics gaId={seoSettings.googleAnalyticsId} />
       )}
+      <GoogleAdSense publisherId="ca-pub-3944364034379577" enabled={adConsent} />
       
       {/* Search Console Verification */}
       {seoSettings?.googleSearchConsole && (

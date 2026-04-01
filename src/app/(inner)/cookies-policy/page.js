@@ -57,7 +57,7 @@ export default function Home() {
                                         
                                         <h4 className="title mt--30 mb--15">Targeting/Advertising Cookies</h4>
                                         <p className="disc">
-                                            These cookies are used to deliver advertisements more relevant to you and your interests. They are also used to limit the number of times you see an advertisement and help measure the effectiveness of advertising campaigns.
+                                            These cookies are used to deliver advertisements more relevant to you and your interests. They are also used to limit the number of times you see an advertisement and help measure the effectiveness of advertising campaigns, including ads served by Google AdSense.
                                         </p>
                                     </div>
                                 </div>
@@ -114,7 +114,10 @@ export default function Home() {
                                         
                                         <h3 className="title mt--40 mb--20">Cookie Consent</h3>
                                         <p className="disc">
-                                            By continuing to use our website, you consent to our use of cookies as described in this policy. When you first visit our website, you will see a cookie consent banner that allows you to accept or decline non-essential cookies.
+                                            When you first visit our website, you will see a cookie consent banner that allows you to accept or decline non-essential cookies, including advertising cookies used for ad personalization.
+                                        </p>
+                                        <p className="disc">
+                                            For more details about how advertising works on this site, see our <a href="/advertising-disclosure">Advertising Disclosure</a>.
                                         </p>
                                         
                                         <h3 className="title mt--40 mb--20">Updates to This Policy</h3>

@@ -81,67 +81,18 @@ export function getStaticSitemapEntries(siteUrl, today = new Date()) {
 
   return [
     { loc: `${base}/`, lastmod: t, changefreq: 'weekly', priority: 1.0 },
-
-    { loc: `${base}/job-alerts`, lastmod: t, changefreq: 'weekly', priority: 0.9 },
-    { loc: `${base}/job-fit`, lastmod: t, changefreq: 'weekly', priority: 0.9 },
     { loc: `${base}/job-listing`, lastmod: t, changefreq: 'weekly', priority: 0.9 },
-    { loc: `${base}/resume-audit`, lastmod: t, changefreq: 'weekly', priority: 0.9 },
-    { loc: `${base}/resume-builder`, lastmod: t, changefreq: 'weekly', priority: 0.9 },
-
-    ...Array.from({ length: 15 }, (_, i) => i + 1).map((n) => ({
-      loc: `${base}/resume-builder/template/${n}`,
-      lastmod: t,
-      changefreq: 'weekly',
-      priority: 0.9,
-    })),
-
-    { loc: `${base}/service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/service-single`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/ai-learning-service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/cyber-security-service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/development-service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/it-consulting-service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/management-service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-    { loc: `${base}/technologies-service`, lastmod: t, changefreq: 'monthly', priority: 0.8 },
-
     { loc: `${base}/blogs`, lastmod: t, changefreq: 'daily', priority: 0.7 },
-    { loc: `${base}/blog-list`, lastmod: t, changefreq: 'daily', priority: 0.7 },
-    { loc: `${base}/blog-grid-two`, lastmod: t, changefreq: 'daily', priority: 0.7 },
-    { loc: `${base}/blog-grid-four`, lastmod: t, changefreq: 'daily', priority: 0.7 },
-    { loc: `${base}/blog-masonry`, lastmod: t, changefreq: 'daily', priority: 0.7 },
 
     { loc: `${base}/about`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
+    { loc: `${base}/career`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
     { loc: `${base}/contact`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
+    { loc: `${base}/faq`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
     { loc: `${base}/privacy-policy`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
     { loc: `${base}/terms-of-use`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
     { loc: `${base}/cookies-policy`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
     { loc: `${base}/refund-policy`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
-
-    { loc: `${base}/faq`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/important-links`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/downloadable-resources`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-
-    { loc: `${base}/apply`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/askgenie`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/award`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/career`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/career-single`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/case-studies`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/case-studies-single`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/free-consultation`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/partner`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/team`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/team-single`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/travel-industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/logistic-industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/construction-industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/ecommerce-industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/fintech-industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/healthcare-industry`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/it-innovations`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/it-strategies`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${base}/why-choose-us`, lastmod: t, changefreq: 'monthly', priority: 0.5 },
+    { loc: `${base}/advertising-disclosure`, lastmod: t, changefreq: 'yearly', priority: 0.5 },
   ];
 }
 

@@ -8,7 +8,8 @@ const GDPRConsent = () => {
     const [preferences, setPreferences] = useState({
         essential: true, // Always required
         functional: false,
-        analytics: false
+        analytics: false,
+        advertising: false
     });
 
     useEffect(() => {
@@ -16,6 +17,19 @@ const GDPRConsent = () => {
         const consent = localStorage.getItem('gdpr-consent');
         if (!consent) {
             setShowBanner(true);
+        } else {
+            try {
+                const parsed = JSON.parse(consent);
+                setPreferences({
+                    essential: true,
+                    functional: !!parsed.functional,
+                    analytics: !!parsed.analytics,
+                    advertising: !!parsed.advertising
+                });
+            } catch (error) {
+                console.error('Failed to parse GDPR consent:', error);
+                setShowBanner(true);
+            }
         }
 
         // Check screen size for mobile responsiveness
@@ -29,14 +43,20 @@ const GDPRConsent = () => {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    const persistConsent = (consent) => {
+        localStorage.setItem('gdpr-consent', JSON.stringify(consent));
+        window.dispatchEvent(new CustomEvent('gdpr-consent-updated', { detail: consent }));
+    };
+
     const handleAcceptAll = () => {
         const consent = {
             essential: true,
             functional: true,
             analytics: true,
+            advertising: true,
             timestamp: new Date().toISOString()
         };
-        localStorage.setItem('gdpr-consent', JSON.stringify(consent));
+        persistConsent(consent);
         setShowBanner(false);
     };
 
@@ -45,7 +65,7 @@ const GDPRConsent = () => {
             ...preferences,
             timestamp: new Date().toISOString()
         };
-        localStorage.setItem('gdpr-consent', JSON.stringify(consent));
+        persistConsent(consent);
         setShowBanner(false);
     };
 
@@ -54,9 +74,10 @@ const GDPRConsent = () => {
             essential: true, // Essential cookies are always required
             functional: false,
             analytics: false,
+            advertising: false,
             timestamp: new Date().toISOString()
         };
-        localStorage.setItem('gdpr-consent', JSON.stringify(consent));
+        persistConsent(consent);
         setShowBanner(false);
     };
 
@@ -324,6 +345,38 @@ const GDPRConsent = () => {
                                         {isMobile
                                             ? "Help us improve our services by collecting anonymous usage data."
                                             : "Help us improve our services by collecting anonymous usage data. These cookies provide insights into how users interact with our platform, helping us optimize performance, identify popular features, and enhance the overall user experience. No personal information is collected."
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '12px' : '20px' }}>
+                                <div style={{ marginTop: '2px' }}>
+                                    <ToggleSwitch
+                                        checked={preferences.advertising}
+                                        onChange={() => handlePreferenceChange('advertising')}
+                                    />
+                                </div>
+                                <div style={{ flex: '1' }}>
+                                    <strong style={{
+                                        fontSize: isMobile ? '14px' : '16px',
+                                        fontWeight: '600',
+                                        color: '#222',
+                                        display: 'block',
+                                        marginBottom: '6px',
+                                        letterSpacing: '0.01em'
+                                    }}>
+                                        Advertising Cookies
+                                    </strong>
+                                    <p style={{
+                                        margin: '0',
+                                        fontSize: isMobile ? '13px' : '15px',
+                                        color: '#666',
+                                        lineHeight: '1.6',
+                                        fontWeight: '400'
+                                    }}>
+                                        {isMobile
+                                            ? "Used to show relevant ads and limit repeated ad impressions."
+                                            : "Used by advertising partners such as Google AdSense to show relevant ads and limit repeated ad impressions. These cookies may be used to personalize ads based on your interaction with our website."
                                         }
                                     </p>
                                 </div>
