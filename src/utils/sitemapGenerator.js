@@ -12,11 +12,26 @@ export const SITEMAP_RESPONSE_HEADERS = {
   'Cache-Control': 'public, max-age=0, s-maxage=0, must-revalidate, no-cache',
 };
 
+const CANONICAL_SITEMAP_ORIGIN = 'https://www.justjobs.info';
+
+/**
+ * Sitemap <loc> values must match the indexed canonical host (HTTPS www).
+ * If NEXT_PUBLIC_SITE_URL is apex or http, normalize so Google does not get
+ * sitemap URLs that only exist as redirects.
+ */
 export function getSiteUrl() {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ||
-    'https://www.justjobs.info'
-  );
+  const fallback = CANONICAL_SITEMAP_ORIGIN;
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '').trim();
+  if (!raw) return fallback;
+  try {
+    const u = new URL(raw);
+    if (u.hostname === 'justjobs.info' || u.hostname === 'www.justjobs.info') {
+      return CANONICAL_SITEMAP_ORIGIN;
+    }
+    return raw;
+  } catch {
+    return fallback;
+  }
 }
 
 function toValidIsoLastmod(raw, fallbackDate) {

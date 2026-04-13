@@ -1,16 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/index.php",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/index.php/",
-      "destination": "/",
-      "permanent": true
-    }
-  ],
   "crons": [
     {
       "path": "/api/cron/prewarm",

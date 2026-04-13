@@ -185,6 +185,29 @@ function toSearchResult(doc) {
 }
 
 /**
+ * Find jobs matching a URL slug (e.g. "team-lead-group-reporting-QgOuC").
+ * Converts hyphens to spaces and runs a text search; returns the best match or null.
+ */
+export async function findJobBySlug(slug) {
+  if (!slug) return null;
+  const col = await getCollection();
+
+  const cleaned = slug.replace(/\/+$/, '').replace(/-/g, ' ').trim();
+  if (!cleaned) return null;
+
+  const doc = await col
+    .find(
+      { $text: { $search: cleaned } },
+      { projection: { score: { $meta: 'textScore' } } }
+    )
+    .sort({ score: { $meta: 'textScore' } })
+    .limit(1)
+    .toArray();
+
+  return doc.length > 0 ? toSearchResult(doc[0]) : null;
+}
+
+/**
  * Mark jobs older than EXPIRE_DAYS as expired
  */
 export async function markExpired() {

@@ -1,12 +1,37 @@
 import { NextResponse } from 'next/server';
 
 const CANONICAL_ORIGIN = 'https://www.justjobs.info';
+/** Legacy redirects on these hosts should target www in one hop (avoid apex→www chains). */
+const PRODUCTION_JUSTJOBS_HOSTS = new Set(['justjobs.info', 'www.justjobs.info']);
+
+/**
+ * @param {import('next/server').NextRequest} request
+ * @param {string} pathname - absolute path e.g. /job-listing
+ * @param {string} [search] - including leading ? or empty
+ */
+function legacyRedirect(request, pathname, search = '') {
+  const hostname = request.nextUrl.hostname;
+  const normalizedSearch =
+    !search ? '' : search.startsWith('?') ? search : `?${search}`;
+
+  if (PRODUCTION_JUSTJOBS_HOSTS.has(hostname)) {
+    const dest = new URL(CANONICAL_ORIGIN);
+    dest.pathname = pathname;
+    dest.search = normalizedSearch;
+    return NextResponse.redirect(dest, 301);
+  }
+  const redirectUrl = request.nextUrl.clone();
+  redirectUrl.pathname = pathname;
+  redirectUrl.search = normalizedSearch;
+  return NextResponse.redirect(redirectUrl, 301);
+}
 const INDEXABLE_EXACT_PATHS = new Set([
   '/',
   '/about',
   '/contact',
   '/blogs',
   '/job-listing',
+  '/login',
   '/privacy-policy',
   '/terms-of-use',
   '/cookies-policy',
@@ -19,7 +44,7 @@ const INDEXABLE_EXACT_PATHS = new Set([
   '/job-fit',
   '/job-alerts',
 ]);
-const INDEXABLE_PREFIX_PATHS = ['/blogs/'];
+const INDEXABLE_PREFIX_PATHS = ['/blogs/', '/job/'];
 
 /**
  * Default listing/filter URLs with query params are thin duplicates; canonical = path only (HTTPS www).
@@ -61,7 +86,7 @@ function isIndexablePath(pathname) {
  * Middleware to handle legacy/permanent redirects.
  * - /posts/:slug  -> /blogs/:slug
  *
- * /job/:slug -> /job-listing?query=:slug (legacy share URLs).
+ * Bare /job -> /job-listing. /job/[slug] is served by the App Router.
  */
 export function middleware(request) {
   try {
@@ -98,53 +123,27 @@ export function middleware(request) {
     // Exact path only; strip query on redirect to avoid reflecting untrusted URLs (open redirect).
     const pathTrimmed = normalizePath(pathname);
     if (pathTrimmed.toLowerCase() === '/index.php') {
-      const home = request.nextUrl.clone();
-      home.pathname = '/';
-      home.search = '';
-      return NextResponse.redirect(home, 301);
+      return legacyRedirect(request, '/', '');
     }
 
     // Legacy template URL (no page); canonical blog index is /blogs
     if (pathname === '/blog-details') {
-      const redirectUrl = url.clone();
-      redirectUrl.pathname = '/blogs';
-      return NextResponse.redirect(redirectUrl, 301);
+      return legacyRedirect(request, '/blogs', '');
     }
 
-    // Legacy job detail URLs (/job/title-shortid) -> listing with same search slug (page uses ?query=)
+    // Bare /job with no slug -> redirect to job listing
     if (pathname === '/job' || pathname === '/job/') {
-      const redirectUrl = url.clone();
-      redirectUrl.pathname = '/job-listing';
-      redirectUrl.search = '';
-      return NextResponse.redirect(redirectUrl, 301);
+      return legacyRedirect(request, '/job-listing', '');
     }
-    if (pathname.startsWith('/job/')) {
-      let slug = pathname.slice('/job/'.length).replace(/\/+$/, '');
-      if (slug && /^[a-z0-9._-]+$/i.test(slug) && slug.length <= 400) {
-        const redirectUrl = url.clone();
-        redirectUrl.pathname = '/job-listing';
-        redirectUrl.search = `?query=${encodeURIComponent(slug)}`;
-        return NextResponse.redirect(redirectUrl, 301);
-      }
-      const fallback = url.clone();
-      fallback.pathname = '/job-listing';
-      fallback.search = '';
-      return NextResponse.redirect(fallback, 301);
-    }
+    // /job/[slug] is handled by the App Router page (src/app/(inner)/job/[slug]/page.js)
 
     // /posts/:slug -> /blogs/:slug
     if (pathname.startsWith('/posts/')) {
       const slug = pathname.slice('/posts/'.length).replace(/\/+$/, '');
       if (!slug) {
-        const redirectUrl = url.clone();
-        redirectUrl.pathname = '/blogs';
-        redirectUrl.search = '';
-        return NextResponse.redirect(redirectUrl, 301);
+        return legacyRedirect(request, '/blogs', '');
       }
-      const redirectUrl = url.clone();
-      redirectUrl.pathname = `/blogs/${slug}`;
-      redirectUrl.search = '';
-      return NextResponse.redirect(redirectUrl, 301);
+      return legacyRedirect(request, `/blogs/${slug}`, '');
     }
 
     // For non-redirect responses, add a Link header that explicitly
