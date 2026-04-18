@@ -55,14 +55,6 @@ export const generateWebSiteSchema = () => {
                 "@type": "ImageObject",
                 "url": "https://www.justjobs.info/assets/images/logo/logo-dark.png"
             }
-        },
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://www.justjobs.info/job-listing?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
         }
     };
 };

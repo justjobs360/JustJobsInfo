@@ -135,6 +135,11 @@ export function middleware(request) {
     if (pathname === '/job' || pathname === '/job/') {
       return legacyRedirect(request, '/job-listing', '');
     }
+    // /job/[slug]/ — canonical metadata uses no trailing slash; one hop to HTTPS www + normalized path
+    const jobTrailingSlash = pathname.match(/^\/job\/([^/]+)\/+$/);
+    if (jobTrailingSlash) {
+      return legacyRedirect(request, `/job/${jobTrailingSlash[1]}`, '');
+    }
     // /job/[slug] is handled by the App Router page (src/app/(inner)/job/[slug]/page.js)
 
     // /posts/:slug -> /blogs/:slug
@@ -155,14 +160,20 @@ export function middleware(request) {
       // Note: If other middleware or framework code sets Link already, this will replace it.
       response.headers.set('Link', `<${canonical}>; rel="canonical"`);
 
+      const sp = url.searchParams;
+      const nz = (k) => (sp.get(k) ?? '').trim().length > 0;
+
       // Filter / deeplink job listing URLs often show "no matching jobs" for expired listings;
       // Google flags that as soft 404. Do not index these URL variants — canonical is /job-listing only.
       if (pathname === '/job-listing') {
-        const sp = url.searchParams;
-        const nz = (k) => (sp.get(k) ?? '').trim().length > 0;
         if (nz('query') || nz('industry') || nz('job') || nz('q')) {
           response.headers.set('X-Robots-Tag', 'noindex, follow');
         }
+      }
+
+      // Blog index with filters is a thin duplicate of /blogs; canonical is path-only (see canonicalLinkHref).
+      if (pathname === '/blogs' && (nz('search') || nz('category'))) {
+        response.headers.set('X-Robots-Tag', 'noindex, follow');
       }
 
       // Keep thin or placeholder marketing/template pages out of index until content is expanded.

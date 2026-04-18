@@ -56,7 +56,7 @@ Allow: /api/blogs/
 Allow: /api/jobs/
 
 # Sitemap
-Sitemap: https://www.justjobs.info/sitemap.xml
+Sitemap: https://www.justjobs.info/sitemap.xml/
 
 # Crawl delay (optional)
 Crawl-delay: 1`;
@@ -127,7 +127,7 @@ Allow: /api/blogs/
 Allow: /api/jobs/
 
 # Sitemap
-Sitemap: https://www.justjobs.info/sitemap.xml
+Sitemap: https://www.justjobs.info/sitemap.xml/
 
 # Crawl delay (optional)
 Crawl-delay: 1`;

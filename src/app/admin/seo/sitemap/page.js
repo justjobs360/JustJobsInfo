@@ -78,8 +78,8 @@ export default function AdminSitemapPage() {
 
   const publicSitemapHref =
     typeof window !== 'undefined'
-      ? `${window.location.origin}/sitemap.xml`
-      : 'https://www.justjobs.info/sitemap.xml';
+      ? `${window.location.origin}/sitemap.xml/`
+      : 'https://www.justjobs.info/sitemap.xml/';
 
   if (!hasPermission(ADMIN_PERMISSIONS.MANAGE_SEO)) {
     return (
@@ -109,7 +109,7 @@ export default function AdminSitemapPage() {
           <p style={{ fontSize: '16px', color: 'var(--color-body)', margin: 0 }}>
             Generate and store the sitemap in MongoDB. <code>/sitemap.xml</code> and{' '}
             <code>/sitemap.xml/</code> both return the same XML (200 — no redirect). Submit{' '}
-            <code>https://www.justjobs.info/sitemap.xml</code> in Search Console so Google does not hit a redirect.
+            <code>https://www.justjobs.info/sitemap.xml/</code> in Search Console (trailing slash is the preferred URL).
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function AdminSitemapPage() {
                 {regenerating ? 'Generating…' : 'Generate / update sitemap'}
               </button>
               <a
-                href="/sitemap.xml"
+                href="/sitemap.xml/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
