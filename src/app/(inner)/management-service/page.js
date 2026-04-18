@@ -1,8 +1,8 @@
 
 import BackToTop from "@/components/common/BackToTop";
 import Breadcrumb from "@/components/common/Breadcrumb";
+import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
-import HeaderTwo from "@/components/header/HeaderTwo";
 import FeatureTwo from "@/components/feature/FeatureTwo";
 import TestimonialsFive from "@/components/testimonials/TestimonialsFive";
 import MoreSolutions from "@/components/service-component/MoreSolution";
@@ -10,7 +10,7 @@ import MoreSolutions from "@/components/service-component/MoreSolution";
 export default function Home() {
     return (
         <div className='#'>
-            <HeaderTwo />
+            <HeaderOne />
             <Breadcrumb />
             <div>
                 <div className="container-large">

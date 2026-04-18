@@ -2,7 +2,7 @@
 import BackToTop from "@/components/common/BackToTop";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import React from "react";
-import HeaderTwo from "@/components/header/HeaderTwo";
+import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
@@ -10,7 +10,7 @@ import Link from 'next/link';
 function page() {
     return (
         <>
-            <HeaderTwo />
+            <HeaderOne />
             <Breadcrumb />
             <>
                 <div className="career-single-banner-area ptb--70 blog-page">

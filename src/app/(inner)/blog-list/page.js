@@ -3,15 +3,16 @@ import BackToTop from "@/components/common/BackToTop";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import Link from "next/link";
 import React from "react";
-import HeaderTwo from "@/components/header/HeaderTwo";
+import HeaderOne from "@/components/header/HeaderOne";
 import FooterOneDynamic from "@/components/footer/FooterOneDynamic";
+
 import Posts from '@/data/Posts.json';
 import BlogGridMain from './BlogListMain';
 function page() {
 
     return (
         <>
-            <HeaderTwo />
+            <HeaderOne />
             <Breadcrumb />
             <>
                 <div className="career-single-banner-area ptb--70 blog-page">
